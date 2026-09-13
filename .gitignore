@@ -2,3 +2,15 @@
 /out
 /include
 *.tsbuildinfo
+
+# Generated Zap Luau (source of truth is net.zap + TS bridges)
+**/zapServer.luau
+**/zapClient.luau
+**/zapServer.d.ts
+**/zapClient.d.ts
+
+*.rbxlx.lock
+*.rbxl.lock
+*.log
+.DS_Store
+Thumbs.db

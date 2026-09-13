@@ -1,39 +1,63 @@
-![Discord](https://img.shields.io/discord/1140689343082672169)
-![GitHub issues](https://img.shields.io/github/issues/mandrillxx/eatventure-rblx)
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+# Leviathan
 
-# Eatventure RBLX
+Minimal roblox-ts game scaffold:
 
-A ROBLOX recreation of the popular mobile game Eatventure
+| Concern | Library |
+| --- | --- |
+| ECS | Jecs |
+| State | Charm |
+| Networking | Zap |
+| Scheduler | Planck |
+| Data | ProfileStore |
+| Validation | t |
 
-## Demo
+## Layout
 
-A playable demo is available here
-https://www.roblox.com/games/14452121035/Tuesday
-
-## Deployment
-
-To deploy this project run
-
-```bash
-  rojo serve
+```
+src/
+  client/
+    controllers/     # client runtime controllers
+    components/      # client UI / instance components
+  server/
+    services/        # ProfileStore sessions and player lifecycle
+    systems/         # persistence, replication, fixed-step gameplay
+    components/      # server-only components
+  shared/
+    ecs/
+      components/    # per-domain jecs components
+      queries/       # reusable ECS queries
+      systems/       # presentation-safe shared systems
+      bus.ts         # typed system event bus
+      scheduler.ts   # fixed + variable Planck schedulers
+    net/             # Zap IDL, generated bindings, t validators
+    state/           # server-authoritative Charm state / client mirror
+    data/            # static item and ability definitions
+    util/            # shared helpers
 ```
 
-and connect rojo through ROBLOX Studio
+Gameplay systems mutate ECS and publish typed events. Persistence and
+replication subscribe to those events; gameplay code never imports ProfileStore
+or Zap. Persistent entities use GUIDs rather than recyclable jecs entity IDs.
 
-## Contributing
+## Setup
 
-Contributions are always welcome!
+```bash
+npm install
+rokit install
+npm run build
+npm run build:place
+rojo serve
+```
 
-See `CONTRIBUTING.md` for ways to get started.
+Open `Leviathan.rbxlx` in Studio and connect Rojo.
 
-Join the [Discord](https://discord.gg/FCQHb6jHr4) for assistance
+## Scripts
 
-## Authors
-
--   [@mandrillxx](https://www.github.com/mandrillxx) - Technical Development
--   [@miracledevlol](https://www.github.com/miracledevlol) - Gameplay Designer & Testing
+- `npm run zap` — regenerate from `src/shared/net/net.zap`
+- `npm run build` — zap + `rbxtsc`
+- `npm run build:place` — write `Leviathan.rbxlx`
+- `npm run watch` — TypeScript watch
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](./LICENSE.md)

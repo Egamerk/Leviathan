@@ -1,86 +1,52 @@
-import {
-	OpenStatus,
-	Renderable,
-	BelongsTo,
-	Balance,
-	Utility,
-	Client,
-	Level,
-	Wants,
-	Body,
-	NPC,
-	OwnedBy,
-	Upgrade,
-	SoundEffect,
-} from "shared/components";
-import { AnyComponent, useEvent, World } from "@rbxts/matter";
-import { Players, ReplicatedStorage } from "@rbxts/services";
-import { ComponentNames } from "shared/types";
-import { ComponentCtor } from "@rbxts/matter/lib/component";
-import { New } from "@rbxts/fusion";
+import { Players } from "@rbxts/services";
+import { Money } from "shared/ecs/components";
+import { gameBus } from "shared/ecs/bus";
+import { world } from "shared/ecs/world";
+import Net from "shared/net/server";
+import { assertPlayerDelta } from "shared/net/validators";
+import { applyMoneyDelta, applyPlayerSnapshot, removePlayerState } from "shared/state/players";
+import { getSession } from "server/services/profile";
 
-const remoteEvent = New("RemoteEvent")({
-	Name: "Replication",
-	Parent: ReplicatedStorage,
-});
+const readyPlayers = new Set<number>();
 
-const REPLICATED_COMPONENTS = new Set<ComponentCtor>([
-	SoundEffect,
-	Renderable,
-	OpenStatus,
-	BelongsTo,
-	Upgrade,
-	Utility,
-	Balance,
-	OwnedBy,
-	Client,
-	Wants,
-	Level,
-	Body,
-	NPC,
-]);
+function replicate(userId: number, guid: string, money: number): void {
+	const player = Players.GetPlayerByUserId(userId);
+	if (player === undefined || !readyPlayers.has(userId)) return;
 
-function replication(world: World): void {
-	for (const [_, plr] of useEvent(Players, "PlayerAdded")) {
-		const payload = new Map<string, Map<ComponentNames, { data: AnyComponent }>>();
-
-		for (const [id, entityData] of world) {
-			const entityPayload = new Map<ComponentNames, { data: AnyComponent }>();
-			payload.set(tostring(id), entityPayload);
-
-			for (const [component, componentInstance] of entityData) {
-				if (REPLICATED_COMPONENTS.has(component)) {
-					entityPayload.set(tostring(component) as ComponentNames, { data: componentInstance });
-				}
-			}
-		}
-
-		remoteEvent.FireClient(plr, payload);
-	}
-
-	const changes = new Map<string, Map<ComponentNames, { data: AnyComponent }>>();
-
-	for (const component of REPLICATED_COMPONENTS) {
-		for (const [entityId, record] of world.queryChanged(component)) {
-			const key = tostring(entityId);
-			const name = tostring(component) as ComponentNames;
-
-			if (!changes.has(key)) {
-				changes.set(key, new Map());
-			}
-
-			if (world.contains(entityId)) {
-				changes.get(key)?.set(name, { data: record.new! });
-			}
-		}
-	}
-
-	if (!changes.isEmpty()) {
-		remoteEvent.FireAllClients(changes);
-	}
+	Net.replicatePlayer.fire(player, assertPlayerDelta({ guid, money }));
 }
 
-export = {
-	system: replication,
-	priority: math.huge,
-};
+/** The only server system that knows clients or Zap exist. */
+export function startReplicationSystem(): void {
+	Net.getPing.setCallback(() => math.floor(os.clock() * 1000) % 65536);
+
+	Net.ready.setCallback((player) => {
+		readyPlayers.add(player.UserId);
+
+		const session = getSession(player.UserId);
+		if (session === undefined) return;
+
+		const money = world.get(session.dummyEntity, Money);
+		if (money !== undefined) {
+			replicate(player.UserId, session.dummyGuid, money);
+		}
+	});
+
+	gameBus.subscribe("PlayerLoaded", ({ userId, guid, money }) => {
+		applyPlayerSnapshot(userId, { money });
+		replicate(userId, guid, money);
+	});
+
+	gameBus.subscribe("MoneyChanged", ({ userId, guid, money }) => {
+		applyMoneyDelta(userId, money);
+		replicate(userId, guid, money);
+	});
+
+	gameBus.subscribe("EntityDespawned", ({ userId }) => {
+		removePlayerState(userId);
+	});
+
+	Players.PlayerRemoving.Connect((player) => {
+		readyPlayers.delete(player.UserId);
+	});
+}

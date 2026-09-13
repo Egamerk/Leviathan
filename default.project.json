@@ -1,8 +1,9 @@
 {
-	"name": "roblox-ts-game",
+	"name": "Leviathan",
 	"globIgnorePaths": [
 		"**/package.json",
-		"**/tsconfig.json"
+		"**/tsconfig.json",
+		"**/*.zap"
 	],
 	"tree": {
 		"$className": "DataModel",
@@ -29,8 +30,14 @@
 			"Client": {
 				"$path": "out/client"
 			},
-			"TS": {
-				"$path": "out/shared"
+			"Network": {
+				"$className": "Folder",
+				"Server": {
+					"$path": "src/shared/net/zapServer.luau"
+				},
+				"Client": {
+					"$path": "src/shared/net/zapClient.luau"
+				}
 			}
 		},
 		"StarterPlayer": {
@@ -46,6 +53,40 @@
 			"$className": "Workspace",
 			"$properties": {
 				"FilteringEnabled": true
+			},
+			"Baseplate": {
+				"$className": "Part",
+				"$properties": {
+					"Anchored": true,
+					"Locked": true,
+					"Color": [0.38823, 0.37254, 0.38823],
+					"Position": [0, -10, 0],
+					"Size": [512, 20, 512],
+					"TopSurface": "Smooth",
+					"BottomSurface": "Smooth"
+				}
+			},
+			"SpawnLocation": {
+				"$className": "SpawnLocation",
+				"$properties": {
+					"Anchored": true,
+					"Duration": 0,
+					"Neutral": true,
+					"Position": [0, 1, 0],
+					"Size": [12, 1, 12],
+					"TopSurface": "Smooth",
+					"BottomSurface": "Smooth"
+				}
+			}
+		},
+		"Lighting": {
+			"$className": "Lighting",
+			"$properties": {
+				"Ambient": [0.4, 0.4, 0.4],
+				"Brightness": 2,
+				"GlobalShadows": true,
+				"Outlines": false,
+				"Technology": "ShadowMap"
 			}
 		},
 		"HttpService": {
