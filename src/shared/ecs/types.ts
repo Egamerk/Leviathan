@@ -1,13 +1,38 @@
-/** State visible to one player and mirrored to their client. */
-export interface PlayerState {
-	money: number;
+import type { ReactionType } from "shared/data/abilities";
+
+export interface ResourceState {
+	current: number;
+	max: number;
+}
+
+/** Server-authored state visible to the owning player through Charm. */
+export interface CombatantState {
+	guid: string;
+	health: ResourceState;
+	stamina: ResourceState;
+	initiative: number;
+	movementPoints: number;
+}
+
+export interface EvadeWindowState {
+	encounterId: string;
+	windowId: string;
+	reaction: ReactionType;
+	openAt: number;
+	closeAt: number;
+	opened: boolean;
+	resolved: boolean;
+	success?: boolean;
 }
 
 export interface EntitySave {
 	guid: string;
-	kind: "dummy";
+	kind: "combatant";
 	components: {
-		money?: number;
+		health?: ResourceState;
+		stamina?: ResourceState;
+		initiative?: number;
+		movementPoints?: number;
 	};
 }
 
@@ -18,7 +43,6 @@ export interface RegionChunk {
 
 export interface ProfileTemplate {
 	version: number;
-	money: number;
 	entities: Record<string, EntitySave>;
 	regions: Record<string, RegionChunk>;
 }

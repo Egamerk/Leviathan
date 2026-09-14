@@ -1,21 +1,18 @@
-import { Players } from "@rbxts/services";
 import Net from "shared/net/client";
-import { assertPlayerDelta } from "shared/net/validators";
-import { applyMoneyDelta } from "shared/state/players";
+import { assertCombatantSnapshot, assertEncounterSnapshot } from "shared/net/validators";
+import { applyCombatantSnapshot } from "shared/state/combatants";
+import { applyEncounterSnapshot } from "shared/state/encounter";
 
 /** Validates server deltas at the client boundary and updates Charm mirrors. */
 export function startReplicationController(): void {
-	const localPlayer = Players.LocalPlayer;
+	Net.replicateCombatant.setCallback((untrustedSnapshot) => {
+		const snapshot = assertCombatantSnapshot(untrustedSnapshot);
+		applyCombatantSnapshot(snapshot, true);
+	});
 
-	Net.replicatePlayer.setCallback((untrustedDelta) => {
-		const delta = assertPlayerDelta(untrustedDelta);
-		applyMoneyDelta(localPlayer.UserId, delta.money);
+	Net.replicateEncounter.setCallback((untrustedSnapshot) => {
+		applyEncounterSnapshot(assertEncounterSnapshot(untrustedSnapshot));
 	});
 
 	Net.ready.fire();
-
-	task.spawn(() => {
-		const ping = Net.getPing.call();
-		print(`[client] ping returned ${ping}`);
-	});
 }

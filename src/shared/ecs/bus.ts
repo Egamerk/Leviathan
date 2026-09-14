@@ -1,24 +1,49 @@
 import type { Entity } from "@rbxts/jecs";
+import type { CombatantState, EvadeWindowState } from "./types";
+import type { CombatAnim, CombatMove, EncounterSnapshot, EvadeResult, EvadeSchedule } from "shared/net/types";
 
 export interface GameEvents {
 	PlayerLoaded: {
 		player: Player;
 		userId: number;
 		playerEntity: Entity;
-		dummyEntity: Entity;
+		combatantEntity: Entity;
 		guid: string;
-		money: number;
+		state: CombatantState;
 	};
-	MoneyChanged: {
+	CombatantChanged: {
 		userId: number;
-		guid: string;
-		money: number;
+		state: CombatantState;
+	};
+	EncounterChanged: {
+		userId: number;
+		snapshot: EncounterSnapshot;
+	};
+	EvadeStateChanged: {
+		userId: number;
+		state?: EvadeWindowState;
+	};
+	EvadeScheduled: {
+		userId: number;
+		schedule: EvadeSchedule;
+	};
+	EvadeResolved: {
+		userId: number;
+		result: EvadeResult;
+	};
+	CombatMovePresented: {
+		userId: number;
+		move: CombatMove;
+	};
+	CombatAnimPresented: {
+		userId: number;
+		anim: CombatAnim;
 	};
 	EntitySpawned: {
 		userId: number;
 		guid: string;
 		entity: Entity;
-		kind: "dummy";
+		kind: "combatant";
 	};
 	EntityDespawned: {
 		userId: number;

@@ -15,14 +15,8 @@ export const UserId = world.component<number>();
  */
 export const Guid = world.component<string>();
 
-/** Server-authoritative currency balance. */
-export const Money = world.component<number>();
-
 /** Tag: entity's state should be written to ProfileStore. */
 export const Persistent = world.entity();
-
-/** Tag: entity is the player's own persistent dummy (round-trip demo). */
-export const Dummy = world.entity();
 
 /** Owner of an entity (the player's UserId) for replication routing. */
 export const OwnerUserId = world.component<number>();

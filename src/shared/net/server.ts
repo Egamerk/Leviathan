@@ -1,15 +1,45 @@
 import { ReplicatedStorage } from "@rbxts/services";
-import type { PlayerDelta } from "./types";
+import type {
+	CombatAction,
+	CombatAnim,
+	CombatantSnapshot,
+	CombatMove,
+	EncounterSnapshot,
+	EvadeInput,
+	EvadeResult,
+	EvadeSchedule,
+} from "./types";
 
 interface ServerNetwork {
 	sendEvents: () => void;
-	replicatePlayer: {
-		fire: (player: Player, value: PlayerDelta) => void;
+	replicateCombatant: {
+		fire: (player: Player, value: CombatantSnapshot) => void;
+	};
+	replicateEncounter: {
+		fire: (player: Player, value: EncounterSnapshot) => void;
+	};
+	evadeSchedule: {
+		fire: (player: Player, value: EvadeSchedule) => void;
+	};
+	evadeResult: {
+		fire: (player: Player, value: EvadeResult) => void;
+	};
+	combatMove: {
+		fire: (player: Player, value: CombatMove) => void;
+	};
+	combatAnim: {
+		fire: (player: Player, value: CombatAnim) => void;
 	};
 	ready: {
 		setCallback: (callback: (player: Player) => void) => () => void;
 	};
-	getPing: {
+	evadeInput: {
+		setCallback: (callback: (player: Player, value: EvadeInput) => void) => () => void;
+	};
+	combatAction: {
+		setCallback: (callback: (player: Player, value: CombatAction) => void) => () => void;
+	};
+	syncClock: {
 		setCallback: (callback: (player: Player) => number) => () => void;
 	};
 }
