@@ -77,7 +77,18 @@ export const HudAnimation = {
 	 * widths) in `seconds`. Copies of the texture are chained with a crossfade
 	 * of `crossfade` (fraction of one copy) so the loop never visibly resets.
 	 */
-	healthFlow: { from: 0, to: 1.77, seconds: 8, crossfade: 0.15 },
+	healthFlow: {
+		from: 0,
+		to: 1.77,
+		seconds: 8,
+		crossfade: 0.15,
+		/**
+		 * Transparent strip at each end of the HealthBlood image, as a fraction of
+		 * its width (≈17 px of 420). Copies overlap past it so the background
+		 * never shows through between them.
+		 */
+		textureEdgeMargin: 18 / 420,
+	},
 	/** Reservoir core spin, degrees per second (the wheel stays still). */
 	reservoirSpinDegreesPerSecond: 25,
 	/** Bar drain/refill smoothing (≈ 1 / seconds). */

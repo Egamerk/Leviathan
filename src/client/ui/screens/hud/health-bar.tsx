@@ -11,8 +11,13 @@ const FLOW = HudAnimation.healthFlow;
 
 /** Fill widths per second. */
 const FLOW_SPEED = (FLOW.to - FLOW.from) / FLOW.seconds;
-/** Distance between chained copies: each overlaps the previous by `crossfade`. */
-const PERIOD = L.bloodWidth * (1 - FLOW.crossfade);
+const EDGE = FLOW.textureEdgeMargin;
+/**
+ * Distance between chained copies. A copy's fade (its left edge, after the
+ * transparent margin) must lie over the previous copy's solid blood, which
+ * ends before that copy's right margin. So copies overlap by margin + fade + margin.
+ */
+const PERIOD = L.bloodWidth * (1 - 2 * EDGE - FLOW.crossfade);
 /**
  * Copy k sits at k × PERIOD + phase. With phase in [0, PERIOD), copies -2..0
  * cover the visible area, and every faded seam has an opaque copy beneath it.
@@ -21,10 +26,11 @@ const PERIOD = L.bloodWidth * (1 - FLOW.crossfade);
  */
 const COPIES = [-2, -1, 0];
 
-/** Each copy fades in over its left edge, blending into the copy beneath it. */
+/** Each copy fades in just after its transparent left margin, blending into the copy beneath it. */
 const SEAM_FADE = new NumberSequence([
 	new NumberSequenceKeypoint(0, 1),
-	new NumberSequenceKeypoint(FLOW.crossfade, 0),
+	new NumberSequenceKeypoint(EDGE, 1),
+	new NumberSequenceKeypoint(EDGE + FLOW.crossfade, 0),
 	new NumberSequenceKeypoint(1, 0),
 ]);
 
