@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { Players } from "@rbxts/services";
 import { CombatConfig } from "shared/config";
 import { ServerNet } from "shared/net/server";
@@ -81,6 +82,8 @@ export function startPlayersService(onLeaving: (record: DiverRecord) => void) {
 		record.sprinting = stance.sprinting;
 	});
 =======
+=======
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
 import { Players, ReplicatedStorage, RunService } from "@rbxts/services";
 import { loadPlayer, reloadPlayer, unloadPlayer } from "server/services/profile";
 
@@ -113,5 +116,8 @@ export function startPlayersService(): void {
 	}
 
 	bindStudioPersistReload();
+<<<<<<< HEAD
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
+=======
 >>>>>>> parent of 2163304 (Describe what you added or fixed)
 }

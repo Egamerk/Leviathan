@@ -1,5 +1,6 @@
 import { ReplicatedStorage } from "@rbxts/services";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import type * as ZapServer from "./zapServer";
 
 /**
@@ -10,6 +11,8 @@ const module = ReplicatedStorage.WaitForChild("Network").WaitForChild("Server") 
 // eslint-disable-next-line @typescript-eslint/no-require-imports -- Zap output is a plain ModuleScript
 export const ServerNet = require(module) as typeof ZapServer;
 =======
+=======
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
 import type {
 	CombatAction,
 	CombatAnim,
@@ -59,4 +62,7 @@ const networkFolder = ReplicatedStorage.WaitForChild("Network");
 const network = require(networkFolder.WaitForChild("Server") as ModuleScript) as ServerNetwork;
 
 export default network;
+<<<<<<< HEAD
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
+=======
 >>>>>>> parent of 2163304 (Describe what you added or fixed)

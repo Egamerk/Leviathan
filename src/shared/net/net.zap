@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 -- Leviathan network contract. Regenerate with `npm run zap`.
 --
 -- Client → Server messages are fully typed so Zap validates/limits them before
@@ -8,6 +9,8 @@
 
 =======
 >>>>>>> parent of 2163304 (Describe what you added or fixed)
+=======
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
 opt server_output = "zapServer.luau"
 opt client_output = "zapClient.luau"
 opt casing = "camelCase"
@@ -15,6 +18,7 @@ opt typescript = true
 opt write_checks = true
 opt yield_type = "yield"
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 type Resource = struct {
 	current: f32,
@@ -171,6 +175,8 @@ event qteInput = {
 		pressedAt: f64,
 	},
 =======
+=======
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
 type ResourceState = struct {
 	current: u8,
 	max: u8,
@@ -325,5 +331,8 @@ event combatAnim = {
 funct syncClock = {
 	call: Async,
 	rets: f64,
+<<<<<<< HEAD
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
+=======
 >>>>>>> parent of 2163304 (Describe what you added or fixed)
 }

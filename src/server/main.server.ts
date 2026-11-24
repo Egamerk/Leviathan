@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { RunService } from "@rbxts/services";
 import { startEnemyService } from "server/ai/enemyService";
 import { startLightTracking } from "server/ai/lighting";
@@ -27,6 +28,8 @@ startSandbox();
 
 print("[server] Leviathan ready");
 =======
+=======
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
 import { Players } from "@rbxts/services";
 import { FixedPhases, fixedScheduler, startFixedStep, variableScheduler } from "shared/ecs/scheduler";
 import { startPlayersService } from "server/services/players";
@@ -59,4 +62,7 @@ assert(variableScheduler !== undefined);
 startPlayersService();
 
 print(`[server] Leviathan ready (${Players.GetPlayers().size()} player(s) already in game)`);
+<<<<<<< HEAD
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
+=======
 >>>>>>> parent of 2163304 (Describe what you added or fixed)

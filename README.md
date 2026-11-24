@@ -1,6 +1,7 @@
 # Leviathan
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 A deep-sea, turn-based roblox-ts game. You explore freely until something notices you, then the
 fight switches into BG3 / Expedition 33-style turn-based combat on a voxelized grid, with QTE
 parries, dodges, and attacks.
@@ -17,6 +18,8 @@ the voxel navigation works, and the build order for the rest of the Trello board
 | Validation | t |
 | ECS (reserved for large world simulations) | Jecs + Planck |
 =======
+=======
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
 Minimal roblox-ts game scaffold:
 
 | Concern | Library |
@@ -27,12 +30,16 @@ Minimal roblox-ts game scaffold:
 | Scheduler | Planck |
 | Data | ProfileStore |
 | Validation | t |
+<<<<<<< HEAD
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
+=======
 >>>>>>> parent of 2163304 (Describe what you added or fixed)
 
 ## Layout
 
 ```
 src/
+<<<<<<< HEAD
 <<<<<<< HEAD
   shared/
     config/    every Trello number (movement, nav, detection, combat)
@@ -53,6 +60,8 @@ src/
 ```
 
 =======
+=======
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
   client/
     controllers/     # client runtime controllers
     components/      # client UI / instance components
@@ -77,11 +86,15 @@ Gameplay systems mutate ECS and publish typed events. Persistence and
 replication subscribe to those events; gameplay code never imports ProfileStore
 or Zap. Persistent entities use GUIDs rather than recyclable jecs entity IDs.
 
+<<<<<<< HEAD
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
+=======
 >>>>>>> parent of 2163304 (Describe what you added or fixed)
 ## Setup
 
 ```bash
 npm install
+<<<<<<< HEAD
 <<<<<<< HEAD
 ```
 
@@ -119,6 +132,8 @@ Walk into their view (or crouch with Ctrl to sneak up and press **E**) to start 
 - `npm run watch`: TypeScript watch mode
 - `npm run build:place`: write `Leviathan.rbxlx`
 =======
+=======
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
 rokit install
 npm run build
 npm run build:place
@@ -133,6 +148,9 @@ Open `Leviathan.rbxlx` in Studio and connect Rojo.
 - `npm run build` — zap + `rbxtsc`
 - `npm run build:place` — write `Leviathan.rbxlx`
 - `npm run watch` — TypeScript watch
+<<<<<<< HEAD
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
+=======
 >>>>>>> parent of 2163304 (Describe what you added or fixed)
 
 ## License

@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import type { MainStats } from "shared/rules/stats";
 import type { StatusId } from "./statuses";
 
@@ -112,6 +113,8 @@ export function getAbility(id: string): AbilityDef | undefined {
 	return (Abilities as Record<string, AbilityDef>)[id];
 }
 =======
+=======
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
 export type ReactionType = "parry" | "dodge";
 export type ReactionTier = "trash" | "elite" | "boss";
 
@@ -190,4 +193,7 @@ export const ABILITY_DEFINITIONS = {
 } satisfies Record<string, AbilityDefinition>;
 
 export type AbilityId = keyof typeof ABILITY_DEFINITIONS;
+<<<<<<< HEAD
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
+=======
 >>>>>>> parent of 2163304 (Describe what you added or fixed)

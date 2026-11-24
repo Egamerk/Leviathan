@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import React from "@rbxts/react";
 import { createPortal, createRoot } from "@rbxts/react-roblox";
 import { Players } from "@rbxts/services";
@@ -21,6 +22,8 @@ root.render(createPortal(React.createElement(App), playerGui));
 
 print("[client] Leviathan ready");
 =======
+=======
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
 import { startBattlefield3d } from "client/controllers/battlefield3d";
 import { startCombatController } from "client/controllers/combat";
 import { startCombatHud } from "client/controllers/combatHud";
@@ -37,4 +40,7 @@ startCombatHud();
 startCombatController();
 startBattlefield3d();
 startReplicationController();
+<<<<<<< HEAD
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
+=======
 >>>>>>> parent of 2163304 (Describe what you added or fixed)
