@@ -1,5 +1,6 @@
 /**
- * Static game content. Add one file per content type (e.g. `abilities.ts`)
- * built with `createRegistry`, and re-export it here.
+ * Static game content. One file per content type, built with `createRegistry`.
  */
 export { createRegistry, type Registry } from "./registry";
+export { StatPassives, type StatPassiveDef, type StatPassiveId } from "./stat-passives";
+export { Vessels, type VesselDef, type VesselId } from "./vessels";

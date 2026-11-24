@@ -1,3 +1,7 @@
+import type { VesselId } from "shared/definitions/vessels";
+import { emptyStats, type MainStats } from "shared/modules/stats/types";
+import { StatsConfig } from "shared/config/stats";
+
 /**
  * Persisted player data (ProfileStore template).
  *
@@ -10,8 +14,19 @@
  */
 export interface PlayerData {
 	schemaVersion: number;
+	/** Chosen at character creation. Undefined until then. */
+	vessel?: VesselId;
+	stats: {
+		/** Points the player spent (the vessel bonus is added on top, not stored). */
+		allocated: MainStats;
+		unspentPoints: number;
+	};
 }
 
 export const DEFAULT_PLAYER_DATA: PlayerData = {
 	schemaVersion: 1,
+	stats: {
+		allocated: emptyStats(),
+		unspentPoints: StatsConfig.startingStatPoints,
+	},
 };

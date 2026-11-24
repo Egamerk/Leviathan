@@ -152,7 +152,7 @@ Studio runs against ProfileStore's **mock** store, so play-testing never touches
 
 ### Static content (abilities, enemies, items…)
 
-Add `shared/definitions/<type>.ts` exporting `createRegistry({ ... })`, and keep behaviour in a
+Add `shared/definitions/<type>.ts` exporting `createRegistry<YourDef>()({ ... })`, and keep behaviour in a
 service or shared module that looks definitions up by id.
 
 ### Pure logic

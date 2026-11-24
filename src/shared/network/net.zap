@@ -30,3 +30,16 @@ event syncState = {
 	call: SingleAsync,
 	data: unknown,
 }
+
+-- ── Stats ────────────────────────────────────────────────────────────────────
+
+-- Spend unspent stat points. The server re-validates with shared/modules/stats.
+event allocateStat = {
+	from: Client,
+	type: Reliable,
+	call: SingleAsync,
+	data: struct {
+		stat: enum { strength, dexterity, endurance, occult, connection },
+		amount: u8(1..50),
+	},
+}
