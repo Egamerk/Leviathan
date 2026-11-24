@@ -1,5 +1,6 @@
 # Leviathan
 
+<<<<<<< HEAD
 A deep-sea, turn-based roblox-ts game. You explore freely until something notices you, then the
 fight switches into BG3 / Expedition 33-style turn-based combat on a voxelized grid, with QTE
 parries, dodges, and attacks.
@@ -15,11 +16,24 @@ the voxel navigation works, and the build order for the rest of the Trello board
 | Persistence (next) | ProfileStore |
 | Validation | t |
 | ECS (reserved for large world simulations) | Jecs + Planck |
+=======
+Minimal roblox-ts game scaffold:
+
+| Concern | Library |
+| --- | --- |
+| ECS | Jecs |
+| State | Charm |
+| Networking | Zap |
+| Scheduler | Planck |
+| Data | ProfileStore |
+| Validation | t |
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
 
 ## Layout
 
 ```
 src/
+<<<<<<< HEAD
   shared/
     config/    every Trello number (movement, nav, detection, combat)
     data/      abilities, enemies, status effects
@@ -38,10 +52,37 @@ src/
     store.ts     Charm atoms
 ```
 
+=======
+  client/
+    controllers/     # client runtime controllers
+    components/      # client UI / instance components
+  server/
+    services/        # ProfileStore sessions and player lifecycle
+    systems/         # persistence, replication, fixed-step gameplay
+    components/      # server-only components
+  shared/
+    ecs/
+      components/    # per-domain jecs components
+      queries/       # reusable ECS queries
+      systems/       # presentation-safe shared systems
+      bus.ts         # typed system event bus
+      scheduler.ts   # fixed + variable Planck schedulers
+    net/             # Zap IDL, generated bindings, t validators
+    state/           # server-authoritative Charm state / client mirror
+    data/            # static item and ability definitions
+    util/            # shared helpers
+```
+
+Gameplay systems mutate ECS and publish typed events. Persistence and
+replication subscribe to those events; gameplay code never imports ProfileStore
+or Zap. Persistent entities use GUIDs rather than recyclable jecs entity IDs.
+
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
 ## Setup
 
 ```bash
 npm install
+<<<<<<< HEAD
 ```
 
 ```bash
@@ -77,6 +118,22 @@ Walk into their view (or crouch with Ctrl to sneak up and press **E**) to start 
 - `npm run build`: runs zap, then `rbxtsc`
 - `npm run watch`: TypeScript watch mode
 - `npm run build:place`: write `Leviathan.rbxlx`
+=======
+rokit install
+npm run build
+npm run build:place
+rojo serve
+```
+
+Open `Leviathan.rbxlx` in Studio and connect Rojo.
+
+## Scripts
+
+- `npm run zap` — regenerate from `src/shared/net/net.zap`
+- `npm run build` — zap + `rbxtsc`
+- `npm run build:place` — write `Leviathan.rbxlx`
+- `npm run watch` — TypeScript watch
+>>>>>>> parent of 2163304 (Describe what you added or fixed)
 
 ## License
 
