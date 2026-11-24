@@ -24,11 +24,16 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
-    "@rbxts/charm": "^0.11.0",
+    "@rbxts/charm": "^0.11.1",
+    "@rbxts/charm-sync": "^0.4.1",
+    "@rbxts/janitor": "^1.18.3-ts.0",
     "@rbxts/jecs": "^0.11.0",
     "@rbxts/planck": "^1.0.0",
     "@rbxts/planck-runservice": "^1.0.3",
     "@rbxts/profile-store": "^1.0.3",
+    "@rbxts/react": "^17.3.13-ts.1",
+    "@rbxts/react-roblox": "^17.3.13-ts.1",
+    "@rbxts/ripple": "^0.10.2",
     "@rbxts/services": "^1.6.0",
     "@rbxts/t": "^3.2.1"
   }
