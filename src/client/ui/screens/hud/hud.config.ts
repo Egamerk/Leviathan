@@ -30,9 +30,8 @@ export const HudLayout = {
 		/** The original clip Frame inside BloodBackground: centred, 92.5% wide. */
 		fillInsetLeft: 0.0375,
 		fillInsetWidth: 0.925,
-		/** Blood texture: AnchorPoint (0.63, 0.5), Size (3, 1) of the fill area. */
-		bloodAnchor: new Vector2(0.63, 0.5),
-		bloodSize: new UDim2(3, 0, 1, 0),
+		/** Blood texture size as a fraction of the fill area (width 3 = stretched 3× wide, as in Studio). */
+		bloodWidth: 3,
 	},
 	oxygen: {
 		anchor: CENTER,
@@ -73,8 +72,12 @@ export const HudLayout = {
 } as const;
 
 export const HudAnimation = {
-	/** Health blood scrolls its X position from `from` to `to` (scale), then resets. */
-	healthFlow: { from: 0, to: 1.77, seconds: 8 },
+	/**
+	 * Health blood flow. Speed matches the Studio spec of moving 0 → 1.77 (fill
+	 * widths) in `seconds`. Copies of the texture are chained with a crossfade
+	 * of `crossfade` (fraction of one copy) so the loop never visibly resets.
+	 */
+	healthFlow: { from: 0, to: 1.77, seconds: 8, crossfade: 0.15 },
 	/** Reservoir core spin, degrees per second (the wheel stays still). */
 	reservoirSpinDegreesPerSecond: 25,
 	/** Bar drain/refill smoothing (≈ 1 / seconds). */
