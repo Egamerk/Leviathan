@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import React from "@rbxts/react";
 import { createPortal, createRoot } from "@rbxts/react-roblox";
 import { Players } from "@rbxts/services";
@@ -44,3 +45,5 @@ startReplicationController();
 >>>>>>> parent of 2163304 (Describe what you added or fixed)
 =======
 >>>>>>> parent of 2163304 (Describe what you added or fixed)
+=======
+>>>>>>> parent of d1073a4 (Merge pull request #1 from Egamerk/claude/dreamy-hawking-6myczo)

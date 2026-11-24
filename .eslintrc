@@ -8,8 +8,7 @@
 		"project": "./tsconfig.json"
 	},
 	"ignorePatterns": [
-		"/out",
-		"src/shared/net/zap*.d.ts"
+		"/out"
 	],
 	"plugins": [
 		"@typescript-eslint",
