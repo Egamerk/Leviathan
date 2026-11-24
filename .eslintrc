@@ -9,7 +9,6 @@
 	},
 	"ignorePatterns": [
 		"/out",
-		"/reference",
 		"src/shared/net/zap*.d.ts"
 	],
 	"plugins": [

@@ -4,7 +4,6 @@ A deep-sea, turn-based roblox-ts game. You explore freely until something notice
 fight switches into BG3 / Expedition 33-style turn-based combat on a voxelized grid.
 
 - **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**: the architecture plan and build order.
-- **[reference/](reference/)**: a prototype of that plan, kept out of the build.
 
 ## Setup
 

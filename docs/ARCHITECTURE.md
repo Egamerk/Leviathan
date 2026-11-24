@@ -5,9 +5,7 @@ into a turn-based fight on a voxelized grid (BG3 / Expedition 33 style). It ends
 order for the rest of the Trello board.
 
 `src/` doesn't contain any of this yet. File paths below show where each piece is **planned** to
-live. A prototype of the whole plan is in
-[`reference/implementation/src/`](../reference/implementation/) if you want to see one way of
-writing it. That copy isn't part of the build, so read from it or copy out of it as you like.
+live.
 
 ---
 
@@ -294,7 +292,7 @@ core doesn't need an ECS, and keeping it out of the engine keeps the engine test
 - **Scale mismatch.** Diver health starts at 4, but the enemy template card has 45 HP. The sample
   enemies use 6–12 HP so fights end in a few rounds.
 - **Downed divers.** Until Vials, Rituals, and extraction exist, a placeholder should wake them up
-  (the prototype wakes them at 40% after 15 s).
+  (for example, wake them at 40% health after 15 s).
 
 ---
 
