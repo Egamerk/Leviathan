@@ -7,6 +7,7 @@ you, then the fight switches into BG3 / Expedition 33-style turn-based combat.
   services, controllers, components, network events, and data.
 - **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**: the design plan for the game systems.
 - **[docs/STATS.md](docs/STATS.md)**: base stat formulas and open questions.
+- **[docs/COMBAT_UI.md](docs/COMBAT_UI.md)**: Combat UI requirements and inputs needed (not started).
 
 ## Stack
 
