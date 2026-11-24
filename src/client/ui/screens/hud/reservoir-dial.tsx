@@ -4,10 +4,11 @@ import { HudAnimation, HudLayout } from "./hud.config";
 
 const L = HudLayout.reservoir;
 
-/** Centre piece: holder, the spinning wheel, and the flipped inner core. Draw order matches Studio. */
+/** Centre piece: holder, wheel, and the spinning Reservoir core. Draw order matches Studio. */
 export function ReservoirDial() {
 	const clock = useAnimationClock();
-	const rotation = clock.map((t) => (t * HudAnimation.reservoirSpinDegreesPerSecond) % 360);
+	// Spin starts from the core's resting rotation (-180°) so frame 0 matches Studio.
+	const coreRotation = clock.map((t) => (L.coreRotation + t * HudAnimation.reservoirSpinDegreesPerSecond) % 360);
 
 	return (
 		<>
@@ -27,7 +28,7 @@ export function ReservoirDial() {
 				BackgroundTransparency={1}
 				Position={L.corePosition}
 				Size={L.coreSize}
-				Rotation={L.coreRotation}
+				Rotation={coreRotation}
 				Image={L.core}
 				ScaleType={Enum.ScaleType.Fit}
 				ZIndex={-2}
@@ -38,7 +39,6 @@ export function ReservoirDial() {
 				BackgroundTransparency={1}
 				Position={L.position}
 				Size={L.size}
-				Rotation={rotation}
 				Image={L.wheel}
 				ScaleType={Enum.ScaleType.Fit}
 				ZIndex={-1}

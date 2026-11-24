@@ -53,7 +53,7 @@ export const HudLayout = {
 		size: new UDim2(0.12, 0, 0.13, 0),
 		holder: Images.WheelAndWoe1,
 		wheel: Images.Wheel,
-		/** The inner piece, flipped 180° and set slightly higher. */
+		/** The "Reservoir" piece: flipped 180°, set slightly higher, and spins. */
 		core: Images.Woe_v2,
 		corePosition: new UDim2(0.5, 0, 0.84, 0),
 		coreSize: new UDim2(0.06, 0, 0.11, 0),
@@ -64,7 +64,7 @@ export const HudLayout = {
 export const HudAnimation = {
 	/** Health blood scrolls its X position from `from` to `to` (scale), then resets. */
 	healthFlow: { from: 0, to: 1.77, seconds: 8 },
-	/** Reservoir wheel spin, degrees per second. */
+	/** Reservoir core spin, degrees per second (the wheel stays still). */
 	reservoirSpinDegreesPerSecond: 25,
 	/** Bar drain/refill smoothing (≈ 1 / seconds). */
 	barSmoothing: 6,
