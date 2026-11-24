@@ -7,15 +7,28 @@ implemented yet.** Items marked **TBD** are open questions to answer first.
 
 | Item | Status |
 | --- | --- |
-| Combat ScreenGui(s) exported as `.rbxm` into `assets/ui/` (see [assets/ui/README.md](../assets/ui/README.md)) | **TBD** |
+| UI image ids: `assets/ui/images.csv` → `shared/assets/images.ts` (see [assets/ui/README.md](../assets/ui/README.md)) | **Done**: 22 images |
+| Pick which copy of each duplicate name to use: `BackgroundHealth`, `BackgroundHealth2`, `Blood`, `Wheel&Woe`, `Woe` | **TBD** |
+| Mockup or screenshot showing how the images fit together (positions and sizes), since the art is separate images, not a built GUI | **TBD** |
 | Screenshot or note per state: your turn, enemy turn, targeting, each QTE | **TBD** |
 | Which QTE minigames have finished art (table below) | **TBD** |
 | Whether the action menu layout matches the Trello turn structure | **TBD** |
 | Target selection: click the enemy in the world, or pick from a list | **TBD** |
 | Scope: build the UI against a mock combat state first, or the turn engine first | **TBD** |
 
-Plan: keep the art exactly as built in Studio and bind behaviour to the exported instances by
-name, rather than rebuilding the layout in code.
+Plan: build the layout in React from the `Images` table, matching the mockup. Each bar is
+probably a background image plus a fill image; the bar component crops the fill by the current
+value.
+
+Image groups as currently named (guesses, to confirm):
+
+| Group | Images |
+| --- | --- |
+| Health bar | `BackgroundHealth`, `BackgroundHealth2`, `Blood` |
+| Auxiliary bar | `BackgroundAux`, `BackgroundAux2`, `Aux` |
+| Reservoir bar | `Backgroundres`, `Backgroundres2`, `res`, `Resstart`, `ResEnd`, `ResEnd1` |
+| Wheel / Woe | `Wheel`, `Woe`, `Wheel&Woe`, `Wheel&Woe1` |
+| Misc | `Divider` |
 
 ## Turn structure (Trello: Combat → Player Turn)
 

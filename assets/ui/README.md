@@ -1,23 +1,26 @@
 # UI assets
 
-Exported Studio UI goes here. Nothing in this folder is synced or built yet.
+The UI art is uploaded as images (Creator Dashboard / Asset Manager). Code never contains raw
+asset ids. It uses the generated `Images` table:
 
-## The easy way: export everything as one file (no IDs needed)
+```ts
+import { Images } from "shared/assets/images";
+<imagelabel Image={Images.Divider} />
+```
 
-**Save to File** writes everything you have selected into a single `.rbxm`, so the GUIs don't need
-exporting one by one.
+## Adding or updating images
 
-1. Select all the GUIs at once:
-   - if they're all in **StarterGui**, click the first and Shift+click the last; or
-   - paste `tools/studio/select-all-ui.luau` into the Command Bar, which selects every GUI in the
-     place.
-2. Right-click → **Save to File…** → `assets/ui/all-ui.rbxm`.
+1. Studio → **Window → Asset Manager → Images**, using the revamped Asset Manager in list view.
+2. Select every image (Ctrl+A) → right-click → **Copy → Copy Info**.
+3. Paste it over `assets/ui/images.csv`.
+4. Run `npm run assets:images`. This regenerates `src/shared/assets/images.ts`.
 
-That one file holds the full hierarchy, layout, names **and every image id**. When the art
-changes, repeat the export and overwrite the file.
+Names become keys (`Wheel&Woe` → `WheelAndWoe`). A name uploaded more than once is kept as
+`_v1`, `_v2`… (oldest first) and listed in `DUPLICATE_IMAGE_NAMES`. Rename or delete the extra
+copies in Asset Manager to get clean keys.
 
-## If you need a plain list of IDs
+## Optional: if the UI is built as GUIs in Studio
 
-Select the UI in Studio and run `tools/studio/collect-ui-assets.luau` in the Command Bar. It writes
-`ServerStorage.UiAssetIds`, a ModuleScript mapping every image and sound to its path in the UI.
-Save that here as `ui-asset-ids.luau`.
+- `tools/studio/select-all-ui.luau` selects every GUI so they can all be exported as one `.rbxm`
+  (right-click → Save to File…).
+- `tools/studio/collect-ui-assets.luau` lists the ids used by the selected GUIs.
