@@ -9,6 +9,17 @@ import { Images } from "shared/assets/images";
 const CENTER = new Vector2(0.5, 0.5);
 
 export const HudLayout = {
+	/**
+	 * Width ÷ height of the area the layout was designed in. Every position and
+	 * size below is a fraction of a HUD frame locked to this shape (centred,
+	 * bottom-aligned), not of the raw screen. That keeps the art identical at
+	 * any resolution. On wider screens (e.g. 1080p) the images would otherwise
+	 * shrink unevenly and the blood would spill over the capsule's end caps.
+	 * Keep it at or below ~1.8, where the original layout is known to render
+	 * correctly.
+	 */
+	designAspectRatio: 16 / 9,
+
 	health: {
 		anchor: CENTER,
 		position: new UDim2(0.5, 0, 0.8, 0),
