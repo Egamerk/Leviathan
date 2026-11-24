@@ -1,8 +1,13 @@
-# Leviathan architecture
+# Leviathan architecture (proposal)
 
-This doc covers how the game is structured: exploring, getting noticed and chased, then switching
-into a turn-based fight on a voxelized grid (BG3 / Expedition 33 style). It also gives a build
+This is a plan for structuring the game: exploring, getting noticed and chased, then switching
+into a turn-based fight on a voxelized grid (BG3 / Expedition 33 style). It ends with a build
 order for the rest of the Trello board.
+
+`src/` doesn't contain any of this yet. File paths below show where each piece is **planned** to
+live. A prototype of the whole plan is in
+[`reference/implementation/src/`](../reference/implementation/) if you want to see one way of
+writing it. That copy isn't part of the build, so read from it or copy out of it as you like.
 
 ---
 
@@ -30,9 +35,9 @@ order for the rest of the Trello board.
 
 Why this layout suits a turn-based game:
 
-- **You can test it.** `CombatEngine` and the pathfinder don't touch `Players`, remotes, or time,
-  so `server/dev/selfTest.ts` can run whole fights in milliseconds. (I ran them under Lune while
-  building this; in Studio they run on server start.)
+- **You can test it.** If `CombatEngine` and the pathfinder never touch `Players`, remotes, or
+  time, a self-test (planned as `server/dev/selfTest.ts`) can run whole fights in milliseconds,
+  in Studio or headless under Lune.
 - **One rules path.** Players and the AI both send the same `CombatCommand`s through
   `engine.apply()`, so the AI can't break rules the player has to follow.
 - **The server is the authority.** Clients only send intents (`Move to node`, `UseAbility on
@@ -219,17 +224,24 @@ sees it.
 | Real enemy model | `ServerStorage.Enemies.<EnemyId>`: a Model with a `Humanoid` and `HumanoidRootPart` |
 | Light that affects stealth | Any `PointLight` / `SpotLight` / `SurfaceLight` (lanterns included) |
 
-In Studio, with no `EnemySpawn` parts in the place, `server/dev/sandbox.ts` drops a Drifter and a
-Sea Scorn on the baseplate so you can test the loop right away.
+A Studio-only sandbox script (planned as `server/dev/sandbox.ts`) should drop a couple of test
+enemies on the baseplate when the place has no `EnemySpawn` parts, so the loop can be tested right
+away.
 
 ---
 
 ## 8. Build order (mapped to the Trello "V.1.0 Playable State" card)
 
-**Phase 0: foundation (this commit)**
-voxel nav, detection/pursuit, encounter start (initiative + 3 encounter types), turn engine with
-main/side actions, Move, Strike, Recover, parry/dodge/attack QTE plumbing, Bleed, placeholder HUD,
-movement kit.
+**Phase 0: foundation (build these first, roughly in this order)**
+1. `shared/config` + `shared/rules`: Trello numbers and pure formulas (stats, initiative,
+   damage, detection).
+2. `shared/nav`: grid, A*/Dijkstra, then the raycast voxelizer, then the arena snapshot. Test it
+   on a hand-made grid before touching raycasts.
+3. `shared/combat`: the engine (move, a basic strike, recover, end turn), then the pending
+   QTE steps, then a simple enemy turn AI.
+4. `net.zap`, then the server encounter service, then the client mirror and move-range overlay.
+5. Roaming enemies (detection → pursuit → engage) and the client movement kit.
+6. A placeholder HUD, just enough to prove that events reach the UI.
 
 **Phase 1: make the existing loop feel good**
 1. *Intro animation for battles*: hook `encounterStarted` (camera swoop, arena ring VFX).
@@ -267,7 +279,7 @@ core doesn't need an ECS, and keeping it out of the engine keeps the engine test
 
 ---
 
-## 9. Trello rules I had to interpret (confirm or change in `shared/config`)
+## 9. Trello rules that need a decision (they'd live in `shared/config`)
 
 - **Parry 33–100%.** The card's wording is ambiguous. I went with: < 33% means your block
   shatters and you're staggered; 33–99% means your block shatters and you take the full hit;
@@ -281,5 +293,20 @@ core doesn't need an ECS, and keeping it out of the engine keeps the engine test
 - **Enemy dodge/parry chances.** These are simple linear placeholders in `rules/damage.ts`.
 - **Scale mismatch.** Diver health starts at 4, but the enemy template card has 45 HP. The sample
   enemies use 6–12 HP so fights end in a few rounds.
-- **Downed divers.** There are no Vials, Rituals, or extraction yet, so a placeholder wakes them at
-  40% after 15 s (`DOWN_PLACEHOLDER_SECONDS`).
+- **Downed divers.** Until Vials, Rituals, and extraction exist, a placeholder should wake them up
+  (the prototype wakes them at 40% after 15 s).
+
+---
+
+## 10. Recommended packages
+
+| Need | Package |
+| --- | --- |
+| UI | `@rbxts/react`, `@rbxts/react-roblox` |
+| Client state | `@rbxts/charm` (already installed) |
+| Networking | Zap (already in `rokit.toml`) |
+| Persistence | `@rbxts/profile-store` (already installed) |
+| Cleanup of connections/instances | `@rbxts/janitor` |
+| UI springs/animation | `@rbxts/ripple` |
+| Large world simulations later | `@rbxts/jecs` + `@rbxts/planck` (already installed) |
+| Headless tests | Lune, running the compiled shared modules |
