@@ -24,3 +24,9 @@ copies in Asset Manager to get clean keys.
 - `tools/studio/select-all-ui.luau` selects every GUI so they can all be exported as one `.rbxm`
   (right-click → Save to File…).
 - `tools/studio/collect-ui-assets.luau` lists the ids used by the selected GUIs.
+
+## Source art made here
+
+| File | What it is | To use it |
+| --- | --- | --- |
+| `source/HealthBloodTile.png` | Seamless version of `HealthBlood`: transparent ends trimmed, a baked-in vertical line softened, ends blended so it repeats with no visible join | Upload it as an Image, add the row to `images.csv` (name `HealthBloodTile`), run `npm run assets:images`, then set `HudArt.health.bloodTile = Images.HealthBloodTile` in `src/client/ui/screens/hud/hud.config.ts` |

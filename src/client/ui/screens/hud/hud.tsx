@@ -2,16 +2,17 @@ import React from "@rbxts/react";
 import { auxiliaryFractionAtom, staminaFractionAtom } from "client/store/stats";
 import { useAtom } from "client/ui/hooks/use-atom";
 import { HealthBar } from "./health-bar";
-import { HudLayout } from "./hud.config";
+import { HudArt, HudPieces, HudPlacement } from "./hud.config";
+import { CLUSTER_ASPECT } from "./hud.layout";
 import { OxygenBar } from "./oxygen-bar";
 import { ReservoirDial } from "./reservoir-dial";
 import { ResourceBar } from "./resource-bar";
 
 /**
- * Bottom-centre vitals HUD: Oxygen, Health, Auxiliary, Stamina, Reservoir dial.
- * Its own ScreenGui with the default GUI inset. Children are laid out inside a
- * frame locked to `HudLayout.designAspectRatio`, so the HUD keeps one shape
- * at every resolution.
+ * Bottom-centre vitals HUD: Oxygen, Health, Auxiliary, Stamina and the
+ * Reservoir dial, laid out in one cluster frame. The cluster's height is a
+ * fraction of the screen and its width follows its fixed aspect ratio, so the
+ * HUD looks identical on every resolution and aspect (16:9, 16:10, ultrawide).
  */
 export function Hud() {
 	const auxiliary = useAtom(auxiliaryFractionAtom);
@@ -19,22 +20,18 @@ export function Hud() {
 
 	return (
 		<screengui key="Hud" ResetOnSpawn={false} ZIndexBehavior={Enum.ZIndexBehavior.Sibling}>
-			{/* Fixed-shape frame: the layout scales as one piece instead of per-screen-axis. */}
 			<frame
-				key="Root"
+				key="Cluster"
 				AnchorPoint={new Vector2(0.5, 1)}
 				BackgroundTransparency={1}
-				Position={UDim2.fromScale(0.5, 1)}
-				Size={UDim2.fromScale(1, 1)}
+				Position={UDim2.fromScale(0.5, 1 - HudPlacement.bottomPadding)}
+				Size={UDim2.fromScale(1, HudPlacement.height)}
 			>
-				<uiaspectratioconstraint
-					AspectRatio={HudLayout.designAspectRatio}
-					AspectType={Enum.AspectType.FitWithinMaxSize}
-				/>
+				<uiaspectratioconstraint AspectRatio={CLUSTER_ASPECT} AspectType={Enum.AspectType.FitWithinMaxSize} />
 				<OxygenBar />
 				<HealthBar />
-				<ResourceBar name="Auxiliary" fraction={auxiliary} {...HudLayout.auxiliary} />
-				<ResourceBar name="Stamina" fraction={stamina} {...HudLayout.stamina} />
+				<ResourceBar name="Auxiliary" fraction={auxiliary} piece={HudPieces.auxiliary} art={HudArt.auxiliary} />
+				<ResourceBar name="Stamina" fraction={stamina} piece={HudPieces.stamina} art={HudArt.stamina} />
 				<ReservoirDial />
 			</frame>
 		</screengui>

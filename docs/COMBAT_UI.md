@@ -18,16 +18,21 @@ answer first.
 
 ## Vitals HUD: done
 
-`client/ui/screens/hud/` contains Oxygen, Health, Auxiliary, Stamina and the Reservoir dial. The
-layout is copied from the Studio "Gui to Lua" export, and every number is in `hud.config.ts`.
+`client/ui/screens/hud/` contains Oxygen, Health, Auxiliary, Stamina and the Reservoir dial,
+arranged as in the Studio design.
+
+- `hud.config.ts`: every piece's position and width in *health widths*, with heights taken from
+  each image's real aspect ratio.
+- `hud.layout.ts`: turns those into one cluster frame anchored to the bottom-centre, sized by
+  screen height. The HUD looks the same at every resolution and aspect ratio.
 
 | Element | Images | Behaviour |
 | --- | --- | --- |
-| Health | `BloodBackground`, `HealthBlood`, `CapsuleCover` | blood texture scrolls X 0 → 1.77 and loops; clipped to current health |
+| Health | `BloodBackground`, `HealthBlood` (or the seamless `HealthBloodTile` once uploaded), `CapsuleCover` | blood flows at the Studio speed (1.77 fill widths per 8 s) and loops; clipped to current health |
 | Oxygen | `OxygenBar`, `Oxygen` | fill reads `oxygenFractionAtom` (full until the Oxygen system exists) |
 | Auxiliary | `BackgroundAux`, `BackgroundAux2`, `Aux` | fill drains/refills smoothly with current Auxiliary |
 | Stamina | `Backgroundres2`, `Backgroundres`, `res` | fill drains/refills smoothly with current Stamina |
-| Reservoir dial | `Wheel&Woe1` (holder), `Wheel` (spins), `Woe` (Jun 30 upload) | wheel spins continuously |
+| Reservoir dial | `Wheel&Woe1` (holder), `Woe` (Jun 30 upload, the purple core), `Wheel` (brass ring) | the purple core spins; holder and ring stay still |
 
 Current values come from `VitalsService` (server) → `vitalsAtom` (client). In Studio, use
 `/vitals health 2`, `/vitals stamina -1` or `/vitals full` in chat to test the bars.

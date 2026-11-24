@@ -1,47 +1,39 @@
 import React from "@rbxts/react";
 import { useAnimationClock } from "client/ui/hooks/use-animation-clock";
-import { HudAnimation, HudLayout } from "./hud.config";
+import { HudAnimation, HudArt, HudPieces } from "./hud.config";
+import { place } from "./hud.layout";
 
-const L = HudLayout.reservoir;
+const ART = HudArt.reservoir;
 
-/** Centre piece: holder, wheel, and the spinning Reservoir core. Draw order matches Studio. */
+/** Centre dial: brass holder, the spinning purple Reservoir core, and the brass ring on top. */
 export function ReservoirDial() {
 	const clock = useAnimationClock();
-	// Spin starts from the core's resting rotation (-180°) so frame 0 matches Studio.
-	const coreRotation = clock.map((t) => (L.coreRotation + t * HudAnimation.reservoirSpinDegreesPerSecond) % 360);
+	// Starts from the core's resting rotation so the first frame matches Studio.
+	const coreRotation = clock.map((t) => (ART.coreRotation + t * HudAnimation.reservoirSpinDegreesPerSecond) % 360);
 
 	return (
 		<>
 			<imagelabel
 				key="ReservoirHolder"
-				AnchorPoint={L.anchor}
 				BackgroundTransparency={1}
-				Position={L.position}
-				Size={L.size}
-				Image={L.holder}
-				ScaleType={Enum.ScaleType.Fit}
+				Image={ART.holder}
 				ZIndex={-3}
+				{...place(HudPieces.holder)}
 			/>
 			<imagelabel
 				key="ReservoirCore"
-				AnchorPoint={L.anchor}
 				BackgroundTransparency={1}
-				Position={L.corePosition}
-				Size={L.coreSize}
+				Image={ART.core}
 				Rotation={coreRotation}
-				Image={L.core}
-				ScaleType={Enum.ScaleType.Fit}
 				ZIndex={-2}
+				{...place(HudPieces.core)}
 			/>
 			<imagelabel
 				key="ReservoirWheel"
-				AnchorPoint={L.anchor}
 				BackgroundTransparency={1}
-				Position={L.position}
-				Size={L.size}
-				Image={L.wheel}
-				ScaleType={Enum.ScaleType.Fit}
+				Image={ART.wheel}
 				ZIndex={-1}
+				{...place(HudPieces.wheel)}
 			/>
 		</>
 	);
