@@ -9,14 +9,15 @@ import { setupLogger } from "shared/util/logger";
  */
 setupLogger();
 
-// Loading controllers can wait on the server (e.g. network remotes). If that
-// never finishes, say so instead of silently showing no UI.
+// Loading controllers can wait on things (network remotes, package folders).
+// If startup never finishes, say so instead of silently showing no UI.
 let ignited = false;
 task.delay(10, () => {
 	if (!ignited) {
 		warn(
-			"[Leviathan] Client still starting after 10s. The server probably failed to start: " +
-				"check Output for server errors (look for 'Server ignited').",
+			"[Leviathan] Client still starting after 10s. A module is waiting on something that never " +
+				"arrived: look above for an 'Infinite yield possible' warning (often a package folder " +
+				"missing from default.project.json) or a server error.",
 		);
 	}
 });
