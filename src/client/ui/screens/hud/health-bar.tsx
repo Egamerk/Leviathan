@@ -11,6 +11,20 @@ const ART = HudArt.health;
 const ANIM = HudAnimation;
 
 /**
+ * Draw order for the health capsule. Every blood layer (all copies, in either
+ * loop mode) stays below `cover`, so the glass is always on top, even under
+ * Global ZIndexBehavior or if the blood is reparented.
+ */
+const Z = {
+	background: 1,
+	/** The clipped fill frames holding the blood. */
+	fill: 2,
+	/** Blood copies use bloodBase (tile) or bloodBase .. bloodBase + 2 (fallback chain). */
+	bloodBase: 2,
+	cover: 10,
+} as const;
+
+/**
  * Seamless tile: two copies one tile-width apart, scrolled by `phase` mod the
  * tile width. The tile's ends match, so the wrap is invisible.
  */
@@ -27,6 +41,7 @@ function TiledBlood({ clock, image }: { clock: Binding<number>; image: string })
 					Position={phase.map((p) => new UDim2(k * width + p, 0, 0.5, 0))}
 					Size={new UDim2(width, 0, 1, 0)}
 					Image={image}
+					ZIndex={Z.bloodBase}
 				/>
 			))}
 		</>
@@ -58,7 +73,7 @@ function CrossfadedBlood({ clock, image }: { clock: Binding<number>; image: stri
 					Position={phase.map((p) => new UDim2(k * period + p, 0, 0.5, 0))}
 					Size={new UDim2(ANIM.bloodWidth, 0, 1, 0)}
 					Image={image}
-					ZIndex={4 + k}
+					ZIndex={Z.bloodBase + 2 + k}
 				>
 					<uigradient Transparency={seamFade} />
 				</imagelabel>
@@ -80,14 +95,21 @@ export function HealthBar() {
 				BackgroundTransparency={1}
 				Size={UDim2.fromScale(1, 1)}
 				Image={ART.background}
+				ZIndex={Z.background}
 			/>
-			<ClippedFill fraction={fraction} insetLeft={ART.fillInsetLeft} insetWidth={ART.fillInsetWidth} zIndex={2}>
+			<ClippedFill
+				fraction={fraction}
+				insetLeft={ART.fillInsetLeft}
+				insetWidth={ART.fillInsetWidth}
+				zIndex={Z.fill}
+			>
 				<frame
 					key="FillArea"
 					BackgroundTransparency={1}
 					ClipsDescendants={true}
 					Position={UDim2.fromScale(ART.fillInsetLeft, 0)}
 					Size={UDim2.fromScale(ART.fillInsetWidth, 1)}
+					ZIndex={Z.fill}
 				>
 					{tile !== undefined ? (
 						<TiledBlood clock={clock} image={tile} />
@@ -101,7 +123,7 @@ export function HealthBar() {
 				BackgroundTransparency={1}
 				Size={UDim2.fromScale(1, 1)}
 				Image={ART.cover}
-				ZIndex={3}
+				ZIndex={Z.cover}
 			/>
 		</frame>
 	);

@@ -37,6 +37,7 @@ export function ClippedFill({ fraction, insetLeft = 0, insetWidth = 1, zIndex, c
 				BackgroundTransparency={1}
 				Position={clipWidth.map((w) => new UDim2(-insetLeft / w, 0, 0, 0))}
 				Size={clipWidth.map((w) => new UDim2(1 / w, 0, 1, 0))}
+				ZIndex={zIndex}
 			>
 				{children}
 			</frame>
