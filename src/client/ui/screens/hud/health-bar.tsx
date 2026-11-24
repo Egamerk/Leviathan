@@ -25,32 +25,33 @@ const Z = {
 } as const;
 
 /**
- * Seamless tile: two copies one tile-width apart, scrolled by `phase` mod the
- * tile width. The tile's ends match, so the wrap is invisible.
+ * Seamless tile in ONE ImageLabel: `ScaleType.Tile` repeats the texture across
+ * a label one tile wider than the fill area. Sliding it by
+ * `phase = (t × speed) mod tileWidth` loops with no visible wrap, because the
+ * tile's ends match.
  */
 function TiledBlood({ clock, image }: { clock: Binding<number>; image: string }) {
-	const width = ANIM.bloodTileWidth;
-	const phase = clock.map((t) => (t * ANIM.bloodSpeed) % width);
+	const tileWidth = ANIM.bloodTileWidth;
+	const labelWidth = 1 + tileWidth;
 	return (
-		<>
-			{[-1, 0].map((k) => (
-				<imagelabel
-					key={`Blood${k}`}
-					AnchorPoint={new Vector2(0, 0.5)}
-					BackgroundTransparency={1}
-					Position={phase.map((p) => new UDim2(k * width + p, 0, 0.5, 0))}
-					Size={new UDim2(width, 0, 1, 0)}
-					Image={image}
-					ZIndex={Z.bloodBase}
-				/>
-			))}
-		</>
+		<imagelabel
+			key="Blood"
+			BackgroundTransparency={1}
+			Image={image}
+			ScaleType={Enum.ScaleType.Tile}
+			TileSize={UDim2.fromScale(tileWidth / labelWidth, 1)}
+			// Flows rightward like the Studio spec: x goes -tileWidth → 0, then wraps.
+			Position={clock.map((t) => UDim2.fromScale(((t * ANIM.bloodSpeed) % tileWidth) - tileWidth, 0))}
+			Size={UDim2.fromScale(labelWidth, 1)}
+			ZIndex={Z.bloodBase}
+		/>
 	);
 }
 
 /**
- * Fallback for the original (non-tileable) texture: a chain of copies, each
- * crossfading into the previous after its transparent end strip.
+ * Fallback until HealthBloodTile is uploaded: the original texture isn't
+ * tileable, so it needs a chain of copies, each crossfading into the previous
+ * after its transparent end strip. Delete this once `bloodTile` is set.
  */
 function CrossfadedBlood({ clock, image }: { clock: Binding<number>; image: string }) {
 	const edge = ANIM.bloodEdgeMargin;

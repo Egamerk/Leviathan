@@ -1,17 +1,20 @@
-import { useBinding, useEffect } from "@rbxts/react";
+import { createBinding } from "@rbxts/react";
 import { RunService } from "@rbxts/services";
 
 /**
- * A binding of seconds elapsed since mount, updated every frame WITHOUT
- * re-rendering. Map it into props for looping animations:
+ * ONE shared animation clock for all UI: a binding of seconds since the
+ * client started, updated every frame by a single RenderStepped connection,
+ * without re-rendering anything. Map it into props for looping animations:
  * `Rotation={clock.map((t) => t * 30)}`.
  */
+const [clock, setClock] = createBinding(0);
+let started = false;
+
 export function useAnimationClock() {
-	const [clock, setClock] = useBinding(0);
-	useEffect(() => {
+	if (!started) {
+		started = true;
 		const start = os.clock();
-		const connection = RunService.RenderStepped.Connect(() => setClock(os.clock() - start));
-		return () => connection.Disconnect();
-	}, []);
+		RunService.RenderStepped.Connect(() => setClock(os.clock() - start));
+	}
 	return clock;
 }
