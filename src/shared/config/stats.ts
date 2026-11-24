@@ -2,8 +2,8 @@
  * Base stat tunables (Trello: Main Systems → Main Stats, Health, Energy Types,
  * Universal Passives, Out of Combat → Initiative, The Vessels).
  *
- * Values marked PLACEHOLDER aren't defined on the board yet. Values marked
- * CONFLICT differ between cards. See docs/STATS.md for both lists.
+ * Values marked DECIDED weren't on the board, or the cards disagreed; the
+ * reasoning for each is in docs/STATS.md. Change them here if the board changes.
  */
 export const StatsConfig = {
 	/** Trello: "{Scaled by 35 Max} +15 possibly". Max total per stat. */
@@ -12,14 +12,14 @@ export const StatsConfig = {
 	statCapExtended: 50,
 	/** Points invested in the vessel's stat at creation (Trello: The Vessels). */
 	vesselStatBonus: 3,
-	/** Unspent stat points a brand-new character starts with. PLACEHOLDER (contracts grant more). */
+	/** Unspent stat points a new character starts with. DECIDED: 0, so points come only from Contracts. */
 	startingStatPoints: 0,
 
 	perPoint: {
 		strength: {
 			/** "Increases Dexterity Scaling by 0.5" */
 			dexterityScaling: 0.5,
-			/** "[0.5 Parry Scaling per point]". CONFLICT: the QTE card says 0.75. */
+			/** "[0.5 Parry Scaling per point]". DECIDED over the QTE card's 0.75. */
 			parryStrength: 0.5,
 		},
 		dexterity: {
@@ -29,10 +29,10 @@ export const StatsConfig = {
 			dodgeWindowSeconds: 0.02,
 			/** "Increases Stealth by 1% per point" (shrinks enemy detection range) */
 			stealth: 0.01,
-			/** Out-of-combat speed/climb/swim-dash multiplier per point. PLACEHOLDER */
+			/** Out-of-combat speed/climb/swim-dash multiplier per point. DECIDED: +1% (+35% at cap) */
 			explorationSpeed: 0.01,
-			/** Extra combat move distance (studs) per point. PLACEHOLDER */
-			combatMoveStuds: 1,
+			/** Extra combat move distance (studs) per point. DECIDED: 0.5 (37.5 studs at cap) */
+			combatMoveStuds: 0.5,
 			/** Trello: Initiative "slight scaling with Dexterity [0.05 Per]" */
 			initiative: 0.05,
 		},
@@ -41,7 +41,7 @@ export const StatsConfig = {
 			maxHealth: 0.5,
 			/** "Adds [0.25 Parry Scaling] per point" */
 			parryStrength: 0.25,
-			/** Physical ailment resistance per point (fraction). PLACEHOLDER */
+			/** Physical ailment resistance per point. DECIDED: 1% (35% at cap) */
 			physicalAilmentResistance: 0.01,
 		},
 		occult: {
@@ -49,7 +49,7 @@ export const StatsConfig = {
 			sanity: 0.75,
 			/** "Increases Depth Affinity by 0.25 per point" */
 			depthAffinity: 0.25,
-			/** Inflicted ailment effectiveness per point (fraction). PLACEHOLDER */
+			/** Inflicted ailment effectiveness per point. DECIDED: +1% (+35% at cap) */
 			ailmentPotency: 0.01,
 		},
 		connection: {
@@ -57,7 +57,7 @@ export const StatsConfig = {
 			sanity: 0.25,
 			/** "Increases Depth Affinity by 0.75 per point" */
 			depthAffinity: 0.75,
-			/** Mental ailment resistance per point (fraction). PLACEHOLDER */
+			/** Mental ailment resistance per point. DECIDED: 1% (35% at cap) */
 			mentalAilmentResistance: 0.01,
 		},
 	},
@@ -73,17 +73,17 @@ export const StatsConfig = {
 		maxReservoir: 6,
 		/** Trello: Initiative — "By default the player will start with 5 Initiative". */
 		initiative: 5,
-		/** Base combat move distance (studs) before Dexterity. PLACEHOLDER */
+		/** Base combat move distance (studs) before Dexterity. DECIDED */
 		combatMoveStuds: 20,
-		/** Base dodge window (seconds) before Dexterity. PLACEHOLDER */
-		dodgeWindowSeconds: 0.2,
+		/** Base dodge window (seconds) before Dexterity. DECIDED: tighter than parry, per the QTE card */
+		dodgeWindowSeconds: 0.15,
 	},
 
 	/**
-	 * Depth Affinity needed to unlock Reservoir. CONFLICT: Energy Types and
-	 * Combat → Player Turn say 3; Universal Passives says 5.
+	 * Depth Affinity needed to unlock Reservoir. DECIDED: 3 (Energy Types and
+	 * Player Turn) over Universal Passives' 5.
 	 */
 	reservoirDepthAffinity: 3,
-	/** Stealth can't make you fully invisible. PLACEHOLDER */
+	/** Stealth can't make you fully invisible. DECIDED: 90% cap (unreachable at 35 DEX, a safety net) */
 	maxStealth: 0.9,
 } as const;

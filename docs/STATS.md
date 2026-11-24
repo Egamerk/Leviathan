@@ -30,12 +30,12 @@ Combat → Initiative, and Vessel → The Vessels. All numbers are in `src/share
 | Parry Strength | 0.5 × STR + 0.25 × END + passives | Main Stats |
 | Strength Scaling | 0.5 × DEX | Main Stats (Dexterity) |
 | Dexterity Scaling | 0.5 × STR | Main Stats (Strength) |
-| Dodge window | base + 0.02 s × DEX | Main Stats |
+| Dodge window | 0.15 s + 0.02 s × DEX | Main Stats |
 | Stealth | 1% × DEX (capped at 90%) | Main Stats |
 | Base Initiative | 5 + 0.05 × DEX (combat scales it by health) | Initiative |
-| Combat move distance | base + per-point × DEX | Main Stats (numbers TBD) |
-| Exploration speed | 1 + per-point × DEX | Main Stats (numbers TBD) |
-| Ailment resist / potency | per-point × END / CON / OCC | Main Stats (numbers TBD) |
+| Combat move distance | 20 + 0.5 × DEX studs | Main Stats |
+| Exploration speed | × (1 + 0.01 × DEX) | Main Stats |
+| Ailment resist / potency | 1% × END / CON / OCC | Main Stats |
 
 ### Universal passives (`shared/definitions/stat-passives.ts`)
 
@@ -45,21 +45,30 @@ Combat → Initiative, and Vessel → The Vessels. All numbers are in `src/share
 | Resolute Will | 7 END, 7 Sanity | unlock flag (Unconscious system) |
 | Iron Bulwark | 8 STR, 10 END | +3 Parry Strength, +15% parry chip reduction |
 
-## Needs your decision
+## Decisions
 
-**Conflicts between cards:**
-1. **Parry per Strength:** Main Stats says **0.5**, the QTE card says **0.75**. I'm using 0.5.
-2. **Reservoir unlock:** Energy Types and Player Turn say **3** Depth Affinity, while Universal
-   Passives says **5**. I'm using 3.
-3. **Scaling cross-over:** taken literally, Strength raises *Dexterity* Scaling and Dexterity raises
-   *Strength* Scaling. I implemented it as written. Swap it if that's a typo.
+The cards disagreed, or didn't give a number, so these were decided. Each one is a single value in
+`src/shared/config/stats.ts`, marked `DECIDED`.
 
-**Not defined on the board yet (placeholders):**
-- Starting stat points (0)
-- Base dodge window (0.2 s)
-- Base combat move distance (20 studs) and studs per DEX (1)
-- Exploration speed per DEX (1%)
-- Ailment resistance and potency per point (1%)
+**Where cards conflicted:**
+
+| Question | Decision | Why |
+| --- | --- | --- |
+| Parry per Strength: 0.5 (Main Stats) or 0.75 (QTE card) | **0.5** | Main Stats is the card that defines what stats do |
+| Depth Affinity to unlock Reservoir: 3 (Energy Types, Player Turn) or 5 (Universal Passives) | **3** | two cards agree, and Energy Types is the card that defines Reservoir |
+| Strength raises *Dexterity* Scaling and Dexterity raises *Strength* Scaling | **kept as written** | both cards mirror each other consistently, which rewards hybrid builds |
+
+**Numbers the board didn't give:**
+
+| Value | Decision | At 35 (cap) |
+| --- | --- | --- |
+| Starting stat points | **0** (all points come from Contracts; the vessel gives +3) | n/a |
+| Base dodge window | **0.15 s**, + 0.02 s per DEX | 0.85 s |
+| Base combat move distance | **20 studs**, + 0.5 per DEX | 37.5 studs |
+| Exploration speed | **+1%** per DEX | +35% |
+| Physical / mental ailment resistance | **1%** per END / CON | 35% |
+| Inflicted ailment effectiveness | **+1%** per OCC | +35% |
+| Stealth cap | **90%** (a safety net; 35 DEX only reaches 35%) | n/a |
 
 ## Not included (separate systems)
 
