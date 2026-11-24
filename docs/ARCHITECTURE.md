@@ -4,8 +4,18 @@ This is a plan for structuring the game: exploring, getting noticed and chased, 
 into a turn-based fight on a voxelized grid (BG3 / Expedition 33 style). It ends with a build
 order for the rest of the Trello board.
 
-`src/` doesn't contain any of this yet. File paths below show where each piece is **planned** to
-live.
+None of this is built yet. The codebase is currently the skeleton described in
+[STRUCTURE.md](STRUCTURE.md). File paths below are shorthand for where each piece is
+**planned** to go in that skeleton:
+
+| Path in this doc | Location in the skeleton |
+| --- | --- |
+| `shared/config`, `shared/data` | `shared/config/<domain>.ts`, `shared/definitions/<type>.ts` |
+| `shared/rules`, `shared/nav`, `shared/combat` | `shared/modules/rules`, `shared/modules/nav`, `shared/modules/combat` |
+| `server/services/nav`, `server/ai/enemyService`, `server/encounter/…` | `@Service` classes, e.g. `server/services/nav/nav.service.ts`, `server/services/ai/enemy.service.ts`, `server/services/encounter/encounter.service.ts` |
+| `server/services/players` | the existing `PlayerDataService` + lifecycle hooks |
+| `client/controllers/…` | `@Controller` classes, e.g. `client/controllers/movement/movement.controller.ts` |
+| `client/ui` | `client/ui/screens/…` |
 
 ---
 

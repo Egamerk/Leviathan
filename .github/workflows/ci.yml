@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      # Keep in sync with rokit.toml
+      ZAP_VERSION: 0.6.27
+      ROJO_VERSION: 7.7.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install toolchain (Zap, Rojo)
+        run: |
+          mkdir -p "$HOME/bin"
+          curl -sSL -o zap.zip "https://github.com/red-blox/zap/releases/download/v${ZAP_VERSION}/zap-${ZAP_VERSION}-linux-x86_64.zip"
+          curl -sSL -o rojo.zip "https://github.com/rojo-rbx/rojo/releases/download/v${ROJO_VERSION}/rojo-${ROJO_VERSION}-linux-x86_64.zip"
+          unzip -o zap.zip -d "$HOME/bin" && unzip -o rojo.zip -d "$HOME/bin"
+          echo "$HOME/bin" >> "$GITHUB_PATH"
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm run lint
+      - run: npm run format:check
+      - name: Build place
+        run: rojo build -o Leviathan.rbxlx

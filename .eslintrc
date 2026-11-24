@@ -9,7 +9,7 @@
 	},
 	"ignorePatterns": [
 		"/out",
-		"src/shared/net/zap*.d.ts"
+		"src/**/network/zap.*"
 	],
 	"plugins": [
 		"@typescript-eslint",

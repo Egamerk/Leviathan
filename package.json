@@ -3,16 +3,22 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "zap": "zap src/shared/net/net.zap",
-    "build": "npm run zap && rbxtsc && npm run clean:zap-out",
-    "clean:zap-out": "node -e \"const fs=require('fs');const p='out/shared/net';if(fs.existsSync(p))for(const f of fs.readdirSync(p))if(f.startsWith('zap')||f.endsWith('.zap'))fs.unlinkSync(require('path').join(p,f));\"",
-    "watch": "rbxtsc -w",
-    "build:place": "rojo build -o Leviathan.rbxlx"
+    "zap": "zap src/shared/network/net.zap",
+    "build": "npm run zap && rbxtsc",
+    "watch": "npm run zap && rbxtsc -w",
+    "serve": "rojo serve",
+    "build:place": "npm run build && rojo build -o Leviathan.rbxlx",
+    "sourcemap": "rojo sourcemap -o sourcemap.json",
+    "lint": "eslint src --ext .ts,.tsx --max-warnings 0",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
+    "check": "npm run build && npm run lint"
   },
   "license": "MIT",
   "devDependencies": {
     "@rbxts/compiler-types": "3.0.0-types.0",
-    "@rbxts/types": "^1.0.952",
+    "@rbxts/types": "^1.0.963",
     "@typescript-eslint/eslint-plugin": "^8.9.0",
     "@typescript-eslint/parser": "^8.9.0",
     "eslint": "^8.57.1",
@@ -20,16 +26,23 @@
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-roblox-ts": "^0.0.36",
     "prettier": "^3.3.3",
+    "rbxts-transformer-flamework": "^1.3.2",
     "roblox-ts": "^3.0.0",
-    "typescript": "^5.6.3"
+    "typescript": "5.5.3"
   },
   "dependencies": {
-    "@rbxts/charm": "^0.11.0",
-    "@rbxts/jecs": "^0.11.0",
-    "@rbxts/planck": "^1.0.0",
-    "@rbxts/planck-runservice": "^1.0.3",
+    "@flamework/components": "^1.3.2",
+    "@flamework/core": "^1.3.2",
+    "@rbxts/charm": "^0.11.1",
+    "@rbxts/charm-sync": "^0.4.1",
+    "@rbxts/janitor": "^1.18.3-ts.0",
+    "@rbxts/log": "^0.6.3",
     "@rbxts/profile-store": "^1.0.3",
+    "@rbxts/react": "^17.3.13-ts.1",
+    "@rbxts/react-roblox": "^17.3.13-ts.1",
+    "@rbxts/ripple": "^0.10.2",
     "@rbxts/services": "^1.6.0",
     "@rbxts/t": "^3.2.1"
-  }
+  },
+  "description": "Leviathan: a deep-sea, turn-based Roblox game (roblox-ts + Flamework)."
 }

@@ -1,18 +1,16 @@
 {
 	"name": "Leviathan",
-	"globIgnorePaths": [
-		"**/package.json",
-		"**/tsconfig.json",
-		"**/*.zap"
-	],
+	"globIgnorePaths": ["**/package.json", "**/tsconfig.json", "**/*.zap"],
 	"tree": {
 		"$className": "DataModel",
+
 		"ServerScriptService": {
 			"$className": "ServerScriptService",
 			"TS": {
 				"$path": "out/server"
 			}
 		},
+
 		"ReplicatedStorage": {
 			"$className": "ReplicatedStorage",
 			"rbxts_include": {
@@ -21,25 +19,17 @@
 					"$className": "Folder",
 					"@rbxts": {
 						"$path": "node_modules/@rbxts"
+					},
+					"@flamework": {
+						"$path": "node_modules/@flamework"
 					}
 				}
 			},
-			"Shared": {
+			"TS": {
 				"$path": "out/shared"
-			},
-			"Client": {
-				"$path": "out/client"
-			},
-			"Network": {
-				"$className": "Folder",
-				"Server": {
-					"$path": "src/shared/net/zapServer.luau"
-				},
-				"Client": {
-					"$path": "src/shared/net/zapClient.luau"
-				}
 			}
 		},
+
 		"StarterPlayer": {
 			"$className": "StarterPlayer",
 			"StarterPlayerScripts": {
@@ -49,6 +39,7 @@
 				}
 			}
 		},
+
 		"Workspace": {
 			"$className": "Workspace",
 			"$properties": {
@@ -79,6 +70,7 @@
 				}
 			}
 		},
+
 		"Lighting": {
 			"$className": "Lighting",
 			"$properties": {
@@ -89,12 +81,14 @@
 				"Technology": "ShadowMap"
 			}
 		},
+
 		"HttpService": {
 			"$className": "HttpService",
 			"$properties": {
 				"HttpEnabled": true
 			}
 		},
+
 		"SoundService": {
 			"$className": "SoundService",
 			"$properties": {

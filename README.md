@@ -1,18 +1,26 @@
 # Leviathan
 
-A deep-sea, turn-based roblox-ts game. You explore freely until something notices you, then the
-fight switches into BG3 / Expedition 33-style turn-based combat on a voxelized grid.
+A deep-sea, turn-based Roblox game built with roblox-ts. You explore freely until something notices
+you, then the fight switches into BG3 / Expedition 33-style turn-based combat.
 
-- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**: the architecture plan and build order.
+- **[docs/STRUCTURE.md](docs/STRUCTURE.md)**: project structure, conventions, and how to add
+  services, controllers, components, network events, and data.
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**: the design plan for the game systems.
+
+## Stack
+
+roblox-ts · Flamework · Zap · Charm + Charm Sync · React · ProfileStore · @rbxts/log
 
 ## Setup
 
-```bash
-npm install
-```
+Requires Node 22 and [Rokit](https://github.com/rojo-rbx/rokit).
 
 ```bash
 rokit install
+```
+
+```bash
+npm install
 ```
 
 ```bash
@@ -20,8 +28,10 @@ npm run build
 ```
 
 ```bash
-rojo serve
+npm run serve
 ```
+
+Then connect to Rojo from Studio. Use `npm run watch` in a second terminal for live rebuilds.
 
 ## License
 
