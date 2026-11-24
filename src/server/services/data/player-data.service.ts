@@ -3,7 +3,7 @@ import Log from "@rbxts/log";
 import ProfileStore from "@rbxts/profile-store";
 import { RunService } from "@rbxts/services";
 import type { OnPlayerDataLoaded, OnPlayerJoined, OnPlayerLeaving } from "server/lifecycles";
-import { playerDataAtom } from "server/store";
+import { playerDataAtom, withEntry } from "server/store";
 import { GameConfig } from "shared/config";
 import { DEFAULT_PLAYER_DATA, type PlayerData } from "shared/schemas/player-data";
 
@@ -95,11 +95,6 @@ export class PlayerDataService implements OnInit, OnPlayerJoined, OnPlayerLeavin
 	}
 
 	private setAtom(player: Player, data: PlayerData | undefined): void {
-		playerDataAtom((current) => {
-			const updated = new Map<number, PlayerData>();
-			for (const [userId, value] of current) if (userId !== player.UserId) updated.set(userId, value);
-			if (data !== undefined) updated.set(player.UserId, table.clone(data));
-			return updated;
-		});
+		playerDataAtom((current) => withEntry(current, player.UserId, data && table.clone(data)));
 	}
 }

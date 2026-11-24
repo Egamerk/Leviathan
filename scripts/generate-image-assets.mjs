@@ -65,7 +65,7 @@ const DATE = col("Date Modified");
 
 const images = rows
 	.filter((r) => r[TYPE]?.trim() === "Image")
-	.map((r) => ({ name: r[NAME].trim(), id: r[ID].trim(), date: Number(r[DATE]) }))
+	.map((r) => ({ name: r[NAME].trim(), id: r[ID].trim(), date: r[DATE]?.trim() ? Number(r[DATE]) : NaN }))
 	.filter((img) => /^\d+$/.test(img.id));
 
 // Group same-named uploads, order each group by upload date.
@@ -79,7 +79,7 @@ for (const img of images) {
 const entries = [];
 const duplicates = [];
 for (const [key, group] of [...groups].sort(([a], [b]) => a.localeCompare(b))) {
-	group.sort((a, b) => a.date - b.date);
+	group.sort((a, b) => (a.date || 0) - (b.date || 0));
 	if (group.length > 1) duplicates.push(key);
 	group.forEach((img, i) => entries.push({ ...img, key: group.length > 1 ? `${key}_v${i + 1}` : key }));
 }

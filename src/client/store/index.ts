@@ -1,5 +1,6 @@
 import { atom } from "@rbxts/charm";
 import type { PlayerData } from "shared/schemas/player-data";
+import type { Vitals } from "shared/schemas/vitals";
 
 /**
  * Client state (Charm atoms).
@@ -14,5 +15,12 @@ import type { PlayerData } from "shared/schemas/player-data";
 
 // ── Synced from server (see shared/schemas/synced-state.ts) ─────────────────
 export const playerDataAtom = atom<PlayerData | undefined>(undefined);
+export const vitalsAtom = atom<Vitals | undefined>(undefined);
 
 // ── Local ────────────────────────────────────────────────────────────────────
+
+/**
+ * Oxygen remaining, 0..1. Placeholder until the Oxygen system exists (Trello:
+ * V1.0 "Oxygen System"); the HUD bar already reads it.
+ */
+export const oxygenFractionAtom = atom(1);

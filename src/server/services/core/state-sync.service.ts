@@ -2,7 +2,7 @@ import { OnStart, Service } from "@flamework/core";
 import { server as CharmSync } from "@rbxts/charm-sync";
 import type { OnPlayerLeaving } from "server/lifecycles";
 import { Network } from "server/network";
-import { playerDataAtom } from "server/store";
+import { playerDataAtom, vitalsAtom } from "server/store";
 import type { SyncedState } from "shared/schemas/synced-state";
 
 type SyncGetters = { [K in keyof SyncedState]: () => SyncedState[K] };
@@ -35,6 +35,7 @@ export class StateSyncService implements OnStart, OnPlayerLeaving {
 	private gettersFor(player: Player): SyncGetters {
 		return {
 			playerData: () => playerDataAtom().get(player.UserId),
+			vitals: () => vitalsAtom().get(player.UserId),
 		};
 	}
 }

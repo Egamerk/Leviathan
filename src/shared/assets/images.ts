@@ -25,8 +25,18 @@ export const Images = {
 	Blood_v1: "rbxassetid://127788627313437",
 	/** "Blood", modified 2026-03-25 */
 	Blood_v2: "rbxassetid://121340196148652",
+	/** "BloodBackground", modified unknown */
+	BloodBackground: "rbxassetid://136181014710756",
+	/** "CapsuleCover", modified unknown */
+	CapsuleCover: "rbxassetid://121162540544331",
 	/** "Divider", modified 2026-03-18 */
 	Divider: "rbxassetid://128776470437215",
+	/** "HealthBlood", modified unknown */
+	HealthBlood: "rbxassetid://72296836262553",
+	/** "Oxygen", modified unknown */
+	Oxygen: "rbxassetid://74475428106789",
+	/** "OxygenBar", modified unknown */
+	OxygenBar: "rbxassetid://88653580683475",
 	/** "res", modified 2026-03-26 */
 	Res: "rbxassetid://118289853331031",
 	/** "ResEnd", modified 2026-06-19 */

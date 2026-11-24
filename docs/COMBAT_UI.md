@@ -1,34 +1,39 @@
-# Combat UI: reference (not started)
+# Combat UI: reference
 
-Requirements gathered from the Trello board for when Combat UI work begins. **Nothing here is
-implemented yet.** Items marked **TBD** are open questions to answer first.
+Requirements gathered from the Trello board. The vitals HUD is built; the combat-specific UI
+(action menu, turn order, QTEs) is **not started**. Items marked **TBD** are open questions to
+answer first.
 
 ## Inputs needed before starting
 
 | Item | Status |
 | --- | --- |
-| UI image ids: `assets/ui/images.csv` → `shared/assets/images.ts` (see [assets/ui/README.md](../assets/ui/README.md)) | **Done**: 22 images |
-| Pick which copy of each duplicate name to use: `BackgroundHealth`, `BackgroundHealth2`, `Blood`, `Wheel&Woe`, `Woe` | **TBD** |
-| Mockup or screenshot showing how the images fit together (positions and sizes), since the art is separate images, not a built GUI | **TBD** |
+| UI image ids: `assets/ui/images.csv` → `shared/assets/images.ts` (see [assets/ui/README.md](../assets/ui/README.md)) | **Done**: 27 images |
+| Vitals HUD layout | **Done** (see below) |
 | Screenshot or note per state: your turn, enemy turn, targeting, each QTE | **TBD** |
 | Which QTE minigames have finished art (table below) | **TBD** |
 | Whether the action menu layout matches the Trello turn structure | **TBD** |
 | Target selection: click the enemy in the world, or pick from a list | **TBD** |
 | Scope: build the UI against a mock combat state first, or the turn engine first | **TBD** |
 
-Plan: build the layout in React from the `Images` table, matching the mockup. Each bar is
-probably a background image plus a fill image; the bar component crops the fill by the current
-value.
+## Vitals HUD: done
 
-Image groups as currently named (guesses, to confirm):
+`client/ui/screens/hud/` contains Oxygen, Health, Auxiliary, Stamina and the Reservoir dial. The
+layout is copied from the Studio "Gui to Lua" export, and every number is in `hud.config.ts`.
 
-| Group | Images |
-| --- | --- |
-| Health bar | `BackgroundHealth`, `BackgroundHealth2`, `Blood` |
-| Auxiliary bar | `BackgroundAux`, `BackgroundAux2`, `Aux` |
-| Reservoir bar | `Backgroundres`, `Backgroundres2`, `res`, `Resstart`, `ResEnd`, `ResEnd1` |
-| Wheel / Woe | `Wheel`, `Woe`, `Wheel&Woe`, `Wheel&Woe1` |
-| Misc | `Divider` |
+| Element | Images | Behaviour |
+| --- | --- | --- |
+| Health | `BloodBackground`, `HealthBlood`, `CapsuleCover` | blood texture scrolls X 0 → 1.77 and loops; clipped to current health |
+| Oxygen | `OxygenBar`, `Oxygen` | fill reads `oxygenFractionAtom` (full until the Oxygen system exists) |
+| Auxiliary | `BackgroundAux`, `BackgroundAux2`, `Aux` | fill drains/refills smoothly with current Auxiliary |
+| Stamina | `Backgroundres2`, `Backgroundres`, `res` | fill drains/refills smoothly with current Stamina |
+| Reservoir dial | `Wheel&Woe1` (holder), `Wheel` (spins), `Woe` (Jun 30 upload) | wheel spins continuously |
+
+Current values come from `VitalsService` (server) → `vitalsAtom` (client). In Studio, use
+`/vitals health 2`, `/vitals stamina -1` or `/vitals full` in chat to test the bars.
+
+Still unused: `BackgroundHealth`, `BackgroundHealth2`, `Blood` (both uploads), `Divider`,
+`Resstart`, `ResEnd`, `ResEnd1`, `Wheel&Woe` (both uploads), `Woe` (the older upload).
 
 ## Turn structure (Trello: Combat → Player Turn)
 
@@ -48,8 +53,8 @@ Each turn has **1 Main action** and **1 Side action**.
 | Riposte | needs the `"Riposte"` passive (7 DEX); stance that counters after a successful evade, and +20% damage taken if the evade fails |
 | Nothing | skip the side action |
 
-The HUD also needs Health, Stamina, Reservoir (only when unlocked) and Auxiliary from
-`DerivedStats`, plus the turn order (initiative).
+The vitals HUD (below) already shows Health, Stamina, Auxiliary and Reservoir. Combat still
+needs the turn order (initiative).
 
 ## QTE minigames (Trello: Quick Time Events, QTE Types)
 
