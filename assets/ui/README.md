@@ -10,6 +10,11 @@ import { Images } from "shared/assets/images";
 
 ## Adding or updating images
 
+Use **Image** ids, not Decal ids: an ImageLabel can't display a Decal. Asset Manager's "Asset Type" column
+shows which is which; uploading can create both. The startup log (`AssetPreloadController`) warns
+when an id doesn't load.
+
+
 1. Studio → **Window → Asset Manager → Images**, using the revamped Asset Manager in list view.
 2. Select every image (Ctrl+A) → right-click → **Copy → Copy Info**.
 3. Paste it over `assets/ui/images.csv`.
@@ -37,7 +42,7 @@ copies in Asset Manager to get clean keys.
 | `source/OxygenGlass.png` | 97372734058818 | The matching glass layer (from `BackgroundAux2`, built the same way). |
 | `source/OxygenTile.png` | 123049627159440 | Seamless pale gas for Oxygen: low-contrast mist, lighter at the top, from the Auxiliary liquid's texture. |
 | `source/OxygenBubbles.png` | 77723458430971 | Transparent bubbles, seamless in both directions, that rise through the gas. |
-| `source/ReservoirSwirl.png` | 125262881309567 | Vivid violet Reservoir disc with spiral arms (painted texture from the original `Woe` disc blended in), so its spin is clearly visible. If it fails to load, the dial uses the original disc. |
-| `source/AuxEmbers.png` | 83630725755057 | Glowing embers (seamless both ways) drifting up and flickering through the Auxiliary liquid: lantern fuel. |
-| `source/StaminaStreaks.png` | 82863422062348 | Soft diagonal light streaks rushing through the Stamina liquid: kinetic energy. |
-| `source/ReservoirRunes.png` | 97803059451137 | Ring of glowing occult glyphs turning slowly against the Reservoir swirl. |
+| `source/ReservoirSwirl.png` | 90548372812692 | Vivid violet Reservoir disc with spiral arms (painted texture from the original `Woe` disc blended in), so its spin is clearly visible. If it fails to load, the dial uses the original disc. |
+| `source/AuxEmbers.png` | 107503796492598 | Glowing embers (seamless both ways) drifting up and flickering through the Auxiliary liquid: lantern fuel. |
+| `source/StaminaStreaks.png` | 107649148856320 | Soft diagonal light streaks rushing through the Stamina liquid: kinetic energy. |
+| `source/ReservoirRunes.png` | 109163895968764 | Ring of glowing occult glyphs turning slowly against the Reservoir swirl. |

@@ -6,7 +6,7 @@ export const Images = {
 	/** "Aux", modified 2026-03-26 */
 	Aux: "rbxassetid://132572534155056",
 	/** "AuxEmbers", modified unknown */
-	AuxEmbers: "rbxassetid://83630725755057",
+	AuxEmbers: "rbxassetid://107503796492598",
 	/** "AuxTile", modified unknown */
 	AuxTile: "rbxassetid://127532014150723",
 	/** "BackgroundAux", modified 2026-03-26 */
@@ -58,15 +58,15 @@ export const Images = {
 	/** "ResEnd1", modified 2026-06-19 */
 	ResEnd1: "rbxassetid://128351465114516",
 	/** "ReservoirRunes", modified unknown */
-	ReservoirRunes: "rbxassetid://97803059451137",
+	ReservoirRunes: "rbxassetid://109163895968764",
 	/** "ReservoirSwirl", modified unknown */
-	ReservoirSwirl: "rbxassetid://125262881309567",
+	ReservoirSwirl: "rbxassetid://90548372812692",
 	/** "Resstart", modified 2026-06-19 */
 	Resstart: "rbxassetid://77943388945462",
 	/** "StaminaFill", modified unknown */
 	StaminaFill: "rbxassetid://86227484174680",
 	/** "StaminaStreaks", modified unknown */
-	StaminaStreaks: "rbxassetid://82863422062348",
+	StaminaStreaks: "rbxassetid://107649148856320",
 	/** "StaminaTile", modified unknown */
 	StaminaTile: "rbxassetid://77945278284031",
 	/** "Wheel", modified 2026-06-30 */
