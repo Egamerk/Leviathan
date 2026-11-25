@@ -6,33 +6,33 @@ answer first.
 
 ## Inputs needed before starting
 
-| Item | Status |
-| --- | --- |
-| UI image ids: `assets/ui/images.csv` → `shared/assets/images.ts` (see [assets/ui/README.md](../assets/ui/README.md)) | **Done**: 27 images |
-| Vitals HUD layout | **Done** (see below) |
-| Screenshot or note per state: your turn, enemy turn, targeting, each QTE | **TBD** |
-| Which QTE minigames have finished art (table below) | **TBD** |
-| Whether the action menu layout matches the Trello turn structure | **TBD** |
-| Target selection: click the enemy in the world, or pick from a list | **TBD** |
-| Scope: build the UI against a mock combat state first, or the turn engine first | **TBD** |
+| Item                                                                                                                 | Status               |
+| -------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| UI image ids: `assets/ui/images.csv` → `shared/assets/images.ts` (see [assets/ui/README.md](../assets/ui/README.md)) | **Done**: 27 images  |
+| Vitals HUD layout                                                                                                    | **Done** (see below) |
+| Screenshot or note per state: your turn, enemy turn, targeting, each QTE                                             | **TBD**              |
+| Which QTE minigames have finished art (table below)                                                                  | **TBD**              |
+| Whether the action menu layout matches the Trello turn structure                                                     | **TBD**              |
+| Target selection: click the enemy in the world, or pick from a list                                                  | **TBD**              |
+| Scope: build the UI against a mock combat state first, or the turn engine first                                      | **TBD**              |
 
 ## Vitals HUD: done
 
 `client/ui/screens/hud/` contains Oxygen, Health, Auxiliary, Stamina and the Reservoir dial,
 arranged as in the Studio design.
 
-- `hud.config.ts`: every piece's position and width in *health widths*, with heights taken from
+- `hud.config.ts`: every piece's position and width in _health widths_, with heights taken from
   each image's real aspect ratio.
 - `hud.layout.ts`: turns those into one cluster frame anchored to the bottom-centre, sized by
   screen height. The HUD looks the same at every resolution and aspect ratio.
 
-| Element | Images | Behaviour |
-| --- | --- | --- |
-| Health | `BloodBackground`, `HealthBloodTile` (one tiling ImageLabel), `CapsuleCover`, plus a `3 / 4` readout | blood flows; clipped to current health | blood flows at the Studio speed (1.77 fill widths per 8 s) and loops; clipped to current health |
-| Oxygen | `OxygenTube`, `OxygenGlass`, `OxygenTile` (gas), `OxygenBubbles`, plus an O₂ label | same tube family as Auxiliary/Stamina (caps both ends); pale gas flows, bubbles rise; reads `oxygenFractionAtom` (full until the Oxygen system exists) |
-| Auxiliary | `BackgroundAux`, `BackgroundAux2`, `AuxTile`, `Divider` | liquid flows (one tiling image in a rounded CanvasGroup) and drains/refills smoothly; brass dividers mark each point |
-| Stamina | `Backgroundres2`, `Backgroundres`, `StaminaTile` (green), `Divider` | liquid flows and drains/refills smoothly; brass dividers mark each point |
-| Reservoir dial | `Wheel&Woe1` (holder), `Woe` (Jun 30 upload, the purple core), `Wheel` (brass ring) | a brass bridge plate frames the top of the chamber; unlocked: an arc gauge below it, one slice per Reservoir point with brass spokes; full slices bright spinning violet (spiral `ReservoirSwirl` once uploaded), empty slices dark, partial slices fade in (fills left → right); locked: dimmed, slow-turning "dormant" liquid |
+| Element        | Images                                                                                               | Behaviour                                                                                                                                                                                                                                                                                                                       |
+| -------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Health         | `BloodBackground`, `HealthBloodTile` (one tiling ImageLabel), `CapsuleCover`, plus a `3 / 4` readout | blood flows; clipped to current health                                                                                                                                                                                                                                                                                          | blood flows at the Studio speed (1.77 fill widths per 8 s) and loops; clipped to current health |
+| Oxygen         | `OxygenTube`, `OxygenGlass`, `OxygenTile` (gas), `OxygenBubbles`, plus an O₂ label                   | same tube family as Auxiliary/Stamina (caps both ends); pale gas flows, bubbles rise; reads `oxygenFractionAtom` (full until the Oxygen system exists)                                                                                                                                                                          |
+| Auxiliary      | `BackgroundAux`, `BackgroundAux2`, `AuxTile`, `Divider`                                              | liquid flows (one tiling image in a rounded CanvasGroup) and drains/refills smoothly; brass dividers mark each point                                                                                                                                                                                                            |
+| Stamina        | `Backgroundres2`, `Backgroundres`, `StaminaTile` (green), `Divider`                                  | liquid flows and drains/refills smoothly; brass dividers mark each point                                                                                                                                                                                                                                                        |
+| Reservoir dial | `Wheel&Woe1` (holder), `Woe` (Jun 30 upload, the purple core), `Wheel` (brass ring)                  | a brass bridge plate frames the top of the chamber; unlocked: an arc gauge below it, one slice per Reservoir point with brass spokes; full slices bright spinning violet (spiral `ReservoirSwirl` once uploaded), empty slices dark, partial slices fade in (fills left → right); locked: dimmed, slow-turning "dormant" liquid |
 
 **Hover / tap:** every element has an invisible hit zone (`hover-zone.tsx`). Hovering eases the
 tube or capsule up to 104% (the dial gets a violet glow ring) and fades in a tooltip above the
@@ -56,35 +56,35 @@ Still unused: `BackgroundHealth`, `BackgroundHealth2`, `Blood` (both uploads), `
 
 Each turn has **1 Main action** and **1 Side action**.
 
-| Main actions | Notes |
-| --- | --- |
-| Attack | physical attacks; costs **Stamina** |
-| Ritual Cast | needs Reservoir (`DerivedStats.hasReservoir`); costs **Reservoir** |
-| Utility | Equipment items; costs **Auxiliary** |
-| Recover | skip the turn: +2 Stamina, +3 Health, +1 Reservoir |
+| Main actions | Notes                                                              |
+| ------------ | ------------------------------------------------------------------ |
+| Attack       | physical attacks; costs **Stamina**                                |
+| Ritual Cast  | needs Reservoir (`DerivedStats.hasReservoir`); costs **Reservoir** |
+| Utility      | Equipment items; costs **Auxiliary**                               |
+| Recover      | skip the turn: +2 Stamina, +3 Health, +1 Reservoir                 |
 
-| Side actions | Notes |
-| --- | --- |
-| Move | distance from Dexterity (`DerivedStats.combatMoveStuds`); a melee basic attack auto-steps without using Move |
-| Ritual | needs 3 Depth Affinity or Occultist/Apostle; non-damaging, has a toll |
-| Riposte | needs the `"Riposte"` passive (7 DEX); stance that counters after a successful evade, and +20% damage taken if the evade fails |
-| Nothing | skip the side action |
+| Side actions | Notes                                                                                                                          |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| Move         | distance from Dexterity (`DerivedStats.combatMoveStuds`); a melee basic attack auto-steps without using Move                   |
+| Ritual       | needs 3 Depth Affinity or Occultist/Apostle; non-damaging, has a toll                                                          |
+| Riposte      | needs the `"Riposte"` passive (7 DEX); stance that counters after a successful evade, and +20% damage taken if the evade fails |
+| Nothing      | skip the side action                                                                                                           |
 
 The vitals HUD (below) already shows Health, Stamina, Auxiliary and Reservoir. Combat still
 needs the turn order (initiative).
 
 ## QTE minigames (Trello: Quick Time Events, QTE Types)
 
-| QTE | Used for | Input | Art? |
-| --- | --- | --- | --- |
-| Basic Attack | the always-equipped Strike | WASD direction strings, one stage at a time; no input hits the torso | **TBD** |
-| Target Hit | attacks | Right Click (or a QTE keybind) just after impact; brief frames after the hit, none before | **TBD** |
-| Thread Weave | skills | follow a half-drawn thread, press a QTE keybind or RMB where the threads meet; speeds up | **TBD** |
-| "OSU" | mostly ritual casts | click the starting sigil, follow the lines, hit closing off-beats with RMB or a keybind | **TBD** |
-| Parry | defense | F before the hit; strength check (≥ 100% full parry, < 33% stagger) | **TBD** |
-| Dodge | defense | Q then A (left) / S (lean back) / D (right), matching the attack direction | **TBD** |
-| Steady Heartbeat | Unconscious | Left / Right Click for lines from the left / right | **TBD** |
-| Steady Breathing | Unconscious | Space when the pulse reaches the heart; tempo rises as oxygen drops | **TBD** |
+| QTE              | Used for                   | Input                                                                                     | Art?    |
+| ---------------- | -------------------------- | ----------------------------------------------------------------------------------------- | ------- |
+| Basic Attack     | the always-equipped Strike | WASD direction strings, one stage at a time; no input hits the torso                      | **TBD** |
+| Target Hit       | attacks                    | Right Click (or a QTE keybind) just after impact; brief frames after the hit, none before | **TBD** |
+| Thread Weave     | skills                     | follow a half-drawn thread, press a QTE keybind or RMB where the threads meet; speeds up  | **TBD** |
+| "OSU"            | mostly ritual casts        | click the starting sigil, follow the lines, hit closing off-beats with RMB or a keybind   | **TBD** |
+| Parry            | defense                    | F before the hit; strength check (≥ 100% full parry, < 33% stagger)                       | **TBD** |
+| Dodge            | defense                    | Q then A (left) / S (lean back) / D (right), matching the attack direction                | **TBD** |
+| Steady Heartbeat | Unconscious                | Left / Right Click for lines from the left / right                                        | **TBD** |
+| Steady Breathing | Unconscious                | Space when the pulse reaches the heart; tempo rises as oxygen drops                       | **TBD** |
 
 - **QTE keybinds:** four rebindable keys, default **Z X C V**. They're active only during a QTE,
   so double-binding them is allowed.
