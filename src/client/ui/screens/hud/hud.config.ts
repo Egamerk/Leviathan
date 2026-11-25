@@ -1,4 +1,5 @@
 import { Images } from "shared/assets/images";
+import type { LiquidOverlay } from "./resource-bar";
 
 /**
  * Vitals HUD layout.
@@ -36,12 +37,13 @@ const OxygenTubeArt = {
 	glass: Images.OxygenGlass as string | undefined,
 	flowTile: Images.OxygenTile as string | undefined,
 	flowTileAspect: 508 / 60,
-	/** Transparent bubble layer, seamless in both directions (1 tube-height tall). */
-	bubbles: Images.OxygenBubbles as string | undefined,
-	bubblesAspect: 512 / 128,
-	/** Bubble rise speed in tube heights per second, and sideways drift relative to it. */
-	bubbleRise: 0.35,
-	bubbleDrift: 0.25,
+	/** Bubbles rising (and drifting slightly) through the gas. */
+	overlay: {
+		image: Images.OxygenBubbles as string | undefined,
+		aspect: 512 / 128,
+		velocityX: 0.09,
+		velocityY: 0.35,
+	} as LiquidOverlay,
 	/** "O₂ 100%" readout centred on the tube, styled like the health readout. */
 	label: true,
 	anchor: "left" as "left" | "right",
@@ -136,8 +138,8 @@ export const HudPieces = {
 const DISC_RADIUS = (HudPieces.core.width / 2) * 0.94;
 /** How far above the disc centre the bridge plate's bottom edge sits (scales with the dial). */
 const BRIDGE_DROP = 0.18 * DISC_RADIUS;
-/** The plate's top tucks this far under the health capsule (hw), so no purple shows above it. */
-const BRIDGE_TOP = HEALTH_HALF - 0.012;
+/** The plate's top sits just under the health capsule's bottom edge. */
+const BRIDGE_TOP = HEALTH_HALF - 0.002;
 const BRIDGE_BOTTOM = HudPieces.core.y - BRIDGE_DROP;
 const BRIDGE_WIDTH = 2 * math.sqrt(math.max(DISC_RADIUS * DISC_RADIUS - BRIDGE_DROP * BRIDGE_DROP, 0)) + 0.004;
 
@@ -154,6 +156,15 @@ export const ReservoirBridge: Piece = {
  * a half circle plus the two slivers down to where the end spokes meet the plate.
  */
 export const RESERVOIR_ARC_DEGREES = 180 + 2 * math.deg(math.asin(BRIDGE_DROP / DISC_RADIUS));
+
+/**
+ * Where the chamber is cut off, as a fraction of the disc's height from its
+ * top: the bridge plate's bottom edge. Everything in the chamber is hidden
+ * above this line, so the disc never shows through the health capsule's glass
+ * when health is low.
+ */
+const CORE_HEIGHT = HudPieces.core.width / HudPieces.core.aspect;
+export const RESERVOIR_CHAMBER_CUT = (BRIDGE_BOTTOM - (HudPieces.core.y - CORE_HEIGHT / 2)) / CORE_HEIGHT;
 
 export const HudPlacement = {
 	/** Cluster height as a fraction of the screen's height. */
@@ -206,6 +217,18 @@ export const HudArt = {
 		flowTile: Images.AuxTile,
 		/** Width ÷ height of the flow tile. */
 		flowTileAspect: 508 / 60,
+		/**
+		 * Lantern fuel: glowing embers drifting up and flickering
+		 * (assets/ui/source/AuxEmbers.png). Set `image` once uploaded; the
+		 * overlay is skipped while it's undefined.
+		 */
+		overlay: {
+			image: undefined as string | undefined,
+			aspect: 512 / 128,
+			velocityX: 0.04,
+			velocityY: 0.28,
+			flicker: 0.35,
+		} as LiquidOverlay,
 	},
 	stamina: {
 		back: Images.Backgroundres2,
@@ -219,6 +242,17 @@ export const HudArt = {
 		/** Seamless strip (assets/ui/source/StaminaTile.png): StaminaFill's green liquid. */
 		flowTile: Images.StaminaTile,
 		flowTileAspect: 511 / 60,
+		/**
+		 * Kinetic energy: quick light streaks rushing through the liquid
+		 * (assets/ui/source/StaminaStreaks.png). Set `image` once uploaded.
+		 */
+		overlay: {
+			image: undefined as string | undefined,
+			aspect: 512 / 128,
+			velocityX: 1.4,
+			velocityY: 0,
+			transparency: 0.4,
+		} as LiquidOverlay,
 	},
 	/**
 	 * End shading for the flowing Auxiliary / Stamina liquids, matching the
@@ -228,6 +262,18 @@ export const HudArt = {
 	liquidShading: { edge: 0.62, shoulder: 0.84, length: 0.8 },
 	/** Brass divider drawn between points on the Auxiliary / Stamina bars. */
 	divider: { image: Images.Divider, heightFraction: 0.7 },
+	/**
+	 * Heartbeat (Trello Health card: "heartbeats" as health drops): the blood
+	 * pulses with a lub-dub that speeds up from `restBpm` at full health to
+	 * `maxBpm` near zero.
+	 */
+	heartbeat: {
+		restBpm: 58,
+		maxBpm: 140,
+		color: Color3.fromRGB(255, 150, 140),
+		/** Peak brightness of the pulse (0..1). */
+		intensity: 0.32,
+	},
 	/** Health readout ("3 / 4") on the capsule. */
 	healthText: {
 		font: new Font("rbxasset://fonts/families/Merriweather.json", Enum.FontWeight.Bold),
@@ -247,6 +293,13 @@ export const HudArt = {
 		 * moderation), the dial falls back to the original `core` disc.
 		 */
 		swirl: Images.ReservoirSwirl as string | undefined,
+		/**
+		 * Occult rune ring turning slowly against the swirl (assets/ui/source/
+		 * ReservoirRunes.png); shown while Reservoir is unlocked. Set once uploaded.
+		 */
+		runes: undefined as string | undefined,
+		runesTransparency: 0.15,
+		runesSpinDegreesPerSecond: -12,
 		coreRotation: -180,
 		/**
 		 * While Reservoir is LOCKED (Depth Affinity below the unlock and not an

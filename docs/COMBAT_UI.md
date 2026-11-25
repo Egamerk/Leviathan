@@ -28,7 +28,7 @@ arranged as in the Studio design.
 
 | Element | Images | Behaviour |
 | --- | --- | --- |
-| Health | `BloodBackground`, `HealthBloodTile` (one tiling ImageLabel), `CapsuleCover`, plus a `3 / 4` readout | blood flows at the Studio speed (1.77 fill widths per 8 s) and loops; clipped to current health |
+| Health | `BloodBackground`, `HealthBloodTile` (one tiling ImageLabel), `CapsuleCover`, plus a `3 / 4` readout | blood flows and pulses with a heartbeat that speeds up as health drops (58 → 140 bpm) | blood flows at the Studio speed (1.77 fill widths per 8 s) and loops; clipped to current health |
 | Oxygen | `OxygenTube`, `OxygenGlass`, `OxygenTile` (gas), `OxygenBubbles`, plus an O₂ label | same tube family as Auxiliary/Stamina (caps both ends); pale gas flows, bubbles rise; reads `oxygenFractionAtom` (full until the Oxygen system exists) |
 | Auxiliary | `BackgroundAux`, `BackgroundAux2`, `AuxTile`, `Divider` | liquid flows (one tiling image in a rounded CanvasGroup) and drains/refills smoothly; brass dividers mark each point |
 | Stamina | `Backgroundres2`, `Backgroundres`, `StaminaTile` (green), `Divider` | liquid flows and drains/refills smoothly; brass dividers mark each point |

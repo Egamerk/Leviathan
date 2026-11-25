@@ -1,4 +1,4 @@
-import React, { type Binding } from "@rbxts/react";
+import React, { type Binding, useRef } from "@rbxts/react";
 import { vitalsAtom } from "client/store";
 import { healthFractionAtom, localStatsAtom } from "client/store/stats";
 import { ClippedFill } from "client/ui/components/clipped-fill";
@@ -26,6 +26,51 @@ const Z = {
 } as const;
 
 const TEXT = HudArt.healthText;
+const BEAT = HudArt.heartbeat;
+
+/** Lub-dub envelope over one beat (phase 0..1): a strong pulse, then a softer one. */
+function beatShape(phase: number): number {
+	const pulse = (center: number, width: number) => math.exp(-(((phase - center) / width) ** 2));
+	return math.max(pulse(0.06, 0.05), 0.6 * pulse(0.24, 0.05));
+}
+
+/**
+ * Pulsing glow over the blood. The rate follows health: `restBpm` when full,
+ * rising to `maxBpm` near zero. The phase is accumulated frame to frame, so a
+ * rate change never makes the beat jump.
+ */
+function Heartbeat({ clock, healthFraction }: { clock: Binding<number>; healthFraction: number }) {
+	const bpm = BEAT.restBpm + (BEAT.maxBpm - BEAT.restBpm) * (1 - math.clamp(healthFraction, 0, 1));
+	// Persist across re-renders (health changes) so the rhythm continues smoothly.
+	const state = useRef({ phase: 0, lastT: -1 });
+	const glow = clock.map((t) => {
+		const s = state.current;
+		if (s.lastT >= 0) s.phase = (s.phase + (t - s.lastT) * (bpm / 60)) % 1;
+		s.lastT = t;
+		return beatShape(s.phase);
+	});
+	return (
+		<frame
+			key="Heartbeat"
+			BackgroundColor3={BEAT.color}
+			BackgroundTransparency={glow.map((g) => 1 - g * BEAT.intensity)}
+			BorderSizePixel={0}
+			Size={UDim2.fromScale(1, 1)}
+			ZIndex={Z.blood + 1}
+		>
+			<uigradient
+				Rotation={90}
+				Transparency={
+					new NumberSequence([
+						new NumberSequenceKeypoint(0, 0.7),
+						new NumberSequenceKeypoint(0.45, 0),
+						new NumberSequenceKeypoint(1, 0.8),
+					])
+				}
+			/>
+		</frame>
+	);
+}
 
 /** "3", "3.5", never "3.50" or "3.0". */
 function formatValue(value: number): string {
@@ -82,7 +127,8 @@ function TiledBlood({ clock, image }: { clock: Binding<number>; image: string })
 
 /** Health capsule: back, flowing blood clipped to current health, glass cover on top. */
 export function HealthBar() {
-	const fraction = useSmoothedNumber(useAtom(healthFractionAtom), ANIM.barSmoothing);
+	const healthFraction = useAtom(healthFractionAtom);
+	const fraction = useSmoothedNumber(healthFraction, ANIM.barSmoothing);
 	const clock = useAnimationClock();
 
 	return (
@@ -109,6 +155,7 @@ export function HealthBar() {
 					ZIndex={Z.fill}
 				>
 					<TiledBlood clock={clock} image={ART.bloodTile} />
+					<Heartbeat clock={clock} healthFraction={healthFraction} />
 				</frame>
 			</ClippedFill>
 			<imagelabel

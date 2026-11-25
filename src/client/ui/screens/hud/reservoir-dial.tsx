@@ -5,7 +5,14 @@ import { localStatsAtom } from "client/store/stats";
 import { useAnimationClock } from "client/ui/hooks/use-animation-clock";
 import { useAtom } from "client/ui/hooks/use-atom";
 import { useSmoothedNumber } from "client/ui/hooks/use-smoothed-number";
-import { HudAnimation, HudArt, HudPieces, RESERVOIR_ARC_DEGREES, ReservoirBridge } from "./hud.config";
+import {
+	HudAnimation,
+	HudArt,
+	HudPieces,
+	RESERVOIR_ARC_DEGREES,
+	RESERVOIR_CHAMBER_CUT,
+	ReservoirBridge,
+} from "./hud.config";
 import { place, rect } from "./hud.layout";
 
 const ART = HudArt.reservoir;
@@ -56,24 +63,15 @@ const ARC_START = 90 + RESERVOIR_ARC_DEGREES / 2;
  *    (compensated for the disc's spin, since a gradient turns with its image).
  * GroupTransparency fades a partly filled slice.
  */
-function Slice(props: {
-	from: number;
-	to: number;
-	fill: Binding<number>;
-	spin: Binding<number>;
-	core: ReturnType<typeof rect>;
-	image: string;
-}) {
-	const { from, to, fill, spin, core, image } = props;
+function Slice(props: { from: number; to: number; fill: Binding<number>; spin: Binding<number>; image: string }) {
+	const { from, to, fill, spin, image } = props;
 	return (
 		<canvasgroup
 			BackgroundTransparency={1}
-			AnchorPoint={new Vector2(0.5, 0.5)}
-			Position={UDim2.fromScale(core.x, core.y)}
-			Size={UDim2.fromScale(core.width, core.height)}
+			Size={UDim2.fromScale(1, 1)}
 			GroupTransparency={fill.map((f) => 1 - f)}
 			Visible={fill.map((f) => f > 0.001)}
-			ZIndex={-4}
+			ZIndex={2}
 		>
 			<uigradient Transparency={HALF} Rotation={from - 90} />
 			<imagelabel BackgroundTransparency={1} Image={image} Rotation={spin} Size={UDim2.fromScale(1, 1)}>
@@ -158,7 +156,8 @@ function BridgePlate() {
  *
  * - Unlocked: an arc gauge with one slice per Reservoir point (brass spokes
  *   between them). Full slices show the bright spinning liquid, empty ones a
- *   dim version, and a partial slice fades in by how full it is.
+ *   dim version, and a partial slice fades in by how full it is. An occult
+ *   rune ring turns slowly against the swirl.
  * - Locked: the whole chamber shows dimmed, slow-turning liquid (dormant).
  */
 export function ReservoirDial() {
@@ -179,6 +178,7 @@ export function ReservoirDial() {
 	const current = useSmoothedNumber(vitals?.reservoir ?? 0, HudAnimation.barSmoothing);
 
 	const gauge = new Array<React.Element>();
+	const spokes = new Array<React.Element>();
 	if (unlocked) {
 		for (let k = 0; k < slices; k++) {
 			const fill = current.map((c) => math.clamp((c - k * perSlice) / perSlice, 0, 1));
@@ -189,13 +189,12 @@ export function ReservoirDial() {
 					to={ARC_START - k * sliceSpan}
 					fill={fill}
 					spin={spin}
-					core={core}
 					image={disc}
 				/>,
 			);
 		}
 		for (let k = 0; k <= slices; k++) {
-			gauge.push(<Spoke key={`Spoke${k}`} angle={ARC_START - k * sliceSpan} core={core} />);
+			spokes.push(<Spoke key={`Spoke${k}`} angle={ARC_START - k * sliceSpan} core={core} />);
 		}
 	}
 
@@ -205,20 +204,46 @@ export function ReservoirDial() {
 				key="ReservoirHolder"
 				BackgroundTransparency={1}
 				Image={ART.holder}
-				ZIndex={-6}
+				ZIndex={-7}
 				{...place(HudPieces.holder)}
 			/>
-			<imagelabel
-				key="ReservoirBase"
-				BackgroundTransparency={1}
-				Image={disc}
-				ImageColor3={unlocked ? GAUGE.emptyTint : ART.dormantTint}
-				ImageTransparency={unlocked ? GAUGE.emptyTransparency : ART.dormantTransparency}
-				Rotation={spin}
-				ZIndex={-5}
-				{...place(HudPieces.core)}
-			/>
-			{gauge}
+			{/* The chamber: everything above the bridge plate's bottom edge is cut away. */}
+			<canvasgroup key="ReservoirChamber" BackgroundTransparency={1} ZIndex={-6} {...place(HudPieces.core)}>
+				<uigradient
+					Rotation={90}
+					Transparency={
+						new NumberSequence([
+							new NumberSequenceKeypoint(0, 1),
+							new NumberSequenceKeypoint(RESERVOIR_CHAMBER_CUT, 1),
+							new NumberSequenceKeypoint(math.min(RESERVOIR_CHAMBER_CUT + 0.002, 1), 0),
+							new NumberSequenceKeypoint(1, 0),
+						])
+					}
+				/>
+				<imagelabel
+					key="Base"
+					BackgroundTransparency={1}
+					Image={disc}
+					ImageColor3={unlocked ? GAUGE.emptyTint : ART.dormantTint}
+					ImageTransparency={unlocked ? GAUGE.emptyTransparency : ART.dormantTransparency}
+					Rotation={spin}
+					Size={UDim2.fromScale(1, 1)}
+					ZIndex={1}
+				/>
+				{gauge}
+				{unlocked && ART.runes !== undefined && (
+					<imagelabel
+						key="Runes"
+						BackgroundTransparency={1}
+						Image={ART.runes}
+						ImageTransparency={ART.runesTransparency}
+						Rotation={clock.map((t) => (t * ART.runesSpinDegreesPerSecond) % 360)}
+						Size={UDim2.fromScale(1, 1)}
+						ZIndex={3}
+					/>
+				)}
+			</canvasgroup>
+			{spokes}
 			<BridgePlate />
 			<imagelabel
 				key="ReservoirWheel"

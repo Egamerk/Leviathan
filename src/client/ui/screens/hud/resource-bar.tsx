@@ -21,13 +21,26 @@ export interface ResourceBarArt {
 	 * of showing a rounded end against it.
 	 */
 	capsBothEnds?: boolean;
-	/** Optional transparent layer (e.g. bubbles) tiled in both directions, rising over the liquid. */
-	bubbles?: string;
-	/** Width ÷ height of the bubble tile; one tile is one liquid-height tall. */
-	bubblesAspect?: number;
-	/** Rise speed in liquid heights per second, and sideways drift relative to it. */
-	bubbleRise?: number;
-	bubbleDrift?: number;
+	/** Optional animated layer over the liquid (bubbles, embers, streaks…). */
+	overlay?: LiquidOverlay;
+}
+
+/**
+ * A transparent texture, seamless in both directions and one liquid-height
+ * tall, that moves over the liquid to show what the resource is.
+ */
+export interface LiquidOverlay {
+	/** Unset (e.g. not uploaded yet) = no overlay. */
+	image: string | undefined;
+	/** Width ÷ height of the tile. */
+	aspect: number;
+	/** Speed in liquid heights per second: x > 0 moves right, y > 0 moves up. */
+	velocityX: number;
+	velocityY: number;
+	/** Base transparency (0 = opaque). */
+	transparency?: number;
+	/** Extra transparency that flickers (0 = steady), e.g. for embers. */
+	flicker?: number;
 }
 
 interface ResourceBarProps {
@@ -181,14 +194,12 @@ function FlowingFill(props: {
 							Position={offset.map((x) => UDim2.fromScale(x, 0))}
 							Size={UDim2.fromScale(labelWidth, 1)}
 						/>
-						{art.bubbles !== undefined && (
-							<Bubbles
+						{art.overlay?.image !== undefined && (
+							<Overlay
 								clock={clock}
-								image={art.bubbles}
-								aspect={art.bubblesAspect ?? 4}
+								overlay={art.overlay}
+								image={art.overlay.image}
 								pillAspect={pillAspect}
-								rise={art.bubbleRise ?? 0.35}
-								drift={art.bubbleDrift ?? 0.25}
 							/>
 						)}
 					</frame>
@@ -199,33 +210,31 @@ function FlowingFill(props: {
 }
 
 /**
- * Bubble layer in fill-box units: one Tile-mode ImageLabel, one tile wider and
- * taller than the box, sliding up (and slightly sideways) by up to one tile,
- * then wrapping. Seamless because the bubble tile wraps in both directions.
+ * Overlay layer in fill-box units: one Tile-mode ImageLabel, one tile wider
+ * and taller than the box, sliding by up to one tile in each direction, then
+ * wrapping. Seamless because the tile wraps in both directions.
  */
-function Bubbles(props: {
-	clock: Binding<number>;
-	image: string;
-	aspect: number;
-	pillAspect: number;
-	rise: number;
-	drift: number;
-}) {
-	const { clock, image, aspect, pillAspect, rise, drift } = props;
-	const tileWidth = aspect / pillAspect; // fill-box widths (one tile is one box height tall)
+function Overlay(props: { clock: Binding<number>; overlay: LiquidOverlay; image: string; pillAspect: number }) {
+	const { clock, overlay, image, pillAspect } = props;
+	const tileWidth = overlay.aspect / pillAspect; // fill-box widths (one tile is one box height tall)
 	const labelWidth = 1 + tileWidth;
+	const base = overlay.transparency ?? 0;
+	const flicker = overlay.flicker ?? 0;
 	return (
 		<imagelabel
-			key="Bubbles"
+			key="Overlay"
 			BackgroundTransparency={1}
 			Image={image}
 			ScaleType={Enum.ScaleType.Tile}
 			TileSize={UDim2.fromScale(tileWidth / labelWidth, 0.5)}
 			Position={clock.map((t) => {
-				const up = (t * rise) % 1; // box heights
-				const side = ((t * rise * drift) / pillAspect) % tileWidth; // box widths
+				const side = ((((t * overlay.velocityX) / pillAspect) % tileWidth) + tileWidth) % tileWidth;
+				const up = (((t * overlay.velocityY) % 1) + 1) % 1;
 				return UDim2.fromScale(side - tileWidth, -up);
 			})}
+			ImageTransparency={clock.map((t) =>
+				flicker > 0 ? base + flicker * (0.5 + 0.3 * math.sin(t * 9.1) + 0.2 * math.sin(t * 23.7)) : base,
+			)}
 			Size={UDim2.fromScale(labelWidth, 2)}
 			ZIndex={2}
 		/>
