@@ -52,6 +52,8 @@ interface ResourceBarProps {
 	art: ResourceBarArt;
 	/** 1 = flows rightward, -1 = leftward. */
 	flowDirection: number;
+	/** Hover feedback: the tube eases up in size. */
+	hovered?: boolean;
 }
 
 const DIVIDER = HudArt.divider;
@@ -245,8 +247,9 @@ function Overlay(props: { clock: Binding<number>; overlay: LiquidOverlay; image:
  * Auxiliary / Stamina tube: back, glass, flowing liquid anchored at the cap,
  * and brass dividers marking each point.
  */
-export function ResourceBar({ name, fraction, points, piece, art, flowDirection }: ResourceBarProps) {
+export function ResourceBar({ name, fraction, points, piece, art, flowDirection, hovered = false }: ResourceBarProps) {
 	const smoothed = useSmoothedNumber(fraction, HudAnimation.barSmoothing);
+	const scale = useSmoothedNumber(hovered ? HudArt.hover.scale : 1, HudArt.hover.speed);
 	const fillWidth = art.fillRight - art.fillLeft;
 	// Divider box: its art is a thin line centred in a wide transparent image.
 	const dividerHeight = DIVIDER.heightFraction;
@@ -273,6 +276,7 @@ export function ResourceBar({ name, fraction, points, piece, art, flowDirection 
 
 	return (
 		<frame key={name} BackgroundTransparency={1} {...place(piece)}>
+			<uiscale Scale={scale} />
 			{layer("Back", art.back, -1)}
 			{layer("Glass", art.glass, 0)}
 			<FlowingFill

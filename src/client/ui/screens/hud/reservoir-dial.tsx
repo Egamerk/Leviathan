@@ -164,7 +164,8 @@ function BridgePlate() {
  *   rune ring turns slowly against the swirl.
  * - Locked: the whole chamber shows dimmed, slow-turning liquid (dormant).
  */
-export function ReservoirDial() {
+export function ReservoirDial({ hovered = false }: { hovered?: boolean }) {
+	const glow = useSmoothedNumber(hovered ? 1 : 0, HudArt.hover.speed);
 	const clock = useAnimationClock();
 	const stats = useAtom(localStatsAtom);
 	const vitals = useAtom(vitalsAtom);
@@ -249,6 +250,19 @@ export function ReservoirDial() {
 			</canvasgroup>
 			{spokes}
 			<BridgePlate />
+			{/* Hover feedback: a soft glow ring just outside the brass ring. */}
+			<frame
+				key="HoverGlow"
+				AnchorPoint={new Vector2(0.5, 0.5)}
+				BackgroundTransparency={1}
+				Position={UDim2.fromScale(core.x, core.y)}
+				Size={UDim2.fromScale(core.width * 1.12, core.height * 1.12)}
+				Visible={glow.map((g) => g > 0.01)}
+				ZIndex={0}
+			>
+				<uicorner CornerRadius={new UDim(1, 0)} />
+				<uistroke Color={HudArt.hover.dialGlow} Thickness={2.5} Transparency={glow.map((g) => 1 - g * 0.85)} />
+			</frame>
 			<imagelabel
 				key="ReservoirWheel"
 				BackgroundTransparency={1}

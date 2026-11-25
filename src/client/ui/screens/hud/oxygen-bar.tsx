@@ -39,8 +39,9 @@ function OxygenReadout({ fraction }: { fraction: number }) {
  * bubbles, plus an "O₂ 100%" readout. Otherwise it falls back to the thin original
  * bar. Reads `oxygenFractionAtom` (stays full until the Oxygen system exists).
  */
-export function OxygenBar() {
+export function OxygenBar({ hovered = false }: { hovered?: boolean }) {
 	const value = useAtom(oxygenFractionAtom);
+	const scale = useSmoothedNumber(hovered ? HudArt.hover.scale : 1, HudArt.hover.speed);
 	const fraction = useSmoothedNumber(value, HudAnimation.barSmoothing);
 
 	if (USE_OXYGEN_TUBE) {
@@ -53,9 +54,11 @@ export function OxygenBar() {
 					piece={HudPieces.oxygen}
 					art={{ ...TUBE, back: TUBE.back!, glass: TUBE.glass!, flowTile: TUBE.flowTile! }}
 					flowDirection={1}
+					hovered={hovered}
 				/>
 				{TUBE.label && (
 					<frame key="OxygenReadout" BackgroundTransparency={1} ZIndex={3} {...place(HudPieces.oxygen)}>
+						<uiscale Scale={scale} />
 						<OxygenReadout fraction={value} />
 					</frame>
 				)}

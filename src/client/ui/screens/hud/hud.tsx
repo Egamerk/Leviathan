@@ -1,7 +1,10 @@
-import React from "@rbxts/react";
+import React, { useState } from "@rbxts/react";
 import { auxiliaryFractionAtom, localStatsAtom, staminaFractionAtom } from "client/store/stats";
 import { useAtom } from "client/ui/hooks/use-atom";
 import { HealthBar } from "./health-bar";
+import { HoverZone } from "./hover-zone";
+import { HudTooltip } from "./hud-tooltip";
+import type { HudElement } from "./hud.tooltips";
 import { HudAnimation, HudArt, HudPieces, HudPlacement } from "./hud.config";
 import { CLUSTER_ASPECT } from "./hud.layout";
 import { OxygenBar } from "./oxygen-bar";
@@ -18,6 +21,9 @@ export function Hud() {
 	const auxiliary = useAtom(auxiliaryFractionAtom);
 	const stamina = useAtom(staminaFractionAtom);
 	const stats = useAtom(localStatsAtom);
+	const [hovered, setHovered] = useState<HudElement | undefined>(undefined);
+	const onHover = (element: HudElement | undefined, toggle?: boolean) =>
+		setHovered((current) => (toggle ? (current === element ? undefined : element) : element));
 
 	return (
 		<screengui key="Hud" ResetOnSpawn={false} ZIndexBehavior={Enum.ZIndexBehavior.Sibling}>
@@ -29,8 +35,8 @@ export function Hud() {
 				Size={UDim2.fromScale(1, HudPlacement.height)}
 			>
 				<uiaspectratioconstraint AspectRatio={CLUSTER_ASPECT} AspectType={Enum.AspectType.FitWithinMaxSize} />
-				<OxygenBar />
-				<HealthBar />
+				<OxygenBar hovered={hovered === "oxygen"} />
+				<HealthBar hovered={hovered === "health"} />
 				<ResourceBar
 					name="Auxiliary"
 					fraction={auxiliary}
@@ -38,6 +44,7 @@ export function Hud() {
 					piece={HudPieces.auxiliary}
 					art={HudArt.auxiliary}
 					flowDirection={HudAnimation.auxiliaryFlowDirection}
+					hovered={hovered === "auxiliary"}
 				/>
 				<ResourceBar
 					name="Stamina"
@@ -46,8 +53,15 @@ export function Hud() {
 					piece={HudPieces.stamina}
 					art={HudArt.stamina}
 					flowDirection={HudAnimation.staminaFlowDirection}
+					hovered={hovered === "stamina"}
 				/>
-				<ReservoirDial />
+				<ReservoirDial hovered={hovered === "reservoir"} />
+				<HoverZone element="oxygen" piece={HudPieces.oxygen} onHover={onHover} />
+				<HoverZone element="health" piece={HudPieces.health} onHover={onHover} />
+				<HoverZone element="auxiliary" piece={HudPieces.auxiliary} onHover={onHover} />
+				<HoverZone element="stamina" piece={HudPieces.stamina} onHover={onHover} />
+				<HoverZone element="reservoir" piece={HudPieces.core} pad={0.15} onHover={onHover} />
+				<HudTooltip hovered={hovered} />
 			</frame>
 		</screengui>
 	);

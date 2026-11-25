@@ -28,11 +28,17 @@ arranged as in the Studio design.
 
 | Element | Images | Behaviour |
 | --- | --- | --- |
-| Health | `BloodBackground`, `HealthBloodTile` (one tiling ImageLabel), `CapsuleCover`, plus a `3 / 4` readout | blood flows and pulses with a heartbeat that speeds up as health drops (58 → 140 bpm) | blood flows at the Studio speed (1.77 fill widths per 8 s) and loops; clipped to current health |
+| Health | `BloodBackground`, `HealthBloodTile` (one tiling ImageLabel), `CapsuleCover`, plus a `3 / 4` readout | blood flows; clipped to current health | blood flows at the Studio speed (1.77 fill widths per 8 s) and loops; clipped to current health |
 | Oxygen | `OxygenTube`, `OxygenGlass`, `OxygenTile` (gas), `OxygenBubbles`, plus an O₂ label | same tube family as Auxiliary/Stamina (caps both ends); pale gas flows, bubbles rise; reads `oxygenFractionAtom` (full until the Oxygen system exists) |
 | Auxiliary | `BackgroundAux`, `BackgroundAux2`, `AuxTile`, `Divider` | liquid flows (one tiling image in a rounded CanvasGroup) and drains/refills smoothly; brass dividers mark each point |
 | Stamina | `Backgroundres2`, `Backgroundres`, `StaminaTile` (green), `Divider` | liquid flows and drains/refills smoothly; brass dividers mark each point |
 | Reservoir dial | `Wheel&Woe1` (holder), `Woe` (Jun 30 upload, the purple core), `Wheel` (brass ring) | a brass bridge plate frames the top of the chamber; unlocked: an arc gauge below it, one slice per Reservoir point with brass spokes; full slices bright spinning violet (spiral `ReservoirSwirl` once uploaded), empty slices dark, partial slices fade in (fills left → right); locked: dimmed, slow-turning "dormant" liquid |
+
+**Hover / tap:** every element has an invisible hit zone (`hover-zone.tsx`). Hovering eases the
+tube or capsule up to 104% (the dial gets a violet glow ring) and fades in a tooltip above the
+HUD (`hud-tooltip.tsx`) with the name, current value and the Trello rules for that resource
+(texts in `hud.tooltips.ts`). On touch, tapping toggles the tooltip. Style and sizes:
+`HudArt.tooltip` and `HudArt.hover` in `hud.config.ts`.
 
 Current values come from `VitalsService` (server) → `vitalsAtom` (client). In Studio, chat
 commands help test the HUD:

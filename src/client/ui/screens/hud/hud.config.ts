@@ -261,17 +261,24 @@ export const HudArt = {
 	liquidShading: { edge: 0.62, shoulder: 0.84, length: 0.8 },
 	/** Brass divider drawn between points on the Auxiliary / Stamina bars. */
 	divider: { image: Images.Divider, heightFraction: 0.7 },
-	/**
-	 * Heartbeat (Trello Health card: "heartbeats" as health drops): the blood
-	 * pulses with a lub-dub that speeds up from `restBpm` at full health to
-	 * `maxBpm` near zero.
-	 */
-	heartbeat: {
-		restBpm: 58,
-		maxBpm: 140,
-		color: Color3.fromRGB(255, 150, 140),
-		/** Peak brightness of the pulse (0..1). */
-		intensity: 0.32,
+	/** Hover tooltip shown above the HUD (see hud-tooltip.tsx). */
+	tooltip: {
+		width: 270,
+		/** Gap between the tooltip and the top of the HUD (pixels). */
+		gap: 10,
+		background: Color3.fromRGB(16, 20, 26),
+		border: Color3.fromRGB(201, 146, 86),
+		text: Color3.fromRGB(232, 226, 216),
+		muted: Color3.fromRGB(160, 156, 150),
+		titleFont: new Font("rbxasset://fonts/families/Merriweather.json", Enum.FontWeight.Bold),
+		bodyFont: new Font("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Medium),
+		fadeSpeed: 14,
+	},
+	/** Hover feedback: hovered tubes/capsules ease up to this scale; the dial gets a glow ring. */
+	hover: {
+		scale: 1.04,
+		speed: 16,
+		dialGlow: Color3.fromRGB(214, 186, 255),
 	},
 	/** Health readout ("3 / 4") on the capsule. */
 	healthText: {

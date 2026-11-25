@@ -79,6 +79,13 @@ export const StatsConfig = {
 		dodgeWindowSeconds: 0.15,
 	},
 
+	/** Trello: Combat → Player Turn (Recover) and Energy Types (regeneration). */
+	recover: { stamina: 2, health: 3, reservoir: 1 },
+	staminaPerTurn: 1,
+	auxiliaryPerBattle: 1,
+	/** Trello: Health — a single hit above this multiple of max health implodes the diver. */
+	implodeRatio: 1.2,
+
 	/**
 	 * Depth Affinity needed to unlock Reservoir. DECIDED: 3 (Energy Types and
 	 * Player Turn) over Universal Passives' 5.
