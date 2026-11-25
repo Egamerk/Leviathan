@@ -22,15 +22,43 @@ export const ArtAspect = {
 	wheel: 420 / 258,
 	core: 420 / 417,
 	divider: 420 / 39,
+	oxygenTube: 998 / 52,
+} as const;
+
+/**
+ * Oxygen as a tube in the same family as Auxiliary / Stamina, built from
+ * the Auxiliary tube art with caps on both ends (assets/ui/source/
+ * OxygenTube.png, OxygenGlass.png, OxygenTile.png). Upload the three, add
+ * them to images.csv, run `npm run assets:images`, then set `back`,
+ * `glass` and `flowTile` below. Until then the thin original bar is used.
+ */
+const OxygenTubeArt = {
+	back: undefined as string | undefined,
+	glass: undefined as string | undefined,
+	flowTile: undefined as string | undefined,
+	flowTileAspect: 508 / 60,
+	anchor: "left" as "left" | "right",
+	capsBothEnds: true,
+	fillLeft: 0.0225,
+	fillRight: 0.9775,
+	fillTop: 21 / 104,
+	fillBottom: 82 / 104,
 } as const;
 
 /** Gap between the health capsule and the rows above/below it (hw). */
 const GAP = 0.016;
 const HEALTH_HALF = 1 / ArtAspect.health / 2;
-/** Oxygen is secondary, so it's a little shorter than health. */
-const OXYGEN_WIDTH = 0.82;
-const OXYGEN_HALF = OXYGEN_WIDTH / ArtAspect.oxygen / 2;
 const BAR_WIDTH = 0.375;
+/**
+ * Oxygen: with the new tube it spans Auxiliary's outer cap to Stamina's outer
+ * cap (same thickness as those tubes), so the stack reads as one block. The
+ * thin original bar is a little shorter than health.
+ */
+export const USE_OXYGEN_TUBE =
+	OxygenTubeArt.back !== undefined && OxygenTubeArt.glass !== undefined && OxygenTubeArt.flowTile !== undefined;
+const OXYGEN_WIDTH = USE_OXYGEN_TUBE ? 2 * 0.3 + BAR_WIDTH : 0.82;
+const OXYGEN_ASPECT = USE_OXYGEN_TUBE ? ArtAspect.oxygenTube : ArtAspect.oxygen;
+const OXYGEN_HALF = OXYGEN_WIDTH / OXYGEN_ASPECT / 2;
 const BAR_HALF = BAR_WIDTH / ArtAspect.resourceBar / 2;
 
 /**
@@ -75,7 +103,7 @@ export interface Piece {
 }
 
 export const HudPieces = {
-	oxygen: { x: 0, y: -(HEALTH_HALF + GAP + OXYGEN_HALF), width: OXYGEN_WIDTH, aspect: ArtAspect.oxygen },
+	oxygen: { x: 0, y: -(HEALTH_HALF + GAP + OXYGEN_HALF), width: OXYGEN_WIDTH, aspect: OXYGEN_ASPECT },
 	health: { x: 0, y: 0, width: 1, aspect: ArtAspect.health },
 	auxiliary: { x: -0.3, y: HEALTH_HALF + GAP + BAR_HALF, width: BAR_WIDTH, aspect: ArtAspect.resourceBar },
 	stamina: { x: 0.3, y: HEALTH_HALF + GAP + BAR_HALF, width: BAR_WIDTH, aspect: ArtAspect.resourceBar },
@@ -135,6 +163,8 @@ export const HudArt = {
 		tint: Color3.fromRGB(215, 238, 246),
 		transparency: 0.1,
 	},
+	/** See OxygenTubeArt at the top of this file. */
+	oxygenTube: OxygenTubeArt,
 	/**
 	 * Point bars. Draw order matches Studio: back (-1) → glass (0) → fill (1).
 	 * `fillLeft`/`fillRight` are where the liquid starts/ends in the fill art

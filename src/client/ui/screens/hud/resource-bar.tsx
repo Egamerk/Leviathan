@@ -15,6 +15,12 @@ export interface ResourceBarArt {
 	fillBottom: number;
 	flowTile: string;
 	flowTileAspect: number;
+	/**
+	 * The tube has a cap at the far end too (Oxygen). Near full, the liquid's
+	 * moving end grows past the fill box so it meets that cap square instead
+	 * of showing a rounded end against it.
+	 */
+	capsBothEnds?: boolean;
 }
 
 interface ResourceBarProps {
@@ -38,8 +44,14 @@ const MIN_FRACTION = 1e-3;
  * physical length (in liquid heights) whatever the level. On the cap side it
  * starts where the clip cuts the pill (after the overhang).
  */
-function endShading(level: number, overhang: number, pillAspect: number, capOnLeft: boolean): ColorSequence {
-	const pillWidth = level + overhang;
+function endShading(
+	level: number,
+	overhang: number,
+	extension: number,
+	pillAspect: number,
+	capOnLeft: boolean,
+): ColorSequence {
+	const pillWidth = level + overhang + extension;
 	const o = overhang / pillWidth;
 	const len = (SHADING.length * (1 / pillAspect)) / pillWidth;
 	const capEdge = SHADING.shoulder * 0.97;
@@ -112,9 +124,12 @@ function FlowingFill(props: {
 	});
 
 	const level = fraction.map((f) => math.max(f, MIN_FRACTION));
+	// Extra length past the moving edge (clipped away), so a far-end cap meets square liquid when full.
+	const extensionAt = (f: number) => (art.capsBothEnds ? overhang * math.clamp((f - 0.95) / 0.05, 0, 1) : 0);
 	// Liquid (pill) extent in fill-box units: [start, start + width].
-	const pillStart = level.map((f) => (fromRight ? 1 - f : -overhang));
-	const pillWidth = level.map((f) => f + overhang);
+	const startAt = (f: number) => (fromRight ? 1 - f - extensionAt(f) : -overhang);
+	const pillStart = level.map(startAt);
+	const pillWidth = level.map((f) => f + overhang + extensionAt(f));
 
 	return (
 		<frame
@@ -141,14 +156,13 @@ function FlowingFill(props: {
 					Size={pillWidth.map((w) => UDim2.fromScale(w, 1))}
 				>
 					<uicorner CornerRadius={new UDim(0.5, 0)} />
-					<uigradient Color={level.map((f) => endShading(f, overhang, pillAspect, !fromRight))} />
+					<uigradient
+						Color={level.map((f) => endShading(f, overhang, extensionAt(f), pillAspect, !fromRight))}
+					/>
 					<frame
 						key="Tex"
 						BackgroundTransparency={1}
-						Position={level.map((f) => {
-							const start = fromRight ? 1 - f : -overhang;
-							return UDim2.fromScale(-start / (f + overhang), 0);
-						})}
+						Position={level.map((f) => UDim2.fromScale(-startAt(f) / (f + overhang + extensionAt(f)), 0))}
 						Size={pillWidth.map((w) => UDim2.fromScale(1 / w, 1))}
 					>
 						<imagelabel
