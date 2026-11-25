@@ -219,11 +219,10 @@ export const HudArt = {
 		flowTileAspect: 508 / 60,
 		/**
 		 * Lantern fuel: glowing embers drifting up and flickering
-		 * (assets/ui/source/AuxEmbers.png). Set `image` once uploaded; the
-		 * overlay is skipped while it's undefined.
+		 * (assets/ui/source/AuxEmbers.png). Clearing `image` removes the overlay.
 		 */
 		overlay: {
-			image: undefined as string | undefined,
+			image: Images.AuxEmbers as string | undefined,
 			aspect: 512 / 128,
 			velocityX: 0.04,
 			velocityY: 0.28,
@@ -244,10 +243,10 @@ export const HudArt = {
 		flowTileAspect: 511 / 60,
 		/**
 		 * Kinetic energy: quick light streaks rushing through the liquid
-		 * (assets/ui/source/StaminaStreaks.png). Set `image` once uploaded.
+		 * (assets/ui/source/StaminaStreaks.png). Clearing `image` removes the overlay.
 		 */
 		overlay: {
-			image: undefined as string | undefined,
+			image: Images.StaminaStreaks as string | undefined,
 			aspect: 512 / 128,
 			velocityX: 1.4,
 			velocityY: 0,
@@ -295,9 +294,9 @@ export const HudArt = {
 		swirl: Images.ReservoirSwirl as string | undefined,
 		/**
 		 * Occult rune ring turning slowly against the swirl (assets/ui/source/
-		 * ReservoirRunes.png); shown while Reservoir is unlocked. Set once uploaded.
+		 * ReservoirRunes.png); shown while Reservoir is unlocked.
 		 */
-		runes: undefined as string | undefined,
+		runes: Images.ReservoirRunes as string | undefined,
 		runesTransparency: 0.15,
 		runesSpinDegreesPerSecond: -12,
 		coreRotation: -180,

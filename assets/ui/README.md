@@ -38,6 +38,6 @@ copies in Asset Manager to get clean keys.
 | `source/OxygenTile.png` | 123049627159440 | Seamless pale gas for Oxygen: low-contrast mist, lighter at the top, from the Auxiliary liquid's texture. |
 | `source/OxygenBubbles.png` | 77723458430971 | Transparent bubbles, seamless in both directions, that rise through the gas. |
 | `source/ReservoirSwirl.png` | 125262881309567 | Vivid violet Reservoir disc with spiral arms (painted texture from the original `Woe` disc blended in), so its spin is clearly visible. If it fails to load, the dial uses the original disc. |
-| `source/AuxEmbers.png` | **upload needed** | Glowing embers (seamless both ways) drifting up and flickering through the Auxiliary liquid: lantern fuel. Set `HudArt.auxiliary.overlay.image`. |
-| `source/StaminaStreaks.png` | **upload needed** | Soft diagonal light streaks rushing through the Stamina liquid: kinetic energy. Set `HudArt.stamina.overlay.image`. |
-| `source/ReservoirRunes.png` | **upload needed** | Ring of glowing occult glyphs turning slowly against the Reservoir swirl. Set `HudArt.reservoir.runes`. |
+| `source/AuxEmbers.png` | 83630725755057 | Glowing embers (seamless both ways) drifting up and flickering through the Auxiliary liquid: lantern fuel. |
+| `source/StaminaStreaks.png` | 82863422062348 | Soft diagonal light streaks rushing through the Stamina liquid: kinetic energy. |
+| `source/ReservoirRunes.png` | 97803059451137 | Ring of glowing occult glyphs turning slowly against the Reservoir swirl. |
