@@ -4,11 +4,14 @@ import { localStatsAtom } from "client/store/stats";
 import { useAnimationClock } from "client/ui/hooks/use-animation-clock";
 import { useAtom } from "client/ui/hooks/use-atom";
 import { useSmoothedNumber } from "client/ui/hooks/use-smoothed-number";
-import { HudAnimation, HudArt, HudPieces } from "./hud.config";
+import { HudAnimation, HudArt, HudPieces, RESERVOIR_ARC_DEGREES, ReservoirBridge } from "./hud.config";
 import { place, rect } from "./hud.layout";
 
 const ART = HudArt.reservoir;
 const GAUGE = ART.gauge;
+const BRIDGE = ART.bridge;
+/** The swirl texture when uploaded (its spin is clearly visible), else the original disc. */
+const DISC = ART.swirl ?? ART.core;
 
 /** Hard-edged half: visible where the gradient position is below 0.5. */
 const HALF = new NumberSequence([
@@ -20,10 +23,10 @@ const HALF = new NumberSequence([
 
 /**
  * Angles are screen degrees: 0 = right, 90 = down (clockwise, like Roblox
- * Rotation). The arc starts at the upper left and sweeps down through the
- * bottom to the upper right, so slices read left → right.
+ * Rotation). The arc starts just under the bridge plate on the left and
+ * sweeps down through the bottom to the right, so slices read left → right.
  */
-const ARC_START = 90 + GAUGE.arcDegrees / 2;
+const ARC_START = 90 + RESERVOIR_ARC_DEGREES / 2;
 
 /**
  * One slice of the disc between screen angles [from, to] (span < 180°). It's
@@ -49,10 +52,10 @@ function Slice(props: {
 			Size={UDim2.fromScale(core.width, core.height)}
 			GroupTransparency={fill.map((f) => 1 - f)}
 			Visible={fill.map((f) => f > 0.001)}
-			ZIndex={-3}
+			ZIndex={-4}
 		>
 			<uigradient Transparency={HALF} Rotation={from - 90} />
-			<imagelabel BackgroundTransparency={1} Image={ART.core} Rotation={spin} Size={UDim2.fromScale(1, 1)}>
+			<imagelabel BackgroundTransparency={1} Image={DISC} Rotation={spin} Size={UDim2.fromScale(1, 1)}>
 				<uigradient Transparency={HALF} Rotation={spin.map((r) => to + 90 - r)} />
 			</imagelabel>
 		</canvasgroup>
@@ -82,14 +85,55 @@ function Spoke({ angle, core }: { angle: number; core: ReturnType<typeof rect> }
 	);
 	return (
 		<>
-			{line("Outline", GAUGE.spokeOutlineWidth, GAUGE.spokeOutline, -2)}
-			{line("Brass", GAUGE.spokeWidth, GAUGE.spokeColor, -2)}
+			{line("Outline", GAUGE.spokeOutlineWidth, GAUGE.spokeOutline, -3)}
+			{line("Brass", GAUGE.spokeWidth, GAUGE.spokeColor, -3)}
 		</>
 	);
 }
 
+/** Brass plate over the top of the chamber: shaded brass, dark outline, two rivets. */
+function BridgePlate() {
+	const rivet = (key: string, x: number) => (
+		<frame
+			key={key}
+			AnchorPoint={new Vector2(0.5, 0.5)}
+			BackgroundColor3={BRIDGE.rivet}
+			BorderSizePixel={0}
+			Position={UDim2.fromScale(x, 0.55)}
+			Size={UDim2.fromScale(1, 0.38)}
+		>
+			<uiaspectratioconstraint AspectRatio={1} />
+			<uicorner CornerRadius={new UDim(1, 0)} />
+			<uistroke Color={BRIDGE.outline} Thickness={1} />
+			<frame
+				key="Shine"
+				BackgroundColor3={BRIDGE.rivetHighlight}
+				BorderSizePixel={0}
+				Position={UDim2.fromScale(0.18, 0.18)}
+				Size={UDim2.fromScale(0.4, 0.4)}
+			>
+				<uicorner CornerRadius={new UDim(1, 0)} />
+			</frame>
+		</frame>
+	);
+	return (
+		<frame
+			key="ReservoirBridge"
+			BackgroundColor3={new Color3(1, 1, 1)}
+			BorderSizePixel={0}
+			ZIndex={-2}
+			{...place(ReservoirBridge)}
+		>
+			<uigradient Color={new ColorSequence(BRIDGE.light, BRIDGE.dark)} Rotation={90} />
+			<uistroke Color={BRIDGE.outline} Thickness={1.5} />
+			{rivet("RivetLeft", 0.25)}
+			{rivet("RivetRight", 0.75)}
+		</frame>
+	);
+}
+
 /**
- * Centre dial: brass holder, the purple Reservoir, and the brass ring.
+ * Centre dial: brass holder, the purple Reservoir, the bridge plate and the brass ring.
  *
  * - Unlocked: an arc gauge with one slice per Reservoir point (brass spokes
  *   between them). Full slices show the bright spinning liquid, empty ones a
@@ -109,7 +153,7 @@ export function ReservoirDial() {
 	const max = unlocked ? stats!.maxReservoir : 0;
 	const slices = math.max(1, math.round(max));
 	const perSlice = max / slices;
-	const sliceSpan = GAUGE.arcDegrees / slices;
+	const sliceSpan = RESERVOIR_ARC_DEGREES / slices;
 	const current = useSmoothedNumber(vitals?.reservoir ?? 0, HudAnimation.barSmoothing);
 
 	const gauge = new Array<React.Element>();
@@ -138,20 +182,21 @@ export function ReservoirDial() {
 				key="ReservoirHolder"
 				BackgroundTransparency={1}
 				Image={ART.holder}
-				ZIndex={-5}
+				ZIndex={-6}
 				{...place(HudPieces.holder)}
 			/>
 			<imagelabel
 				key="ReservoirBase"
 				BackgroundTransparency={1}
-				Image={ART.core}
+				Image={DISC}
 				ImageColor3={unlocked ? GAUGE.emptyTint : ART.dormantTint}
 				ImageTransparency={unlocked ? GAUGE.emptyTransparency : ART.dormantTransparency}
 				Rotation={spin}
-				ZIndex={-4}
+				ZIndex={-5}
 				{...place(HudPieces.core)}
 			/>
 			{gauge}
+			<BridgePlate />
 			<imagelabel
 				key="ReservoirWheel"
 				BackgroundTransparency={1}

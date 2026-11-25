@@ -131,6 +131,29 @@ export const HudPieces = {
 	},
 } satisfies Record<string, Piece>;
 
+/** Radius of the Reservoir's visible liquid (inside the brass ring), in hw. */
+const DISC_RADIUS = (HudPieces.core.width / 2) * 0.94;
+/** How far above the disc centre the bridge plate's bottom edge sits (hw). */
+const BRIDGE_DROP = 0.011;
+/** The plate's top tucks this far under the health capsule (hw), so no purple shows above it. */
+const BRIDGE_TOP = HEALTH_HALF - 0.012;
+const BRIDGE_BOTTOM = HudPieces.core.y - BRIDGE_DROP;
+const BRIDGE_WIDTH = 2 * math.sqrt(math.max(DISC_RADIUS * DISC_RADIUS - BRIDGE_DROP * BRIDGE_DROP, 0)) + 0.004;
+
+/** The brass bridge plate over the top of the Reservoir chamber. */
+export const ReservoirBridge: Piece = {
+	x: HudPieces.core.x,
+	y: (BRIDGE_TOP + BRIDGE_BOTTOM) / 2,
+	width: BRIDGE_WIDTH,
+	aspect: BRIDGE_WIDTH / (BRIDGE_BOTTOM - BRIDGE_TOP),
+};
+
+/**
+ * Gauge arc (degrees): everything below the bridge plate's bottom edge, i.e.
+ * a half circle plus the two slivers down to where the end spokes meet the plate.
+ */
+export const RESERVOIR_ARC_DEGREES = 180 + 2 * math.deg(math.asin(BRIDGE_DROP / DISC_RADIUS));
+
 export const HudPlacement = {
 	/** Cluster height as a fraction of the screen's height. */
 	height: 0.18,
@@ -217,6 +240,12 @@ export const HudArt = {
 		holder: Images.WheelAndWoe1,
 		wheel: Images.Wheel,
 		core: Images.Woe_v2,
+		/**
+		 * Vivid violet disc with spiral arms (assets/ui/source/ReservoirSwirl.png),
+		 * so the spin is clearly visible. Set to `Images.ReservoirSwirl` once
+		 * uploaded; until then the original `core` disc is used.
+		 */
+		swirl: undefined as string | undefined,
 		coreRotation: -180,
 		/**
 		 * While Reservoir is LOCKED (Depth Affinity below the unlock and not an
@@ -231,11 +260,9 @@ export const HudArt = {
 		 * visible lower arc, filling left → right through the bottom.
 		 */
 		gauge: {
-			/** Arc span in degrees, centred on the bottom of the disc. */
-			arcDegrees: 210,
-			/** Empty slices: darker, dimmer liquid. */
-			emptyTint: Color3.fromRGB(110, 100, 140),
-			emptyTransparency: 0.35,
+			/** Empty slices: much darker liquid, so full slices stand out. */
+			emptyTint: Color3.fromRGB(70, 60, 95),
+			emptyTransparency: 0.15,
 			/** Brass spokes between slices: line and its dark outline, as fractions of the disc's width. */
 			spokeColor: Color3.fromRGB(201, 146, 86),
 			spokeOutline: Color3.fromRGB(40, 24, 16),
@@ -243,6 +270,18 @@ export const HudArt = {
 			spokeOutlineWidth: 0.03,
 			/** Spoke length as a fraction of the disc's diameter (from the centre outward). */
 			spokeLength: 0.94,
+		},
+		/**
+		 * Brass bridge plate across the top of the chamber (under the health
+		 * capsule), so the gauge looks deliberately framed. The arc's end spokes
+		 * meet its bottom edge. Its size is `ReservoirBridge` (geometry section).
+		 */
+		bridge: {
+			light: Color3.fromRGB(214, 160, 98),
+			dark: Color3.fromRGB(120, 72, 40),
+			outline: Color3.fromRGB(46, 26, 14),
+			rivet: Color3.fromRGB(96, 56, 30),
+			rivetHighlight: Color3.fromRGB(230, 186, 130),
 		},
 	},
 } as const;
