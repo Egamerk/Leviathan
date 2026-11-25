@@ -21,6 +21,13 @@ export interface ResourceBarArt {
 	 * of showing a rounded end against it.
 	 */
 	capsBothEnds?: boolean;
+	/** Optional transparent layer (e.g. bubbles) tiled in both directions, rising over the liquid. */
+	bubbles?: string;
+	/** Width ÷ height of the bubble tile; one tile is one liquid-height tall. */
+	bubblesAspect?: number;
+	/** Rise speed in liquid heights per second, and sideways drift relative to it. */
+	bubbleRise?: number;
+	bubbleDrift?: number;
 }
 
 interface ResourceBarProps {
@@ -174,10 +181,54 @@ function FlowingFill(props: {
 							Position={offset.map((x) => UDim2.fromScale(x, 0))}
 							Size={UDim2.fromScale(labelWidth, 1)}
 						/>
+						{art.bubbles !== undefined && (
+							<Bubbles
+								clock={clock}
+								image={art.bubbles}
+								aspect={art.bubblesAspect ?? 4}
+								pillAspect={pillAspect}
+								rise={art.bubbleRise ?? 0.35}
+								drift={art.bubbleDrift ?? 0.25}
+							/>
+						)}
 					</frame>
 				</canvasgroup>
 			</frame>
 		</frame>
+	);
+}
+
+/**
+ * Bubble layer in fill-box units: one Tile-mode ImageLabel, one tile wider and
+ * taller than the box, sliding up (and slightly sideways) by up to one tile,
+ * then wrapping. Seamless because the bubble tile wraps in both directions.
+ */
+function Bubbles(props: {
+	clock: Binding<number>;
+	image: string;
+	aspect: number;
+	pillAspect: number;
+	rise: number;
+	drift: number;
+}) {
+	const { clock, image, aspect, pillAspect, rise, drift } = props;
+	const tileWidth = aspect / pillAspect; // fill-box widths (one tile is one box height tall)
+	const labelWidth = 1 + tileWidth;
+	return (
+		<imagelabel
+			key="Bubbles"
+			BackgroundTransparency={1}
+			Image={image}
+			ScaleType={Enum.ScaleType.Tile}
+			TileSize={UDim2.fromScale(tileWidth / labelWidth, 0.5)}
+			Position={clock.map((t) => {
+				const up = (t * rise) % 1; // box heights
+				const side = ((t * rise * drift) / pillAspect) % tileWidth; // box widths
+				return UDim2.fromScale(side - tileWidth, -up);
+			})}
+			Size={UDim2.fromScale(labelWidth, 2)}
+			ZIndex={2}
+		/>
 	);
 }
 
