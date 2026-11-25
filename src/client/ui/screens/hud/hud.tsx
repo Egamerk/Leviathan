@@ -2,7 +2,7 @@ import React from "@rbxts/react";
 import { auxiliaryFractionAtom, localStatsAtom, staminaFractionAtom } from "client/store/stats";
 import { useAtom } from "client/ui/hooks/use-atom";
 import { HealthBar } from "./health-bar";
-import { HudArt, HudPieces, HudPlacement } from "./hud.config";
+import { HudAnimation, HudArt, HudPieces, HudPlacement } from "./hud.config";
 import { CLUSTER_ASPECT } from "./hud.layout";
 import { OxygenBar } from "./oxygen-bar";
 import { ReservoirDial } from "./reservoir-dial";
@@ -37,6 +37,7 @@ export function Hud() {
 					points={stats?.maxAuxiliary ?? 2}
 					piece={HudPieces.auxiliary}
 					art={HudArt.auxiliary}
+					flowDirection={HudAnimation.auxiliaryFlowDirection}
 				/>
 				<ResourceBar
 					name="Stamina"
@@ -44,6 +45,7 @@ export function Hud() {
 					points={stats?.maxStamina ?? 4}
 					piece={HudPieces.stamina}
 					art={HudArt.stamina}
+					flowDirection={HudAnimation.staminaFlowDirection}
 				/>
 				<ReservoirDial />
 			</frame>

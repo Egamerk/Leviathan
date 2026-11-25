@@ -146,6 +146,17 @@ export const HudArt = {
 		fill: Images.Aux,
 		fillLeft: 24 / 420,
 		fillRight: 410 / 420,
+		/** Top/bottom of the liquid pill in the fill art (fractions of its height). */
+		fillTop: 21 / 104,
+		fillBottom: 82 / 104,
+		/**
+		 * Seamless strip for the flowing liquid (assets/ui/source/AuxTile.png).
+		 * Upload it, add it to images.csv, run `npm run assets:images`, then set
+		 * this to `Images.AuxTile`. Until then the still `fill` image is shown.
+		 */
+		flowTile: undefined as string | undefined,
+		/** Width ÷ height of the flow tile. */
+		flowTileAspect: 508 / 60,
 	},
 	stamina: {
 		back: Images.Backgroundres2,
@@ -154,6 +165,11 @@ export const HudArt = {
 		fill: Images.StaminaFill,
 		fillLeft: 10 / 420,
 		fillRight: 399 / 420,
+		fillTop: 21 / 104,
+		fillBottom: 82 / 104,
+		/** Seamless strip (assets/ui/source/StaminaTile.png); set to `Images.StaminaTile` once uploaded. */
+		flowTile: undefined as string | undefined,
+		flowTileAspect: 511 / 60,
 	},
 	/** Brass divider drawn between points on the Auxiliary / Stamina bars. */
 	divider: { image: Images.Divider, heightFraction: 0.7 },
@@ -175,6 +191,16 @@ export const HudAnimation = {
 	 * of moving 0 → 1.77 in 8 seconds.
 	 */
 	bloodSpeed: 1.77 / 8,
+	/**
+	 * On-screen speed shared by every flowing liquid, in health widths per
+	 * second (the blood's speed: 1.77/8 fill-area widths, and the fill area is
+	 * 92.5% of the capsule). Bars convert it to their own width so all liquids
+	 * move together.
+	 */
+	liquidSpeed: (1.77 / 8) * 0.925,
+	/** Flow direction per bar: 1 = rightward (like the blood), -1 = leftward. */
+	auxiliaryFlowDirection: 1,
+	staminaFlowDirection: 1,
 	/**
 	 * Width of one blood tile, in fill-area widths. The original texture was
 	 * stretched 3× wide; the tile is the trimmed 875 of its 1200 px at that scale.
