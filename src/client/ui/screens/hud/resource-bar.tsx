@@ -90,19 +90,22 @@ function endShading(
 	const capEdge = SHADING.shoulder * 0.97;
 	// Anchor end: a cut edge at the cap (after the overhang), or a rounded end like the moving one.
 	const knee: [number, number] = overhang > 0 ? [o, capEdge] : [0.3 * len, SHADING.shoulder];
+	// Moving end: rounded, or cut straight when the pill extends past it (the extension is clipped).
+	const e = extension / pillWidth;
+	const tip: [number, number] = e > 0 ? [e, capEdge] : [0.3 * len, SHADING.shoulder];
 	const raw: Array<[number, number]> = capOnLeft
 		? [
 				[0, SHADING.edge],
 				[knee[0], knee[1]],
 				[o + len, 1],
-				[1 - len, 1],
-				[1 - 0.3 * len, SHADING.shoulder],
+				[1 - e - len, 1],
+				[1 - tip[0], tip[1]],
 				[1, SHADING.edge],
 			]
 		: [
 				[0, SHADING.edge],
-				[0.3 * len, SHADING.shoulder],
-				[len, 1],
+				[tip[0], tip[1]],
+				[e + len, 1],
 				[1 - o - len, 1],
 				[1 - knee[0], knee[1]],
 				[1, SHADING.edge],
@@ -149,8 +152,8 @@ function FlowingFill(props: {
 	const fromRight = art.anchor === "right";
 	// Anchored at the cap: square end (pill overhangs the clip). At the glass end: round.
 	const anchorAtCap = (art.cap ?? art.anchor) === art.anchor;
-	// The moving end reaches a cap when full (far-end cap, or the anchor is the glass end).
-	const capAtMovingEnd = art.capsBothEnds === true || !anchorAtCap;
+	// Anchored at the round glass end: the draining edge is always cut straight.
+	const straightMovingEdge = !anchorAtCap;
 	const darken = art.darkenWhenLow ?? 0;
 	const fillWidth = art.fillRight - art.fillLeft;
 	const fillHeight = art.fillBottom - art.fillTop;
@@ -170,7 +173,8 @@ function FlowingFill(props: {
 
 	const level = fraction.map((f) => math.max(f, MIN_FRACTION));
 	// Extra length past the moving edge (clipped away), so a far-end cap meets square liquid when full.
-	const extensionAt = (f: number) => (capAtMovingEnd ? radius * math.clamp((f - 0.95) / 0.05, 0, 1) : 0);
+	const extensionAt = (f: number) =>
+		straightMovingEdge ? radius : art.capsBothEnds ? radius * math.clamp((f - 0.95) / 0.05, 0, 1) : 0;
 	// Liquid (pill) extent in fill-box units: [start, start + width].
 	const startAt = (f: number) => (fromRight ? 1 - f - extensionAt(f) : -overhang);
 	const pillStart = level.map(startAt);
@@ -286,16 +290,29 @@ export function ResourceBar({ name, fraction, points, piece, art, flowDirection,
 
 	const dividers = new Array<React.Element>();
 	for (let k = 1; k < points; k++) {
+		const x = art.fillLeft + (fillWidth * k) / points;
 		dividers.push(
 			<imagelabel
 				key={`Divider${k}`}
 				AnchorPoint={new Vector2(0.5, 0.5)}
 				BackgroundTransparency={1}
-				Position={UDim2.fromScale(art.fillLeft + (fillWidth * k) / points, 0.5)}
+				Position={UDim2.fromScale(x, 0.5)}
 				Size={UDim2.fromScale(dividerWidth, dividerHeight)}
 				Image={DIVIDER.image}
 				ZIndex={2}
 			/>,
+			// Bold brass line cutting across the liquid, past its top and bottom, so it reads on any colour.
+			<frame
+				key={`DividerLine${k}`}
+				AnchorPoint={new Vector2(0.5, 0.5)}
+				BackgroundColor3={DIVIDER.lineColor}
+				BorderSizePixel={0}
+				Position={UDim2.fromScale(x, 0.5)}
+				Size={new UDim2(0, DIVIDER.lineWidth, DIVIDER.lineHeight, 0)}
+				ZIndex={3}
+			>
+				<uistroke Color={DIVIDER.lineOutline} Thickness={1} />
+			</frame>,
 		);
 	}
 
