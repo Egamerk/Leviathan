@@ -39,6 +39,11 @@ tube or capsule up to 104% (the dial gets a violet glow ring); hovering Oxygen a
 its "O₂" label to the percentage. On touch, tapping toggles the highlight. Tuning: `HudArt.hover`
 in `hud.config.ts`.
 
+**Drain direction:** Auxiliary and Stamina both keep their liquid at the inner (dial-side) end and
+drain toward the middle, so the empty part opens up at the outer brass caps. Stamina also dims as it
+drains (`darkenWhenLow` in `HudArt.stamina`; 0 turns it off). Set `anchor` / `cap` in
+`hud.config.ts` to change either bar.
+
 **Health dividers:** one brass divider per whole health point (3 between 4), drawn over the
 blood and under the glass. Height: `HudArt.healthDivider`.
 

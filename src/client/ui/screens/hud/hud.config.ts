@@ -206,8 +206,9 @@ export const HudArt = {
 	auxiliary: {
 		back: Images.BackgroundAux,
 		glass: Images.BackgroundAux2,
-		/** Side the liquid is anchored to (its brass cap). It drains away from the dial side. */
-		anchor: "left" as "left" | "right",
+		/** Brass cap on the outer (left) end. The liquid sits at the inner end and drains toward the middle. */
+		cap: "left" as "left" | "right",
+		anchor: "right" as "left" | "right",
 		fillLeft: 24 / 420,
 		fillRight: 410 / 420,
 		/** Top/bottom of the liquid pill in the fill art (fractions of its height). */
@@ -232,8 +233,11 @@ export const HudArt = {
 	stamina: {
 		back: Images.Backgroundres2,
 		glass: Images.Backgroundres,
-		/** Cap is on the right: Stamina drains left → right (away from the dial). */
-		anchor: "right" as "left" | "right",
+		/** Brass cap on the outer (right) end. The liquid sits at the inner end and drains toward the middle. */
+		cap: "right" as "left" | "right",
+		anchor: "left" as "left" | "right",
+		/** Stamina dims as it drains: at the last sliver it's at 45% brightness. */
+		darkenWhenLow: 0.55,
 		fillLeft: 10 / 420,
 		fillRight: 399 / 420,
 		fillTop: 21 / 104,

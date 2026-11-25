@@ -7,8 +7,18 @@ import { place } from "./hud.layout";
 export interface ResourceBarArt {
 	back: string;
 	glass: string;
-	/** Side of the brass cap. The liquid stays anchored there and drains from the other end. */
+	/**
+	 * Side the liquid stays anchored to; it drains from the other end. At the
+	 * brass cap the liquid end is cut square; at the rounded glass end it stays round.
+	 */
 	anchor: "left" | "right";
+	/** Side of the brass cap (defaults to `anchor`). */
+	cap?: "left" | "right";
+	/**
+	 * Darken the liquid as it drains: brightness at empty = 1 - darkenWhenLow
+	 * (0 = never darkens, 0.5 = half as bright when nearly empty).
+	 */
+	darkenWhenLow?: number;
 	fillLeft: number;
 	fillRight: number;
 	fillTop: number;
@@ -72,15 +82,18 @@ function endShading(
 	extension: number,
 	pillAspect: number,
 	capOnLeft: boolean,
+	brightness = 1,
 ): ColorSequence {
 	const pillWidth = level + overhang + extension;
 	const o = overhang / pillWidth;
 	const len = (SHADING.length * (1 / pillAspect)) / pillWidth;
 	const capEdge = SHADING.shoulder * 0.97;
+	// Anchor end: a cut edge at the cap (after the overhang), or a rounded end like the moving one.
+	const knee: [number, number] = overhang > 0 ? [o, capEdge] : [0.3 * len, SHADING.shoulder];
 	const raw: Array<[number, number]> = capOnLeft
 		? [
 				[0, SHADING.edge],
-				[o, capEdge],
+				[knee[0], knee[1]],
 				[o + len, 1],
 				[1 - len, 1],
 				[1 - 0.3 * len, SHADING.shoulder],
@@ -91,7 +104,7 @@ function endShading(
 				[0.3 * len, SHADING.shoulder],
 				[len, 1],
 				[1 - o - len, 1],
-				[1 - o, capEdge],
+				[1 - knee[0], knee[1]],
 				[1, SHADING.edge],
 			];
 	// Keypoint times must start at 0, end at 1 and strictly increase.
@@ -100,15 +113,19 @@ function endShading(
 	for (const [t, v] of raw) {
 		const time = keypoints.size() === 0 ? 0 : math.min(math.max(t, last + 1e-4), 1);
 		if (time <= last) continue;
-		keypoints.push(new ColorSequenceKeypoint(time, new Color3(v, v, v)));
+		const b = v * brightness;
+		keypoints.push(new ColorSequenceKeypoint(time, new Color3(b, b, b)));
 		last = time;
 	}
-	if (last < 1) keypoints.push(new ColorSequenceKeypoint(1, new Color3(SHADING.edge, SHADING.edge, SHADING.edge)));
+	if (last < 1) {
+		const b = SHADING.edge * brightness;
+		keypoints.push(new ColorSequenceKeypoint(1, new Color3(b, b, b)));
+	}
 	return new ColorSequence(keypoints);
 }
 
 /**
- * Flowing liquid, anchored at the cap side and draining from the other end.
+ * Flowing liquid, anchored at one end and draining from the other.
  *
  * Coordinates inside the `Box` frame are fractions of the liquid area (the
  * "fill box"), so the texture keeps its scale while the level changes:
@@ -130,11 +147,17 @@ function FlowingFill(props: {
 	const { fraction, art, barAspect, barWidthHw, flowDirection } = props;
 	const clock = useAnimationClock();
 	const fromRight = art.anchor === "right";
+	// Anchored at the cap: square end (pill overhangs the clip). At the glass end: round.
+	const anchorAtCap = (art.cap ?? art.anchor) === art.anchor;
+	// The moving end reaches a cap when full (far-end cap, or the anchor is the glass end).
+	const capAtMovingEnd = art.capsBothEnds === true || !anchorAtCap;
+	const darken = art.darkenWhenLow ?? 0;
 	const fillWidth = art.fillRight - art.fillLeft;
 	const fillHeight = art.fillBottom - art.fillTop;
 	const pillAspect = (fillWidth * barAspect) / fillHeight; // fill box width ÷ height, in pixels
 	// How far the pill extends past the cap edge, in fill-box widths (≥ its corner radius).
-	const overhang = 1 / pillAspect;
+	const overhang = anchorAtCap ? 1 / pillAspect : 0;
+	const radius = 1 / pillAspect;
 	// Tile width in fill-box widths: the tile spans the box's height, keeping its aspect.
 	const tileWidth = art.flowTileAspect / pillAspect;
 	const labelWidth = 1 + tileWidth;
@@ -147,7 +170,7 @@ function FlowingFill(props: {
 
 	const level = fraction.map((f) => math.max(f, MIN_FRACTION));
 	// Extra length past the moving edge (clipped away), so a far-end cap meets square liquid when full.
-	const extensionAt = (f: number) => (art.capsBothEnds ? overhang * math.clamp((f - 0.95) / 0.05, 0, 1) : 0);
+	const extensionAt = (f: number) => (capAtMovingEnd ? radius * math.clamp((f - 0.95) / 0.05, 0, 1) : 0);
 	// Liquid (pill) extent in fill-box units: [start, start + width].
 	const startAt = (f: number) => (fromRight ? 1 - f - extensionAt(f) : -overhang);
 	const pillStart = level.map(startAt);
@@ -179,7 +202,9 @@ function FlowingFill(props: {
 				>
 					<uicorner CornerRadius={new UDim(0.5, 0)} />
 					<uigradient
-						Color={level.map((f) => endShading(f, overhang, extensionAt(f), pillAspect, !fromRight))}
+						Color={level.map((f) =>
+							endShading(f, overhang, extensionAt(f), pillAspect, !fromRight, 1 - darken * (1 - f)),
+						)}
 					/>
 					<frame
 						key="Tex"
@@ -244,7 +269,7 @@ function Overlay(props: { clock: Binding<number>; overlay: LiquidOverlay; image:
 }
 
 /**
- * Auxiliary / Stamina tube: back, glass, flowing liquid anchored at the cap,
+ * Auxiliary / Stamina tube: back, glass, flowing liquid anchored at one end,
  * and brass dividers marking each point.
  */
 export function ResourceBar({ name, fraction, points, piece, art, flowDirection, hovered = false }: ResourceBarProps) {
