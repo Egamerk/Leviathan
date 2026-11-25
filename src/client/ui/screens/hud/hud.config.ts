@@ -267,15 +267,8 @@ export const HudArt = {
 	 */
 	liquidShading: { edge: 0.62, shoulder: 0.84, length: 0.8 },
 	/** Brass divider drawn between points on the Auxiliary / Stamina bars. */
-	divider: {
-		image: Images.Divider,
-		heightFraction: 0.7,
-		/** Brass line drawn over the liquid at each divider (height = fraction of the tube). */
-		lineColor: Color3.fromRGB(214, 164, 98),
-		lineOutline: Color3.fromRGB(36, 22, 14),
-		lineWidth: 2,
-		lineHeight: 0.66,
-	},
+	/** Divider image between points; taller than the liquid so its ends stick out a little past it. */
+	divider: { image: Images.Divider, heightFraction: 0.9 },
 	/** Dividers on the health capsule, one per whole health point (height = fraction of the capsule). */
 	healthDivider: { heightFraction: 0.78 },
 	/** Hover feedback: hovered tubes/capsules ease up to this scale; the dial gets a glow ring. Hovering Oxygen shows its %. */

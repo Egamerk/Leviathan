@@ -301,18 +301,6 @@ export function ResourceBar({ name, fraction, points, piece, art, flowDirection,
 				Image={DIVIDER.image}
 				ZIndex={2}
 			/>,
-			// Bold brass line cutting across the liquid, past its top and bottom, so it reads on any colour.
-			<frame
-				key={`DividerLine${k}`}
-				AnchorPoint={new Vector2(0.5, 0.5)}
-				BackgroundColor3={DIVIDER.lineColor}
-				BorderSizePixel={0}
-				Position={UDim2.fromScale(x, 0.5)}
-				Size={new UDim2(0, DIVIDER.lineWidth, DIVIDER.lineHeight, 0)}
-				ZIndex={3}
-			>
-				<uistroke Color={DIVIDER.lineOutline} Thickness={1} />
-			</frame>,
 		);
 	}
 
