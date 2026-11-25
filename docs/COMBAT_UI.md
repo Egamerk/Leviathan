@@ -35,10 +35,12 @@ arranged as in the Studio design.
 | Reservoir dial | `Wheel&Woe1` (holder), `Woe` (Jun 30 upload, the purple core), `Wheel` (brass ring)                  | a brass bridge plate frames the top of the chamber; unlocked: an arc gauge below it, one slice per Reservoir point with brass spokes; full slices bright spinning violet (spiral `ReservoirSwirl` once uploaded), empty slices dark, partial slices fade in (fills left → right); locked: dimmed, slow-turning "dormant" liquid |
 
 **Hover / tap:** every element has an invisible hit zone (`hover-zone.tsx`). Hovering eases the
-tube or capsule up to 104% (the dial gets a violet glow ring) and fades in a tooltip above the
-HUD (`hud-tooltip.tsx`) with the name, current value and the Trello rules for that resource
-(texts in `hud.tooltips.ts`). On touch, tapping toggles the tooltip. Style and sizes:
-`HudArt.tooltip` and `HudArt.hover` in `hud.config.ts`.
+tube or capsule up to 104% (the dial gets a violet glow ring); hovering Oxygen also crossfades
+its "O₂" label to the percentage. On touch, tapping toggles the highlight. Tuning: `HudArt.hover`
+in `hud.config.ts`.
+
+**Health dividers:** one brass divider per whole health point (3 between 4), drawn over the
+blood and under the glass. Height: `HudArt.healthDivider`.
 
 Current values come from `VitalsService` (server) → `vitalsAtom` (client). In Studio, chat
 commands help test the HUD:

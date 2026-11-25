@@ -5,9 +5,9 @@ import { ClippedFill } from "client/ui/components/clipped-fill";
 import { useAnimationClock } from "client/ui/hooks/use-animation-clock";
 import { useAtom } from "client/ui/hooks/use-atom";
 import { useSmoothedNumber } from "client/ui/hooks/use-smoothed-number";
-import { HudAnimation, HudArt, HudPieces } from "./hud.config";
+import { ArtAspect, HudAnimation, HudArt, HudPieces } from "./hud.config";
 import { place } from "./hud.layout";
-import { formatValue } from "./hud.tooltips";
+import { formatValue } from "./hud.format";
 
 const ART = HudArt.health;
 const ANIM = HudAnimation;
@@ -22,6 +22,8 @@ const Z = {
 	/** The clipped fill frames holding the blood. */
 	fill: 2,
 	blood: 2,
+	/** Point dividers: over the blood, under the glass. */
+	dividers: 5,
 	cover: 10,
 	text: 11,
 } as const;
@@ -50,6 +52,29 @@ function HealthText() {
 	);
 }
 
+/** One brass divider per whole health point (e.g. 3 between 4 points). */
+function HealthDividers() {
+	const stats = useAtom(localStatsAtom);
+	const max = stats?.maxHealth ?? 0;
+	const height = HudArt.healthDivider.heightFraction;
+	const width = (height * ArtAspect.divider) / HudPieces.health.aspect;
+	const dividers = new Array<React.Element>();
+	for (let k = 1; k < max; k++) {
+		dividers.push(
+			<imagelabel
+				key={`Divider${k}`}
+				AnchorPoint={new Vector2(0.5, 0.5)}
+				BackgroundTransparency={1}
+				Image={HudArt.divider.image}
+				Position={UDim2.fromScale(ART.fillInsetLeft + (ART.fillInsetWidth * k) / max, 0.5)}
+				Size={UDim2.fromScale(width, height)}
+				ZIndex={Z.dividers}
+			/>,
+		);
+	}
+	return <>{dividers}</>;
+}
+
 /**
  * Seamless tile in ONE ImageLabel: `ScaleType.Tile` repeats the texture across
  * a label one tile wider than the fill area. Sliding it by
@@ -74,7 +99,7 @@ function TiledBlood({ clock, image }: { clock: Binding<number>; image: string })
 	);
 }
 
-/** Health capsule: back, flowing blood clipped to current health, glass cover on top. */
+/** Health capsule: back, flowing blood clipped to current health, point dividers, glass cover on top. */
 export function HealthBar({ hovered = false }: { hovered?: boolean }) {
 	const scale = useSmoothedNumber(hovered ? HudArt.hover.scale : 1, HudArt.hover.speed);
 	const fraction = useSmoothedNumber(useAtom(healthFractionAtom), ANIM.barSmoothing);
@@ -107,6 +132,7 @@ export function HealthBar({ hovered = false }: { hovered?: boolean }) {
 					<TiledBlood clock={clock} image={ART.bloodTile} />
 				</frame>
 			</ClippedFill>
+			<HealthDividers />
 			<imagelabel
 				key="Cover"
 				BackgroundTransparency={1}

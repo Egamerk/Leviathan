@@ -3,8 +3,7 @@ import { auxiliaryFractionAtom, localStatsAtom, staminaFractionAtom } from "clie
 import { useAtom } from "client/ui/hooks/use-atom";
 import { HealthBar } from "./health-bar";
 import { HoverZone } from "./hover-zone";
-import { HudTooltip } from "./hud-tooltip";
-import type { HudElement } from "./hud.tooltips";
+import type { HudElement } from "./hud.format";
 import { HudAnimation, HudArt, HudPieces, HudPlacement } from "./hud.config";
 import { CLUSTER_ASPECT } from "./hud.layout";
 import { OxygenBar } from "./oxygen-bar";
@@ -61,7 +60,6 @@ export function Hud() {
 				<HoverZone element="auxiliary" piece={HudPieces.auxiliary} onHover={onHover} />
 				<HoverZone element="stamina" piece={HudPieces.stamina} onHover={onHover} />
 				<HoverZone element="reservoir" piece={HudPieces.core} pad={0.15} onHover={onHover} />
-				<HudTooltip hovered={hovered} />
 			</frame>
 		</screengui>
 	);

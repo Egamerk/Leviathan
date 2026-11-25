@@ -1,7 +1,7 @@
 import React from "@rbxts/react";
 import type { Piece } from "./hud.config";
 import { place } from "./hud.layout";
-import type { HudElement } from "./hud.tooltips";
+import type { HudElement } from "./hud.format";
 
 interface HoverZoneProps {
 	element: HudElement;
@@ -12,8 +12,8 @@ interface HoverZoneProps {
 }
 
 /**
- * Invisible hit area over a HUD element. Mouse: hover shows its tooltip.
- * Touch: tapping toggles it.
+ * Invisible hit area over a HUD element. Mouse: hover highlights it.
+ * Touch: tapping toggles the highlight.
  */
 export function HoverZone({ element, piece, pad = 0, onHover }: HoverZoneProps) {
 	const grown: Piece = { ...piece, width: piece.width * (1 + pad), aspect: piece.aspect };
