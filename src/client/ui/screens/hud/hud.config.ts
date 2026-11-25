@@ -10,7 +10,7 @@ import { Images } from "shared/assets/images";
  * cluster frame anchored to the bottom-centre of the screen.
  *
  * The arrangement is the Studio design, with an equal gap above and below the
- * health capsule.
+ * health capsule, and the Reservoir dial made concentric from measured art.
  */
 
 /** Width ÷ height of each image (from the uploaded art). */
@@ -30,6 +30,38 @@ const OXYGEN_HALF = 1 / ArtAspect.oxygen / 2;
 const BAR_WIDTH = 0.375;
 const BAR_HALF = BAR_WIDTH / ArtAspect.resourceBar / 2;
 
+/**
+ * Reservoir dial geometry, measured from the art (pixels in each image at
+ * 420 px wide). Used to make the three pieces concentric: the purple core
+ * fills the holder's hole, and the brass ring sits on the hole's bevelled rim.
+ */
+const Dial = {
+	holderWidth: 0.3,
+	/** Holder (Wheel&Woe1): the hole's centre and radius, and the outer edge of its bevelled rim. */
+	holeCenter: new Vector2(211, 42),
+	holeRadius: 78,
+	bevelRadius: 95,
+	/** Wheel: the brass ring's centre and its inner/outer radius. */
+	ringCenter: new Vector2(210, 44.6),
+	ringInner: 95,
+	ringOuter: 112,
+	/** Woe (purple core): the disc's radius (centred in its image). */
+	discRadius: 193.4,
+	/** How far (art px) the disc extends under the ring's inner edge. */
+	discTuck: 2,
+	/** How far (hw) the holder's top tucks under the health capsule. */
+	tuck: 0.003,
+} as const;
+
+const ART_WIDTH = 420;
+const holderScale = Dial.holderWidth / ART_WIDTH;
+const holderTop = HEALTH_HALF - Dial.tuck;
+const holeX = (Dial.holeCenter.X - ART_WIDTH / 2) * holderScale;
+const holeY = holderTop + Dial.holeCenter.Y * holderScale;
+const wheelWidth = Dial.holderWidth * (Dial.bevelRadius / Dial.ringOuter);
+const wheelScale = wheelWidth / ART_WIDTH;
+const coreWidth = (Dial.ringInner * wheelScale + Dial.discTuck * holderScale) * (ART_WIDTH / Dial.discRadius);
+
 export interface Piece {
 	/** Centre x / y in hw from the health capsule's centre. */
 	x: number;
@@ -44,9 +76,21 @@ export const HudPieces = {
 	health: { x: 0, y: 0, width: 1, aspect: ArtAspect.health },
 	auxiliary: { x: -0.3, y: HEALTH_HALF + GAP + BAR_HALF, width: BAR_WIDTH, aspect: ArtAspect.resourceBar },
 	stamina: { x: 0.3, y: HEALTH_HALF + GAP + BAR_HALF, width: BAR_WIDTH, aspect: ArtAspect.resourceBar },
-	holder: { x: 0, y: 0.1043, width: 0.3, aspect: ArtAspect.holder },
-	core: { x: 0, y: 0.0522, width: 0.1445, aspect: ArtAspect.core },
-	wheel: { x: 0, y: 0.1043, width: 0.276, aspect: ArtAspect.wheel },
+	holder: {
+		x: 0,
+		y: holderTop + Dial.holderWidth / ArtAspect.holder / 2,
+		width: Dial.holderWidth,
+		aspect: ArtAspect.holder,
+	},
+	/** Centred on the hole; sized so the disc fills it and tucks under the ring. */
+	core: { x: holeX, y: holeY, width: coreWidth, aspect: ArtAspect.core },
+	/** Ring centred on the hole, sized so its outer edge meets the bevel's outer edge. */
+	wheel: {
+		x: holeX - (Dial.ringCenter.X - ART_WIDTH / 2) * wheelScale,
+		y: holeY + (ART_WIDTH / ArtAspect.wheel / 2 - Dial.ringCenter.Y) * wheelScale,
+		width: wheelWidth,
+		aspect: ArtAspect.wheel,
+	},
 } satisfies Record<string, Piece>;
 
 export const HudPlacement = {
