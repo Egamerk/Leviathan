@@ -168,6 +168,12 @@ export const HudArt = {
 		flowTile: Images.StaminaTile,
 		flowTileAspect: 511 / 60,
 	},
+	/**
+	 * End shading for the flowing Auxiliary / Stamina liquids, matching the
+	 * original fill art: each end darkens toward the edge, giving the liquid
+	 * depth inside the tube. Brightness multipliers; `length` is in liquid heights.
+	 */
+	liquidShading: { edge: 0.62, shoulder: 0.84, length: 0.8 },
 	/** Brass divider drawn between points on the Auxiliary / Stamina bars. */
 	divider: { image: Images.Divider, heightFraction: 0.7 },
 	/** Health readout ("3 / 4") on the capsule. */

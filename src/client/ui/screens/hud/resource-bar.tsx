@@ -29,7 +29,49 @@ interface ResourceBarProps {
 }
 
 const DIVIDER = HudArt.divider;
+const SHADING = HudArt.liquidShading;
 const MIN_FRACTION = 1e-3;
+
+/**
+ * Brightness along the pill (0 = left edge, 1 = right edge) so both visible
+ * ends darken like the original fill art. The shading keeps a constant
+ * physical length (in liquid heights) whatever the level. On the cap side it
+ * starts where the clip cuts the pill (after the overhang).
+ */
+function endShading(level: number, overhang: number, pillAspect: number, capOnLeft: boolean): ColorSequence {
+	const pillWidth = level + overhang;
+	const o = overhang / pillWidth;
+	const len = (SHADING.length * (1 / pillAspect)) / pillWidth;
+	const capEdge = SHADING.shoulder * 0.97;
+	const raw: Array<[number, number]> = capOnLeft
+		? [
+				[0, SHADING.edge],
+				[o, capEdge],
+				[o + len, 1],
+				[1 - len, 1],
+				[1 - 0.3 * len, SHADING.shoulder],
+				[1, SHADING.edge],
+			]
+		: [
+				[0, SHADING.edge],
+				[0.3 * len, SHADING.shoulder],
+				[len, 1],
+				[1 - o - len, 1],
+				[1 - o, capEdge],
+				[1, SHADING.edge],
+			];
+	// Keypoint times must start at 0, end at 1 and strictly increase.
+	const keypoints = new Array<ColorSequenceKeypoint>();
+	let last = -1;
+	for (const [t, v] of raw) {
+		const time = keypoints.size() === 0 ? 0 : math.min(math.max(t, last + 1e-4), 1);
+		if (time <= last) continue;
+		keypoints.push(new ColorSequenceKeypoint(time, new Color3(v, v, v)));
+		last = time;
+	}
+	if (last < 1) keypoints.push(new ColorSequenceKeypoint(1, new Color3(SHADING.edge, SHADING.edge, SHADING.edge)));
+	return new ColorSequence(keypoints);
+}
 
 /**
  * Flowing liquid, anchored at the cap side and draining from the other end.
@@ -99,6 +141,7 @@ function FlowingFill(props: {
 					Size={pillWidth.map((w) => UDim2.fromScale(w, 1))}
 				>
 					<uicorner CornerRadius={new UDim(0.5, 0)} />
+					<uigradient Color={level.map((f) => endShading(f, overhang, pillAspect, !fromRight))} />
 					<frame
 						key="Tex"
 						BackgroundTransparency={1}
