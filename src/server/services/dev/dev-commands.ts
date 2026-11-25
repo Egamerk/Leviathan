@@ -15,6 +15,20 @@ type Handler = (player: Player, args: string[]) => void;
  */
 const handlers = new Map<string, Handler>();
 let chattedHooked = false;
+let warnedLegacy = false;
+
+/**
+ * Legacy chat ("old Roblox chat") is deprecated and may never deliver the
+ * message to the server, so commands can't run. Say so once, clearly.
+ */
+function warnIfLegacyChat() {
+	if (warnedLegacy || TextChatService.ChatVersion === Enum.ChatVersion.TextChatService) return;
+	warnedLegacy = true;
+	warn(
+		"[DevCommands] This place uses the old (legacy) chat, so /vitals and /stats may not run. " +
+			"Fix: Explorer → TextChatService → set ChatVersion to TextChatService, then press Play again.",
+	);
+}
 
 function run(player: Player, message: string, via: string): boolean {
 	const words = message.split(" ").filter((word) => word !== "");
@@ -60,5 +74,6 @@ export function registerDevCommand(alias: string, handler: Handler): void {
 	handlers.set(alias.lower(), handler);
 	hookChatted();
 	addTextChatCommand(alias);
+	warnIfLegacyChat();
 	Log.Info("Dev command {Alias} registered", alias);
 }

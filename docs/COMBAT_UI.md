@@ -51,6 +51,10 @@ commands help test the HUD:
 
 Each command logs to Output when it registers and when it runs.
 
+The commands need the **new chat**: in Studio, Explorer → `TextChatService` → `ChatVersion` =
+`TextChatService` (saved with the place). With the old (legacy) chat the server warns at startup
+and the commands may not run.
+
 Still unused: `BackgroundHealth`, `BackgroundHealth2`, `Blood` (both uploads), `Divider`,
 `Resstart`, `ResEnd`, `ResEnd1`, `Wheel&Woe` (both uploads), `Woe` (the older upload).
 
