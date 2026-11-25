@@ -149,12 +149,8 @@ export const HudArt = {
 		/** Top/bottom of the liquid pill in the fill art (fractions of its height). */
 		fillTop: 21 / 104,
 		fillBottom: 82 / 104,
-		/**
-		 * Seamless strip for the flowing liquid (assets/ui/source/AuxTile.png).
-		 * Upload it, add it to images.csv, run `npm run assets:images`, then set
-		 * this to `Images.AuxTile`. Until then the still `fill` image is shown.
-		 */
-		flowTile: undefined as string | undefined,
+		/** Seamless strip for the flowing liquid (assets/ui/source/AuxTile.png). Unset = still `fill`. */
+		flowTile: Images.AuxTile as string | undefined,
 		/** Width ÷ height of the flow tile. */
 		flowTileAspect: 508 / 60,
 	},
@@ -167,8 +163,8 @@ export const HudArt = {
 		fillRight: 399 / 420,
 		fillTop: 21 / 104,
 		fillBottom: 82 / 104,
-		/** Seamless strip (assets/ui/source/StaminaTile.png); set to `Images.StaminaTile` once uploaded. */
-		flowTile: undefined as string | undefined,
+		/** Seamless strip for the flowing liquid (assets/ui/source/StaminaTile.png). Unset = still `fill`. */
+		flowTile: Images.StaminaTile as string | undefined,
 		flowTileAspect: 511 / 60,
 	},
 	/** Brass divider drawn between points on the Auxiliary / Stamina bars. */

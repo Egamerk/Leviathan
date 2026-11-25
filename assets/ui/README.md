@@ -31,5 +31,5 @@ copies in Asset Manager to get clean keys.
 | --- | --- | --- |
 | `source/HealthBloodTile.png` | 81895076126332 | Seamless version of `HealthBlood`: transparent ends trimmed, a baked-in vertical line softened, ends blended so it repeats with no visible join. The HUD loops it with one `ScaleType.Tile` ImageLabel. |
 | `source/StaminaFill.png` | 86227484174680 | The Stamina fill (`res`) recoloured green, so Stamina no longer looks like the purple Reservoir. Same shading and texture. |
-| `source/AuxTile.png` | **upload needed** | Seamless strip from the middle of the Auxiliary fill, so the orange liquid can flow. Once uploaded: add it to `images.csv` as `AuxTile`, run `npm run assets:images`, set `HudArt.auxiliary.flowTile = Images.AuxTile`. |
-| `source/StaminaTile.png` | **upload needed** | Same for the green Stamina liquid: add it as `StaminaTile`, set `HudArt.stamina.flowTile = Images.StaminaTile`. |
+| `source/AuxTile.png` | 127532014150723 | Seamless strip from the middle of the Auxiliary fill, so the orange liquid flows. |
+| `source/StaminaTile.png` | 77945278284031 | Same for the green Stamina liquid. |

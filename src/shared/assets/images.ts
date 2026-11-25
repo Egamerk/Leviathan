@@ -5,6 +5,8 @@
 export const Images = {
 	/** "Aux", modified 2026-03-26 */
 	Aux: "rbxassetid://132572534155056",
+	/** "AuxTile", modified unknown */
+	AuxTile: "rbxassetid://127532014150723",
 	/** "BackgroundAux", modified 2026-03-26 */
 	BackgroundAux: "rbxassetid://131696029375511",
 	/** "BackgroundAux2", modified 2026-03-26 */
@@ -49,6 +51,8 @@ export const Images = {
 	Resstart: "rbxassetid://77943388945462",
 	/** "StaminaFill", modified unknown */
 	StaminaFill: "rbxassetid://86227484174680",
+	/** "StaminaTile", modified unknown */
+	StaminaTile: "rbxassetid://77945278284031",
 	/** "Wheel", modified 2026-06-30 */
 	Wheel: "rbxassetid://80750835199144",
 	/** "Wheel&Woe", modified 2026-06-30 */
