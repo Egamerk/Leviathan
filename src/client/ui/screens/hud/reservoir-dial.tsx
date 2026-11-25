@@ -28,11 +28,15 @@ function useDiscImage(): string {
 	useEffect(() => {
 		if (swirl === undefined) return;
 		let alive = true;
-		task.spawn(() =>
-			ContentProvider.PreloadAsync([swirl], (_, status) => {
+		// Preload through an ImageLabel: a bare id string can't be preloaded as an image.
+		const probe = new Instance("ImageLabel");
+		probe.Image = swirl;
+		task.spawn(() => {
+			ContentProvider.PreloadAsync([probe], (_, status) => {
 				if (alive && status === Enum.AssetFetchStatus.Success) setImage(swirl);
-			}),
-		);
+			});
+			probe.Destroy();
+		});
 		return () => {
 			alive = false;
 		};
