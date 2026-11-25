@@ -21,12 +21,15 @@ export const ArtAspect = {
 	holder: 420 / 191,
 	wheel: 420 / 258,
 	core: 420 / 417,
+	divider: 420 / 39,
 } as const;
 
 /** Gap between the health capsule and the rows above/below it (hw). */
-const GAP = 0.012;
+const GAP = 0.016;
 const HEALTH_HALF = 1 / ArtAspect.health / 2;
-const OXYGEN_HALF = 1 / ArtAspect.oxygen / 2;
+/** Oxygen is secondary, so it's a little shorter than health. */
+const OXYGEN_WIDTH = 0.82;
+const OXYGEN_HALF = OXYGEN_WIDTH / ArtAspect.oxygen / 2;
 const BAR_WIDTH = 0.375;
 const BAR_HALF = BAR_WIDTH / ArtAspect.resourceBar / 2;
 
@@ -72,7 +75,7 @@ export interface Piece {
 }
 
 export const HudPieces = {
-	oxygen: { x: 0, y: -(HEALTH_HALF + GAP + OXYGEN_HALF), width: 1, aspect: ArtAspect.oxygen },
+	oxygen: { x: 0, y: -(HEALTH_HALF + GAP + OXYGEN_HALF), width: OXYGEN_WIDTH, aspect: ArtAspect.oxygen },
 	health: { x: 0, y: 0, width: 1, aspect: ArtAspect.health },
 	auxiliary: { x: -0.3, y: HEALTH_HALF + GAP + BAR_HALF, width: BAR_WIDTH, aspect: ArtAspect.resourceBar },
 	stamina: { x: 0.3, y: HEALTH_HALF + GAP + BAR_HALF, width: BAR_WIDTH, aspect: ArtAspect.resourceBar },
@@ -92,6 +95,15 @@ export const HudPieces = {
 		aspect: ArtAspect.wheel,
 	},
 } satisfies Record<string, Piece>;
+
+/**
+ * The top of the purple disc hides under the health capsule, so the Reservoir
+ * level is measured over the VISIBLE part of the chamber: from the capsule's
+ * bottom edge down to the disc's bottom. This is that span as a fraction of
+ * the disc's height (a full reservoir fills it, empty shows the dark hole).
+ */
+const coreHeight = HudPieces.core.width / HudPieces.core.aspect;
+export const RESERVOIR_VISIBLE_FRACTION = (HudPieces.core.y + coreHeight / 2 - HEALTH_HALF) / coreHeight;
 
 export const HudPlacement = {
 	/** Cluster height as a fraction of the screen's height. */
@@ -117,9 +129,42 @@ export const HudArt = {
 		fillInsetWidth: 0.925,
 	},
 	oxygen: { bar: Images.OxygenBar, fill: Images.Oxygen },
-	/** Draw order matches Studio: back (-1) → glass (0) → fill (1). */
-	auxiliary: { back: Images.BackgroundAux, glass: Images.BackgroundAux2, fill: Images.Aux },
-	stamina: { back: Images.Backgroundres2, glass: Images.Backgroundres, fill: Images.Res },
+	/**
+	 * Point bars. Draw order matches Studio: back (-1) → glass (0) → fill (1).
+	 * `fillLeft`/`fillRight` are where the liquid starts/ends in the fill art
+	 * (fractions of its width), so fill amounts and point dividers line up.
+	 */
+	auxiliary: {
+		back: Images.BackgroundAux,
+		glass: Images.BackgroundAux2,
+		fill: Images.Aux,
+		fillLeft: 24 / 420,
+		fillRight: 410 / 420,
+	},
+	stamina: {
+		back: Images.Backgroundres2,
+		glass: Images.Backgroundres,
+		/**
+		 * Purple, which clashes with the Reservoir. Upload
+		 * assets/ui/source/StaminaFill.png (the same art recoloured green), add it
+		 * to images.csv, run `npm run assets:images`, then set this to
+		 * `Images.StaminaFill`.
+		 */
+		fill: Images.Res,
+		fillLeft: 10 / 420,
+		fillRight: 399 / 420,
+	},
+	/** Brass divider drawn between points on the Auxiliary / Stamina bars. */
+	divider: { image: Images.Divider, heightFraction: 0.7 },
+	/** Health readout ("3 / 4") on the capsule. */
+	healthText: {
+		font: new Font("rbxasset://fonts/families/Merriweather.json", Enum.FontWeight.Bold),
+		color: Color3.fromRGB(240, 228, 214),
+		strokeColor: Color3.fromRGB(40, 14, 12),
+		strokeThickness: 1.5,
+		/** Text height as a fraction of the capsule's height. */
+		heightFraction: 0.6,
+	},
 	reservoir: { holder: Images.WheelAndWoe1, wheel: Images.Wheel, core: Images.Woe_v2, coreRotation: -180 },
 } as const;
 

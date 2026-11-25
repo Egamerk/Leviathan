@@ -33,11 +33,22 @@ export interface Placement {
 	Size: UDim2;
 }
 
+/** A piece's centre and size as Scale of the cluster frame. */
+export function rect(piece: Piece) {
+	return {
+		x: (piece.x - left) / CLUSTER_WIDTH,
+		y: (piece.y - top) / CLUSTER_HEIGHT,
+		width: piece.width / CLUSTER_WIDTH,
+		height: piece.width / piece.aspect / CLUSTER_HEIGHT,
+	};
+}
+
 /** Centre-anchored Position/Size for a piece, as Scale of the cluster frame. */
 export function place(piece: Piece): Placement {
+	const r = rect(piece);
 	return {
 		AnchorPoint: new Vector2(0.5, 0.5),
-		Position: UDim2.fromScale((piece.x - left) / CLUSTER_WIDTH, (piece.y - top) / CLUSTER_HEIGHT),
-		Size: UDim2.fromScale(piece.width / CLUSTER_WIDTH, piece.width / piece.aspect / CLUSTER_HEIGHT),
+		Position: UDim2.fromScale(r.x, r.y),
+		Size: UDim2.fromScale(r.width, r.height),
 	};
 }

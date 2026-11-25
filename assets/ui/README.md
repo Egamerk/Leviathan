@@ -30,3 +30,4 @@ copies in Asset Manager to get clean keys.
 | File | What it is | To use it |
 | --- | --- | --- |
 | `source/HealthBloodTile.png` | Seamless version of `HealthBlood`: transparent ends trimmed, a baked-in vertical line softened, ends blended so it repeats with no visible join | Upload it as an Image, add the row to `images.csv` (name `HealthBloodTile`), run `npm run assets:images`, then set `HudArt.health.bloodTile = Images.HealthBloodTile` in `src/client/ui/screens/hud/hud.config.ts` |
+| `source/StaminaFill.png` | The Stamina fill (`res`) recoloured green, so Stamina no longer looks like the purple Reservoir. Same shading and texture. | Upload it, add the row to `images.csv` (name `StaminaFill`), run `npm run assets:images`, then set `HudArt.stamina.fill = Images.StaminaFill` in `hud.config.ts` |

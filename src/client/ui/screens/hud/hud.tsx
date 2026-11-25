@@ -1,5 +1,5 @@
 import React from "@rbxts/react";
-import { auxiliaryFractionAtom, staminaFractionAtom } from "client/store/stats";
+import { auxiliaryFractionAtom, localStatsAtom, staminaFractionAtom } from "client/store/stats";
 import { useAtom } from "client/ui/hooks/use-atom";
 import { HealthBar } from "./health-bar";
 import { HudArt, HudPieces, HudPlacement } from "./hud.config";
@@ -17,6 +17,7 @@ import { ResourceBar } from "./resource-bar";
 export function Hud() {
 	const auxiliary = useAtom(auxiliaryFractionAtom);
 	const stamina = useAtom(staminaFractionAtom);
+	const stats = useAtom(localStatsAtom);
 
 	return (
 		<screengui key="Hud" ResetOnSpawn={false} ZIndexBehavior={Enum.ZIndexBehavior.Sibling}>
@@ -30,8 +31,20 @@ export function Hud() {
 				<uiaspectratioconstraint AspectRatio={CLUSTER_ASPECT} AspectType={Enum.AspectType.FitWithinMaxSize} />
 				<OxygenBar />
 				<HealthBar />
-				<ResourceBar name="Auxiliary" fraction={auxiliary} piece={HudPieces.auxiliary} art={HudArt.auxiliary} />
-				<ResourceBar name="Stamina" fraction={stamina} piece={HudPieces.stamina} art={HudArt.stamina} />
+				<ResourceBar
+					name="Auxiliary"
+					fraction={auxiliary}
+					points={stats?.maxAuxiliary ?? 2}
+					piece={HudPieces.auxiliary}
+					art={HudArt.auxiliary}
+				/>
+				<ResourceBar
+					name="Stamina"
+					fraction={stamina}
+					points={stats?.maxStamina ?? 4}
+					piece={HudPieces.stamina}
+					art={HudArt.stamina}
+				/>
 				<ReservoirDial />
 			</frame>
 		</screengui>

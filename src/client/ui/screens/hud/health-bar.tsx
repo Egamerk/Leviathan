@@ -1,5 +1,6 @@
 import React, { type Binding } from "@rbxts/react";
-import { healthFractionAtom } from "client/store/stats";
+import { vitalsAtom } from "client/store";
+import { healthFractionAtom, localStatsAtom } from "client/store/stats";
 import { ClippedFill } from "client/ui/components/clipped-fill";
 import { useAnimationClock } from "client/ui/hooks/use-animation-clock";
 import { useAtom } from "client/ui/hooks/use-atom";
@@ -22,7 +23,39 @@ const Z = {
 	/** Blood copies use bloodBase (tile) or bloodBase .. bloodBase + 2 (fallback chain). */
 	bloodBase: 2,
 	cover: 10,
+	text: 11,
 } as const;
+
+const TEXT = HudArt.healthText;
+
+/** "3", "3.5", never "3.50" or "3.0". */
+function formatValue(value: number): string {
+	const rounded = math.round(value * 10) / 10;
+	return rounded % 1 === 0 ? tostring(rounded) : string.format("%.1f", rounded);
+}
+
+/** "3 / 4" readout, read straight from synced vitals and derived stats. */
+function HealthText() {
+	const vitals = useAtom(vitalsAtom);
+	const stats = useAtom(localStatsAtom);
+	if (vitals === undefined || stats === undefined) return undefined;
+	return (
+		<textlabel
+			key="Readout"
+			AnchorPoint={new Vector2(0.5, 0.5)}
+			BackgroundTransparency={1}
+			Position={UDim2.fromScale(0.5, 0.5)}
+			Size={UDim2.fromScale(0.5, TEXT.heightFraction)}
+			FontFace={TEXT.font}
+			Text={`${formatValue(vitals.health)} / ${formatValue(stats.maxHealth)}`}
+			TextColor3={TEXT.color}
+			TextScaled={true}
+			ZIndex={Z.text}
+		>
+			<uistroke Color={TEXT.strokeColor} Thickness={TEXT.strokeThickness} />
+		</textlabel>
+	);
+}
 
 /**
  * Seamless tile in ONE ImageLabel: `ScaleType.Tile` repeats the texture across
@@ -126,6 +159,7 @@ export function HealthBar() {
 				Image={ART.cover}
 				ZIndex={Z.cover}
 			/>
+			<HealthText />
 		</frame>
 	);
 }

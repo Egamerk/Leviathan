@@ -28,11 +28,11 @@ arranged as in the Studio design.
 
 | Element | Images | Behaviour |
 | --- | --- | --- |
-| Health | `BloodBackground`, `HealthBlood` (or the seamless `HealthBloodTile` once uploaded), `CapsuleCover` | blood flows at the Studio speed (1.77 fill widths per 8 s) and loops; clipped to current health |
+| Health | `BloodBackground`, `HealthBlood` (or the seamless `HealthBloodTile` once uploaded), `CapsuleCover`, plus a `3 / 4` readout | blood flows at the Studio speed (1.77 fill widths per 8 s) and loops; clipped to current health |
 | Oxygen | `OxygenBar`, `Oxygen` | fill reads `oxygenFractionAtom` (full until the Oxygen system exists) |
-| Auxiliary | `BackgroundAux`, `BackgroundAux2`, `Aux` | fill drains/refills smoothly with current Auxiliary |
-| Stamina | `Backgroundres2`, `Backgroundres`, `res` | fill drains/refills smoothly with current Stamina |
-| Reservoir dial | `Wheel&Woe1` (holder), `Woe` (Jun 30 upload, the purple core), `Wheel` (brass ring) | the purple core spins; holder and ring stay still |
+| Auxiliary | `BackgroundAux`, `BackgroundAux2`, `Aux`, `Divider` | fill drains/refills smoothly; brass dividers mark each point |
+| Stamina | `Backgroundres2`, `Backgroundres`, `res` (green `StaminaFill` once uploaded), `Divider` | fill drains/refills smoothly; brass dividers mark each point |
+| Reservoir dial | `Wheel&Woe1` (holder), `Woe` (Jun 30 upload, the purple core), `Wheel` (brass ring) | purple liquid spins and fills the visible chamber from the bottom by current Reservoir |
 
 Current values come from `VitalsService` (server) → `vitalsAtom` (client). In Studio, use
 `/vitals health 2`, `/vitals stamina -1` or `/vitals full` in chat to test the bars.
