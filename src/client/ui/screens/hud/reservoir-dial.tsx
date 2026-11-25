@@ -1,5 +1,5 @@
 import React from "@rbxts/react";
-import { reservoirFractionAtom } from "client/store/stats";
+import { localStatsAtom, reservoirFractionAtom } from "client/store/stats";
 import { useAnimationClock } from "client/ui/hooks/use-animation-clock";
 import { useAtom } from "client/ui/hooks/use-atom";
 import { useSmoothedNumber } from "client/ui/hooks/use-smoothed-number";
@@ -12,13 +12,19 @@ const MIN_LEVEL = 1e-3;
 /**
  * Centre dial: brass holder, the purple Reservoir liquid, and the brass ring.
  *
- * The liquid spins and fills the chamber from the bottom up to the current
- * Reservoir. The clip is a CanvasGroup, because plain ClipsDescendants doesn't
- * clip rotated children reliably.
+ * - Unlocked: the liquid spins and fills the visible chamber from the bottom up
+ *   to the current Reservoir. The clip is a CanvasGroup, because plain
+ *   ClipsDescendants doesn't clip rotated children reliably.
+ * - Locked: the whole chamber shows dimmed, slow-turning liquid (dormant), so
+ *   the HUD never shows an empty hole that looks broken.
  */
 export function ReservoirDial() {
 	const clock = useAnimationClock();
-	const coreRotation = clock.map((t) => (ART.coreRotation + t * HudAnimation.reservoirSpinDegreesPerSecond) % 360);
+	const stats = useAtom(localStatsAtom);
+	const unlocked = stats?.hasReservoir === true;
+	const spin = HudAnimation.reservoirSpinDegreesPerSecond * (unlocked ? 1 : HudAnimation.reservoirDormantSpinFactor);
+	const coreRotation = clock.map((t) => (ART.coreRotation + t * spin) % 360);
+
 	const level = useSmoothedNumber(useAtom(reservoirFractionAtom), HudAnimation.barSmoothing);
 	// Visible height of the liquid, as a fraction of the disc's full height.
 	const boxFraction = level.map((f) => math.max(f * RESERVOIR_VISIBLE_FRACTION, MIN_LEVEL));
@@ -33,25 +39,38 @@ export function ReservoirDial() {
 				ZIndex={-3}
 				{...place(HudPieces.holder)}
 			/>
-			<canvasgroup
-				key="ReservoirLiquid"
-				AnchorPoint={new Vector2(0.5, 1)}
-				BackgroundTransparency={1}
-				Position={UDim2.fromScale(core.x, core.y + core.height / 2)}
-				Size={boxFraction.map((b) => UDim2.fromScale(core.width, core.height * b))}
-				Visible={level.map((f) => f > MIN_LEVEL)}
-				ZIndex={-2}
-			>
-				<imagelabel
-					key="Core"
+			{unlocked ? (
+				<canvasgroup
+					key="ReservoirLiquid"
 					AnchorPoint={new Vector2(0.5, 1)}
 					BackgroundTransparency={1}
+					Position={UDim2.fromScale(core.x, core.y + core.height / 2)}
+					Size={boxFraction.map((b) => UDim2.fromScale(core.width, core.height * b))}
+					Visible={level.map((f) => f > MIN_LEVEL)}
+					ZIndex={-2}
+				>
+					<imagelabel
+						key="Core"
+						AnchorPoint={new Vector2(0.5, 1)}
+						BackgroundTransparency={1}
+						Image={ART.core}
+						Position={UDim2.fromScale(0.5, 1)}
+						Rotation={coreRotation}
+						Size={boxFraction.map((b) => UDim2.fromScale(1, 1 / b))}
+					/>
+				</canvasgroup>
+			) : (
+				<imagelabel
+					key="ReservoirDormant"
+					BackgroundTransparency={1}
 					Image={ART.core}
-					Position={UDim2.fromScale(0.5, 1)}
+					ImageColor3={ART.dormantTint}
+					ImageTransparency={ART.dormantTransparency}
 					Rotation={coreRotation}
-					Size={boxFraction.map((b) => UDim2.fromScale(1, 1 / b))}
+					ZIndex={-2}
+					{...place(HudPieces.core)}
 				/>
-			</canvasgroup>
+			)}
 			<imagelabel
 				key="ReservoirWheel"
 				BackgroundTransparency={1}

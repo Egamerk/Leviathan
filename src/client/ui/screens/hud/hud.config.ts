@@ -178,7 +178,19 @@ export const HudArt = {
 		/** Text height as a fraction of the capsule's height. */
 		heightFraction: 0.6,
 	},
-	reservoir: { holder: Images.WheelAndWoe1, wheel: Images.Wheel, core: Images.Woe_v2, coreRotation: -180 },
+	reservoir: {
+		holder: Images.WheelAndWoe1,
+		wheel: Images.Wheel,
+		core: Images.Woe_v2,
+		coreRotation: -180,
+		/**
+		 * While Reservoir is LOCKED (Depth Affinity below the unlock and not an
+		 * Occultist/Apostle), the chamber shows dimmed, slow-turning liquid
+		 * instead of an empty hole, so it reads as "dormant" rather than broken.
+		 */
+		dormantTint: Color3.fromRGB(150, 140, 175),
+		dormantTransparency: 0.45,
+	},
 } as const;
 
 export const HudAnimation = {
@@ -204,6 +216,8 @@ export const HudAnimation = {
 	bloodTileWidth: 3 * (875 / 1200),
 	/** Reservoir core spin, degrees per second (the wheel stays still). */
 	reservoirSpinDegreesPerSecond: 25,
+	/** Spin speed multiplier while Reservoir is locked (dormant). */
+	reservoirDormantSpinFactor: 0.4,
 	/** Bar drain/refill smoothing (≈ 1 / seconds). */
 	barSmoothing: 6,
 } as const;

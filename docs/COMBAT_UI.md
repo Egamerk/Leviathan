@@ -32,10 +32,16 @@ arranged as in the Studio design.
 | Oxygen | `OxygenBar`, `Oxygen` | air-blue fill behind the glass, clipped between the caps; reads `oxygenFractionAtom` (full until the Oxygen system exists) |
 | Auxiliary | `BackgroundAux`, `BackgroundAux2`, `AuxTile`, `Divider` | liquid flows (one tiling image in a rounded CanvasGroup) and drains/refills smoothly; brass dividers mark each point |
 | Stamina | `Backgroundres2`, `Backgroundres`, `StaminaTile` (green), `Divider` | liquid flows and drains/refills smoothly; brass dividers mark each point |
-| Reservoir dial | `Wheel&Woe1` (holder), `Woe` (Jun 30 upload, the purple core), `Wheel` (brass ring) | purple liquid spins and fills the visible chamber from the bottom by current Reservoir |
+| Reservoir dial | `Wheel&Woe1` (holder), `Woe` (Jun 30 upload, the purple core), `Wheel` (brass ring) | unlocked: purple liquid spins and fills the visible chamber by current Reservoir; locked: dimmed, slow-turning "dormant" liquid |
 
-Current values come from `VitalsService` (server) → `vitalsAtom` (client). In Studio, use
-`/vitals health 2`, `/vitals stamina -1` or `/vitals full` in chat to test the bars.
+Current values come from `VitalsService` (server) → `vitalsAtom` (client). In Studio, chat
+commands help test the HUD:
+
+- `/vitals health 2`, `/vitals stamina -1`, `/vitals full`: set or refill pools.
+- `/stats connection 2`: grant and spend stat points (2 Connection unlocks Reservoir on the
+  default build).
+
+Each command logs to Output when it registers and when it runs.
 
 Still unused: `BackgroundHealth`, `BackgroundHealth2`, `Blood` (both uploads), `Divider`,
 `Resstart`, `ResEnd`, `ResEnd1`, `Wheel&Woe` (both uploads), `Woe` (the older upload).
