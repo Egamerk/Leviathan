@@ -32,7 +32,7 @@ arranged as in the Studio design.
 | Oxygen | `OxygenTube`, `OxygenGlass`, `OxygenTile` (gas), `OxygenBubbles`, plus an O₂ label | same tube family as Auxiliary/Stamina (caps both ends); pale gas flows, bubbles rise; reads `oxygenFractionAtom` (full until the Oxygen system exists) |
 | Auxiliary | `BackgroundAux`, `BackgroundAux2`, `AuxTile`, `Divider` | liquid flows (one tiling image in a rounded CanvasGroup) and drains/refills smoothly; brass dividers mark each point |
 | Stamina | `Backgroundres2`, `Backgroundres`, `StaminaTile` (green), `Divider` | liquid flows and drains/refills smoothly; brass dividers mark each point |
-| Reservoir dial | `Wheel&Woe1` (holder), `Woe` (Jun 30 upload, the purple core), `Wheel` (brass ring) | unlocked: purple liquid spins and fills the visible chamber by current Reservoir; locked: dimmed, slow-turning "dormant" liquid |
+| Reservoir dial | `Wheel&Woe1` (holder), `Woe` (Jun 30 upload, the purple core), `Wheel` (brass ring) | unlocked: a 210° arc gauge across the visible lower part, one slice per Reservoir point with brass spokes; full slices bright and spinning, empty slices dim, partial slices fade in (fills left → right); locked: dimmed, slow-turning "dormant" liquid |
 
 Current values come from `VitalsService` (server) → `vitalsAtom` (client). In Studio, chat
 commands help test the HUD:

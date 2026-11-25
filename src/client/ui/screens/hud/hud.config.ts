@@ -131,15 +131,6 @@ export const HudPieces = {
 	},
 } satisfies Record<string, Piece>;
 
-/**
- * The top of the purple disc hides under the health capsule, so the Reservoir
- * level is measured over the VISIBLE part of the chamber: from the capsule's
- * bottom edge down to the disc's bottom. This is that span as a fraction of
- * the disc's height (a full reservoir fills it, empty shows the dark hole).
- */
-const coreHeight = HudPieces.core.width / HudPieces.core.aspect;
-export const RESERVOIR_VISIBLE_FRACTION = (HudPieces.core.y + coreHeight / 2 - HEALTH_HALF) / coreHeight;
-
 export const HudPlacement = {
 	/** Cluster height as a fraction of the screen's height. */
 	height: 0.18,
@@ -234,6 +225,25 @@ export const HudArt = {
 		 */
 		dormantTint: Color3.fromRGB(150, 140, 175),
 		dormantTransparency: 0.45,
+		/**
+		 * Unlocked: an arc gauge split into one slice per Reservoir point. The
+		 * top of the disc hides under the health capsule, so the gauge uses the
+		 * visible lower arc, filling left → right through the bottom.
+		 */
+		gauge: {
+			/** Arc span in degrees, centred on the bottom of the disc. */
+			arcDegrees: 210,
+			/** Empty slices: darker, dimmer liquid. */
+			emptyTint: Color3.fromRGB(110, 100, 140),
+			emptyTransparency: 0.35,
+			/** Brass spokes between slices: line and its dark outline, as fractions of the disc's width. */
+			spokeColor: Color3.fromRGB(201, 146, 86),
+			spokeOutline: Color3.fromRGB(40, 24, 16),
+			spokeWidth: 0.014,
+			spokeOutlineWidth: 0.03,
+			/** Spoke length as a fraction of the disc's diameter (from the centre outward). */
+			spokeLength: 0.94,
+		},
 	},
 } as const;
 

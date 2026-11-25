@@ -29,6 +29,3 @@ export const staminaFractionAtom = computed(() =>
 export const auxiliaryFractionAtom = computed(() =>
 	vitalsAtom() ? fraction(vitalsAtom()!.auxiliary, localStatsAtom()?.maxAuxiliary) : 1,
 );
-export const reservoirFractionAtom = computed(() =>
-	vitalsAtom() ? fraction(vitalsAtom()!.reservoir, localStatsAtom()?.maxReservoir) : 0,
-);
