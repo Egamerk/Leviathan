@@ -28,18 +28,16 @@ export const ArtAspect = {
 /**
  * Oxygen as a tube in the same family as Auxiliary / Stamina (caps on both
  * ends), filled with pale gas and rising bubbles so it reads as air, not
- * liquid. Art in assets/ui/source: OxygenTube.png, OxygenGlass.png,
- * OxygenTile.png (gas) and OxygenBubbles.png. Upload them, add them to
- * images.csv, run `npm run assets:images`, then set the four ids below.
- * Until `back`, `glass` and `flowTile` are set, the thin original bar is used.
+ * liquid (art in assets/ui/source). Clearing `back`, `glass` or `flowTile`
+ * falls back to the thin original bar.
  */
 const OxygenTubeArt = {
-	back: undefined as string | undefined,
-	glass: undefined as string | undefined,
-	flowTile: undefined as string | undefined,
+	back: Images.OxygenTube as string | undefined,
+	glass: Images.OxygenGlass as string | undefined,
+	flowTile: Images.OxygenTile as string | undefined,
 	flowTileAspect: 508 / 60,
 	/** Transparent bubble layer, seamless in both directions (1 tube-height tall). */
-	bubbles: undefined as string | undefined,
+	bubbles: Images.OxygenBubbles as string | undefined,
 	bubblesAspect: 512 / 128,
 	/** Bubble rise speed in tube heights per second, and sideways drift relative to it. */
 	bubbleRise: 0.35,

@@ -33,7 +33,7 @@ copies in Asset Manager to get clean keys.
 | `source/StaminaFill.png` | 86227484174680 | The Stamina fill (`res`) recoloured green, so Stamina no longer looks like the purple Reservoir. Same shading and texture. |
 | `source/AuxTile.png` | 127532014150723 | Seamless strip from the middle of the Auxiliary fill, so the orange liquid flows. |
 | `source/StaminaTile.png` | 77945278284031 | Same for the green Stamina liquid. |
-| `source/OxygenTube.png` | **upload needed** | Oxygen tube in the Auxiliary/Stamina style: your Auxiliary tube with its left end mirrored for a second cap, and the even middle stretched. |
-| `source/OxygenGlass.png` | **upload needed** | The matching glass layer (from `BackgroundAux2`, built the same way). |
-| `source/OxygenTile.png` | **upload needed** | Seamless pale gas for Oxygen: low-contrast mist, lighter at the top, from the Auxiliary liquid's texture. |
-| `source/OxygenBubbles.png` | **upload needed** | Transparent bubbles, seamless in both directions, that rise through the gas. Once all four are uploaded, add them to `images.csv` (`OxygenTube`, `OxygenGlass`, `OxygenTile`, `OxygenBubbles`), run `npm run assets:images`, and set the ids in `OxygenTubeArt` at the top of `hud.config.ts`. |
+| `source/OxygenTube.png` | 120379759578056 | Oxygen tube in the Auxiliary/Stamina style: your Auxiliary tube with its left end mirrored for a second cap, and the even middle stretched. |
+| `source/OxygenGlass.png` | 97372734058818 | The matching glass layer (from `BackgroundAux2`, built the same way). |
+| `source/OxygenTile.png` | 123049627159440 | Seamless pale gas for Oxygen: low-contrast mist, lighter at the top, from the Auxiliary liquid's texture. |
+| `source/OxygenBubbles.png` | 77723458430971 | Transparent bubbles, seamless in both directions, that rise through the gas. |

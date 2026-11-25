@@ -41,6 +41,14 @@ export const Images = {
 	Oxygen: "rbxassetid://74475428106789",
 	/** "OxygenBar", modified unknown */
 	OxygenBar: "rbxassetid://88653580683475",
+	/** "OxygenBubbles", modified unknown */
+	OxygenBubbles: "rbxassetid://77723458430971",
+	/** "OxygenGlass", modified unknown */
+	OxygenGlass: "rbxassetid://97372734058818",
+	/** "OxygenTile", modified unknown */
+	OxygenTile: "rbxassetid://123049627159440",
+	/** "OxygenTube", modified unknown */
+	OxygenTube: "rbxassetid://120379759578056",
 	/** "res", modified 2026-03-26 */
 	Res: "rbxassetid://118289853331031",
 	/** "ResEnd", modified 2026-06-19 */
