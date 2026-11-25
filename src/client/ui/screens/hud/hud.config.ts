@@ -238,8 +238,8 @@ export const HudArt = {
 		fillRight: 399 / 420,
 		fillTop: 21 / 104,
 		fillBottom: 82 / 104,
-		/** Seamless strip (assets/ui/source/StaminaTile.png): StaminaFill's green liquid. */
-		flowTile: Images.StaminaTile,
+		/** Seamless strip (assets/ui/source/StaminaTileBlue.png): cobalt-blue liquid. */
+		flowTile: Images.StaminaTileBlue,
 		flowTileAspect: 511 / 60,
 		/**
 		 * Kinetic energy: quick light streaks rushing through the liquid

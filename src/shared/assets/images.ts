@@ -69,6 +69,8 @@ export const Images = {
 	StaminaStreaks: "rbxassetid://107649148856320",
 	/** "StaminaTile", modified unknown */
 	StaminaTile: "rbxassetid://77945278284031",
+	/** "StaminaTileBlue", modified 2026-11-25 */
+	StaminaTileBlue: "rbxassetid://103127781750945",
 	/** "Wheel", modified 2026-06-30 */
 	Wheel: "rbxassetid://80750835199144",
 	/** "Wheel&Woe", modified 2026-06-30 */
