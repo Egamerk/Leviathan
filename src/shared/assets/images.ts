@@ -55,6 +55,8 @@ export const Images = {
 	ResEnd: "rbxassetid://116795170524828",
 	/** "ResEnd1", modified 2026-06-19 */
 	ResEnd1: "rbxassetid://128351465114516",
+	/** "ReservoirSwirl", modified unknown */
+	ReservoirSwirl: "rbxassetid://125262881309567",
 	/** "Resstart", modified 2026-06-19 */
 	Resstart: "rbxassetid://77943388945462",
 	/** "StaminaFill", modified unknown */

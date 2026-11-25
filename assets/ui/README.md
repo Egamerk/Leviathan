@@ -37,4 +37,4 @@ copies in Asset Manager to get clean keys.
 | `source/OxygenGlass.png` | 97372734058818 | The matching glass layer (from `BackgroundAux2`, built the same way). |
 | `source/OxygenTile.png` | 123049627159440 | Seamless pale gas for Oxygen: low-contrast mist, lighter at the top, from the Auxiliary liquid's texture. |
 | `source/OxygenBubbles.png` | 77723458430971 | Transparent bubbles, seamless in both directions, that rise through the gas. |
-| `source/ReservoirSwirl.png` | **upload needed** | Vivid violet Reservoir disc with spiral arms (painted texture from the original `Woe` disc blended in), so its spin is clearly visible. Add it to `images.csv` as `ReservoirSwirl`, run `npm run assets:images`, set `HudArt.reservoir.swirl = Images.ReservoirSwirl`. |
+| `source/ReservoirSwirl.png` | 125262881309567 | Vivid violet Reservoir disc with spiral arms (painted texture from the original `Woe` disc blended in), so its spin is clearly visible. If it fails to load, the dial uses the original disc. |

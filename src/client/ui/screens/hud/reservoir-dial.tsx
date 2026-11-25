@@ -1,4 +1,5 @@
-import React, { type Binding } from "@rbxts/react";
+import React, { type Binding, useEffect, useState } from "@rbxts/react";
+import { ContentProvider } from "@rbxts/services";
 import { vitalsAtom } from "client/store";
 import { localStatsAtom } from "client/store/stats";
 import { useAnimationClock } from "client/ui/hooks/use-animation-clock";
@@ -10,8 +11,27 @@ import { place, rect } from "./hud.layout";
 const ART = HudArt.reservoir;
 const GAUGE = ART.gauge;
 const BRIDGE = ART.bridge;
-/** The swirl texture when uploaded (its spin is clearly visible), else the original disc. */
-const DISC = ART.swirl ?? ART.core;
+/**
+ * The swirl texture (its spin is clearly visible) once it has loaded, else the
+ * original disc. Falls back if the swirl fails, e.g. while it's in moderation.
+ */
+function useDiscImage(): string {
+	const swirl = ART.swirl;
+	const [image, setImage] = useState<string>(ART.core);
+	useEffect(() => {
+		if (swirl === undefined) return;
+		let alive = true;
+		task.spawn(() =>
+			ContentProvider.PreloadAsync([swirl], (_, status) => {
+				if (alive && status === Enum.AssetFetchStatus.Success) setImage(swirl);
+			}),
+		);
+		return () => {
+			alive = false;
+		};
+	}, []);
+	return image;
+}
 
 /** Hard-edged half: visible where the gradient position is below 0.5. */
 const HALF = new NumberSequence([
@@ -42,8 +62,9 @@ function Slice(props: {
 	fill: Binding<number>;
 	spin: Binding<number>;
 	core: ReturnType<typeof rect>;
+	image: string;
 }) {
-	const { from, to, fill, spin, core } = props;
+	const { from, to, fill, spin, core, image } = props;
 	return (
 		<canvasgroup
 			BackgroundTransparency={1}
@@ -55,7 +76,7 @@ function Slice(props: {
 			ZIndex={-4}
 		>
 			<uigradient Transparency={HALF} Rotation={from - 90} />
-			<imagelabel BackgroundTransparency={1} Image={DISC} Rotation={spin} Size={UDim2.fromScale(1, 1)}>
+			<imagelabel BackgroundTransparency={1} Image={image} Rotation={spin} Size={UDim2.fromScale(1, 1)}>
 				<uigradient Transparency={HALF} Rotation={spin.map((r) => to + 90 - r)} />
 			</imagelabel>
 		</canvasgroup>
@@ -149,6 +170,7 @@ export function ReservoirDial() {
 		HudAnimation.reservoirSpinDegreesPerSecond * (unlocked ? 1 : HudAnimation.reservoirDormantSpinFactor);
 	const spin = clock.map((t) => (ART.coreRotation + t * spinSpeed) % 360);
 	const core = rect(HudPieces.core);
+	const disc = useDiscImage();
 
 	const max = unlocked ? stats!.maxReservoir : 0;
 	const slices = math.max(1, math.round(max));
@@ -168,6 +190,7 @@ export function ReservoirDial() {
 					fill={fill}
 					spin={spin}
 					core={core}
+					image={disc}
 				/>,
 			);
 		}
@@ -188,7 +211,7 @@ export function ReservoirDial() {
 			<imagelabel
 				key="ReservoirBase"
 				BackgroundTransparency={1}
-				Image={DISC}
+				Image={disc}
 				ImageColor3={unlocked ? GAUGE.emptyTint : ART.dormantTint}
 				ImageTransparency={unlocked ? GAUGE.emptyTransparency : ART.dormantTransparency}
 				Rotation={spin}

@@ -242,10 +242,10 @@ export const HudArt = {
 		core: Images.Woe_v2,
 		/**
 		 * Vivid violet disc with spiral arms (assets/ui/source/ReservoirSwirl.png),
-		 * so the spin is clearly visible. Set to `Images.ReservoirSwirl` once
-		 * uploaded; until then the original `core` disc is used.
+		 * so the spin is clearly visible. If it fails to load (e.g. still in
+		 * moderation), the dial falls back to the original `core` disc.
 		 */
-		swirl: undefined as string | undefined,
+		swirl: Images.ReservoirSwirl as string | undefined,
 		coreRotation: -180,
 		/**
 		 * While Reservoir is LOCKED (Depth Affinity below the unlock and not an
