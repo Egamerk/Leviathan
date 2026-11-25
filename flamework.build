@@ -1,0 +1,65 @@
+{
+	"version": 1,
+	"flameworkVersion": "1.3.2",
+	"identifiers": {
+		"leviathan:out/client/controllers/core/character-lifecycle.controller@CharacterLifecycleController": "client/controllers/core/character-lifecycle.controller@CharacterLifecycleController",
+		"leviathan:out/client/controllers/core/state-sync.controller@StateSyncController": "client/controllers/core/state-sync.controller@StateSyncController",
+		"leviathan:out/client/controllers/core/ui.controller@UiController": "client/controllers/core/ui.controller@UiController",
+		"leviathan:out/client/controllers/stats/stats.controller@StatsController": "client/controllers/stats/stats.controller@StatsController",
+		"leviathan:out/server/services/core/player-lifecycle.service@PlayerLifecycleService": "server/services/core/player-lifecycle.service@PlayerLifecycleService",
+		"leviathan:out/server/services/core/state-sync.service@StateSyncService": "server/services/core/state-sync.service@StateSyncService",
+		"leviathan:out/server/services/data/player-data.service@PlayerDataService": "server/services/data/player-data.service@PlayerDataService",
+		"leviathan:out/server/services/stats/stats.service@StatsService": "server/services/stats/stats.service@StatsService",
+		"leviathan:out/server/services/vitals/vitals.service@VitalsService": "server/services/vitals/vitals.service@VitalsService",
+		"leviathan:out/server/services/dev/vitals-command.service@VitalsCommandService": "server/services/dev/vitals-command.service@VitalsCommandService",
+		"leviathan:out/client/lifecycles/init@OnCharacterAdded": "client/lifecycles/init@OnCharacterAdded",
+		"leviathan:out/client/lifecycles/init@OnCharacterRemoving": "client/lifecycles/init@OnCharacterRemoving",
+		"leviathan:out/server/lifecycles/init@OnPlayerJoined": "server/lifecycles/init@OnPlayerJoined",
+		"leviathan:out/server/lifecycles/init@OnPlayerLeaving": "server/lifecycles/init@OnPlayerLeaving",
+		"leviathan:out/server/lifecycles/init@OnPlayerDataLoaded": "server/lifecycles/init@OnPlayerDataLoaded",
+		"leviathan:out/server/services/dev/stats-command.service@StatsCommandService": "server/services/dev/stats-command.service@StatsCommandService",
+		"leviathan:out/client/controllers/core/asset-preload.controller@AssetPreloadController": "client/controllers/core/asset-preload.controller@AssetPreloadController"
+	},
+	"metadata": {
+		"globs": {
+			"paths": {
+				"src/shared/components/**/*.component.ts": [],
+				"src/client/controllers/**/*.controller.ts": [
+					"out/client/controllers/stats/stats.controller.lua",
+					"out/client/controllers/core/state-sync.controller.lua",
+					"out/client/controllers/core/character-lifecycle.controller.lua",
+					"out/client/controllers/core/asset-preload.controller.lua"
+				],
+				"src/client/controllers/**/*.controller.tsx": [
+					"out/client/controllers/core/ui.controller.lua"
+				],
+				"src/client/components/**/*.component.ts": [],
+				"src/client/components/**/*.component.tsx": [],
+				"src/server/services/**/*.service.ts": [
+					"out/server/services/vitals/vitals.service.lua",
+					"out/server/services/stats/stats.service.lua",
+					"out/server/services/dev/vitals-command.service.lua",
+					"out/server/services/dev/stats-command.service.lua",
+					"out/server/services/data/player-data.service.lua",
+					"out/server/services/core/state-sync.service.lua",
+					"out/server/services/core/player-lifecycle.service.lua"
+				],
+				"src/server/components/**/*.component.ts": []
+			},
+			"origins": {
+				"src/client/runtime.client.ts": [
+					"src/client/controllers/**/*.controller.ts",
+					"src/client/controllers/**/*.controller.tsx",
+					"src/client/components/**/*.component.ts",
+					"src/client/components/**/*.component.tsx",
+					"src/shared/components/**/*.component.ts"
+				],
+				"src/server/runtime.server.ts": [
+					"src/server/services/**/*.service.ts",
+					"src/server/components/**/*.component.ts",
+					"src/shared/components/**/*.component.ts"
+				]
+			}
+		}
+	}
+}
