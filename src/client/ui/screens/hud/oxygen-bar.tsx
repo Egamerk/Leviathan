@@ -9,51 +9,34 @@ import { ResourceBar } from "./resource-bar";
 
 const ART = HudArt.oxygen;
 const TUBE = HudArt.oxygenTube;
-const LABEL_FONT = HudArt.healthText.font;
-const LABEL_INK = Color3.fromRGB(28, 62, 84);
-const LABEL_STROKE = Color3.fromRGB(220, 244, 252);
+const TEXT = HudArt.healthText;
+const INK = Color3.fromRGB(24, 52, 74);
+const STROKE = Color3.fromRGB(228, 246, 252);
 
-/**
- * "O₂" drawn as a big O and a small, lowered 2 (Roblox fonts may lack the
- * subscript glyph), sitting inside the tube next to the left cap.
- */
-function OxygenLabel() {
-	// Fractions of the tube frame. A box h tall and h·k wide (in pixels) is
-	// h·k / aspect wide in width fractions, where aspect = tube width ÷ height.
-	const aspect = HudPieces.oxygen.aspect;
-	const widthFor = (h: number, k: number) => (h * k) / aspect;
-	const height = (TUBE.fillBottom - TUBE.fillTop) * 0.62;
-	const top = TUBE.fillTop + (TUBE.fillBottom - TUBE.fillTop - height) / 2;
-	const letter = (key: string, text: string, x: number, y: number, h: number) => (
+/** "O₂ 100%" centred on the tube: same font as the health readout, dark ink for the pale gas. */
+function OxygenReadout({ fraction }: { fraction: number }) {
+	return (
 		<textlabel
-			key={key}
+			key="Readout"
+			AnchorPoint={new Vector2(0.5, 0.5)}
 			BackgroundTransparency={1}
-			FontFace={LABEL_FONT}
-			Position={UDim2.fromScale(x, y)}
-			Size={UDim2.fromScale(widthFor(h, 1.2), h)}
-			Text={text}
-			TextColor3={LABEL_INK}
+			FontFace={TEXT.font}
+			Position={UDim2.fromScale(0.5, 0.5)}
+			Size={UDim2.fromScale(0.5, 0.62)}
+			Text={`O₂ ${math.round(fraction * 100)}%`}
+			TextColor3={INK}
 			TextScaled={true}
-			TextXAlignment={Enum.TextXAlignment.Left}
 			ZIndex={4}
 		>
-			<uistroke Color={LABEL_STROKE} Thickness={1} />
+			<uistroke Color={STROKE} Thickness={1.5} />
 		</textlabel>
-	);
-	const x = TUBE.fillLeft + 0.012;
-	const oWidth = widthFor(height, 1.05);
-	return (
-		<frame key="Label" BackgroundTransparency={1} Size={UDim2.fromScale(1, 1)} ZIndex={4}>
-			{letter("O", "O", x, top, height)}
-			{letter("Two", "2", x + oWidth, top + height * 0.45, height * 0.55)}
-		</frame>
 	);
 }
 
 /**
  * Oxygen. With the new tube art it's the same flowing tube as Auxiliary /
  * Stamina (caps on both ends, no point dividers), filled with gas and rising
- * bubbles, plus an "O₂" label. Otherwise it falls back to the thin original
+ * bubbles, plus an "O₂ 100%" readout. Otherwise it falls back to the thin original
  * bar. Reads `oxygenFractionAtom` (stays full until the Oxygen system exists).
  */
 export function OxygenBar() {
@@ -72,8 +55,8 @@ export function OxygenBar() {
 					flowDirection={1}
 				/>
 				{TUBE.label && (
-					<frame key="OxygenLabel" BackgroundTransparency={1} ZIndex={3} {...place(HudPieces.oxygen)}>
-						<OxygenLabel />
+					<frame key="OxygenReadout" BackgroundTransparency={1} ZIndex={3} {...place(HudPieces.oxygen)}>
+						<OxygenReadout fraction={value} />
 					</frame>
 				)}
 			</>

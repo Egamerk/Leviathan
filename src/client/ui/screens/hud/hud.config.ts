@@ -42,7 +42,7 @@ const OxygenTubeArt = {
 	/** Bubble rise speed in tube heights per second, and sideways drift relative to it. */
 	bubbleRise: 0.35,
 	bubbleDrift: 0.25,
-	/** "O₂" label at the capped (left) end. */
+	/** "O₂ 100%" readout centred on the tube, styled like the health readout. */
 	label: true,
 	anchor: "left" as "left" | "right",
 	capsBothEnds: true,
@@ -74,7 +74,8 @@ const BAR_HALF = BAR_WIDTH / ArtAspect.resourceBar / 2;
  * fills the holder's hole, and the brass ring sits on the hole's bevelled rim.
  */
 const Dial = {
-	holderWidth: 0.3,
+	/** The dial is the HUD's centrepiece; large enough for the gauge slices to read. */
+	holderWidth: 0.36,
 	/** Holder (Wheel&Woe1): the hole's centre and radius, and the outer edge of its bevelled rim. */
 	holeCenter: new Vector2(211, 42),
 	holeRadius: 78,
@@ -133,8 +134,8 @@ export const HudPieces = {
 
 /** Radius of the Reservoir's visible liquid (inside the brass ring), in hw. */
 const DISC_RADIUS = (HudPieces.core.width / 2) * 0.94;
-/** How far above the disc centre the bridge plate's bottom edge sits (hw). */
-const BRIDGE_DROP = 0.011;
+/** How far above the disc centre the bridge plate's bottom edge sits (scales with the dial). */
+const BRIDGE_DROP = 0.18 * DISC_RADIUS;
 /** The plate's top tucks this far under the health capsule (hw), so no purple shows above it. */
 const BRIDGE_TOP = HEALTH_HALF - 0.012;
 const BRIDGE_BOTTOM = HudPieces.core.y - BRIDGE_DROP;
@@ -156,9 +157,9 @@ export const RESERVOIR_ARC_DEGREES = 180 + 2 * math.deg(math.asin(BRIDGE_DROP / 
 
 export const HudPlacement = {
 	/** Cluster height as a fraction of the screen's height. */
-	height: 0.18,
+	height: 0.2,
 	/** Gap between the cluster and the bottom of the screen, as a fraction of screen height. */
-	bottomPadding: 0.02,
+	bottomPadding: 0.03,
 } as const;
 
 export const HudArt = {
