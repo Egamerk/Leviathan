@@ -28,10 +28,10 @@ arranged as in the Studio design.
 
 | Element | Images | Behaviour |
 | --- | --- | --- |
-| Health | `BloodBackground`, `HealthBlood` (or the seamless `HealthBloodTile` once uploaded), `CapsuleCover`, plus a `3 / 4` readout | blood flows at the Studio speed (1.77 fill widths per 8 s) and loops; clipped to current health |
-| Oxygen | `OxygenBar`, `Oxygen` | fill reads `oxygenFractionAtom` (full until the Oxygen system exists) |
+| Health | `BloodBackground`, `HealthBloodTile` (one tiling ImageLabel), `CapsuleCover`, plus a `3 / 4` readout | blood flows at the Studio speed (1.77 fill widths per 8 s) and loops; clipped to current health |
+| Oxygen | `OxygenBar`, `Oxygen` | air-blue fill behind the glass, clipped between the caps; reads `oxygenFractionAtom` (full until the Oxygen system exists) |
 | Auxiliary | `BackgroundAux`, `BackgroundAux2`, `Aux`, `Divider` | fill drains/refills smoothly; brass dividers mark each point |
-| Stamina | `Backgroundres2`, `Backgroundres`, `res` (green `StaminaFill` once uploaded), `Divider` | fill drains/refills smoothly; brass dividers mark each point |
+| Stamina | `Backgroundres2`, `Backgroundres`, `StaminaFill` (green), `Divider` | fill drains/refills smoothly; brass dividers mark each point |
 | Reservoir dial | `Wheel&Woe1` (holder), `Woe` (Jun 30 upload, the purple core), `Wheel` (brass ring) | purple liquid spins and fills the visible chamber from the bottom by current Reservoir |
 
 Current values come from `VitalsService` (server) → `vitalsAtom` (client). In Studio, use

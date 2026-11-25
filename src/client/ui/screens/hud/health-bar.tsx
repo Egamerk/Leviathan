@@ -12,16 +12,15 @@ const ART = HudArt.health;
 const ANIM = HudAnimation;
 
 /**
- * Draw order for the health capsule. Every blood layer (all copies, in either
- * loop mode) stays below `cover`, so the glass is always on top, even under
- * Global ZIndexBehavior or if the blood is reparented.
+ * Draw order for the health capsule. The blood stays below `cover`, so the
+ * glass is always on top, even under Global ZIndexBehavior or if the blood is
+ * reparented.
  */
 const Z = {
 	background: 1,
 	/** The clipped fill frames holding the blood. */
 	fill: 2,
-	/** Blood copies use bloodBase (tile) or bloodBase .. bloodBase + 2 (fallback chain). */
-	bloodBase: 2,
+	blood: 2,
 	cover: 10,
 	text: 11,
 } as const;
@@ -76,43 +75,8 @@ function TiledBlood({ clock, image }: { clock: Binding<number>; image: string })
 			// Flows rightward like the Studio spec: x goes -tileWidth → 0, then wraps.
 			Position={clock.map((t) => UDim2.fromScale(((t * ANIM.bloodSpeed) % tileWidth) - tileWidth, 0))}
 			Size={UDim2.fromScale(labelWidth, 1)}
-			ZIndex={Z.bloodBase}
+			ZIndex={Z.blood}
 		/>
-	);
-}
-
-/**
- * Fallback until HealthBloodTile is uploaded: the original texture isn't
- * tileable, so it needs a chain of copies, each crossfading into the previous
- * after its transparent end strip. Delete this once `bloodTile` is set.
- */
-function CrossfadedBlood({ clock, image }: { clock: Binding<number>; image: string }) {
-	const edge = ANIM.bloodEdgeMargin;
-	const fade = ANIM.bloodCrossfade;
-	const period = ANIM.bloodWidth * (1 - 2 * edge - fade);
-	const phase = clock.map((t) => (t * ANIM.bloodSpeed) % period);
-	const seamFade = new NumberSequence([
-		new NumberSequenceKeypoint(0, 1),
-		new NumberSequenceKeypoint(edge, 1),
-		new NumberSequenceKeypoint(edge + fade, 0),
-		new NumberSequenceKeypoint(1, 0),
-	]);
-	return (
-		<>
-			{[-2, -1, 0].map((k) => (
-				<imagelabel
-					key={`Blood${k}`}
-					AnchorPoint={new Vector2(0, 0.5)}
-					BackgroundTransparency={1}
-					Position={phase.map((p) => new UDim2(k * period + p, 0, 0.5, 0))}
-					Size={new UDim2(ANIM.bloodWidth, 0, 1, 0)}
-					Image={image}
-					ZIndex={Z.bloodBase + 2 + k}
-				>
-					<uigradient Transparency={seamFade} />
-				</imagelabel>
-			))}
-		</>
 	);
 }
 
@@ -120,7 +84,6 @@ function CrossfadedBlood({ clock, image }: { clock: Binding<number>; image: stri
 export function HealthBar() {
 	const fraction = useSmoothedNumber(useAtom(healthFractionAtom), ANIM.barSmoothing);
 	const clock = useAnimationClock();
-	const tile = ART.bloodTile;
 
 	return (
 		<frame key="Health" BackgroundTransparency={1} {...place(HudPieces.health)}>
@@ -145,11 +108,7 @@ export function HealthBar() {
 					Size={UDim2.fromScale(ART.fillInsetWidth, 1)}
 					ZIndex={Z.fill}
 				>
-					{tile !== undefined ? (
-						<TiledBlood clock={clock} image={tile} />
-					) : (
-						<CrossfadedBlood clock={clock} image={ART.blood} />
-					)}
+					<TiledBlood clock={clock} image={ART.bloodTile} />
 				</frame>
 			</ClippedFill>
 			<imagelabel

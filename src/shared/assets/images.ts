@@ -33,6 +33,8 @@ export const Images = {
 	Divider: "rbxassetid://128776470437215",
 	/** "HealthBlood", modified unknown */
 	HealthBlood: "rbxassetid://72296836262553",
+	/** "HealthBloodTile", modified unknown */
+	HealthBloodTile: "rbxassetid://81895076126332",
 	/** "Oxygen", modified unknown */
 	Oxygen: "rbxassetid://74475428106789",
 	/** "OxygenBar", modified unknown */
@@ -45,6 +47,8 @@ export const Images = {
 	ResEnd1: "rbxassetid://128351465114516",
 	/** "Resstart", modified 2026-06-19 */
 	Resstart: "rbxassetid://77943388945462",
+	/** "StaminaFill", modified unknown */
+	StaminaFill: "rbxassetid://86227484174680",
 	/** "Wheel", modified 2026-06-30 */
 	Wheel: "rbxassetid://80750835199144",
 	/** "Wheel&Woe", modified 2026-06-30 */

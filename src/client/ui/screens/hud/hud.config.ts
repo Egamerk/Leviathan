@@ -115,20 +115,26 @@ export const HudPlacement = {
 export const HudArt = {
 	health: {
 		background: Images.BloodBackground,
-		blood: Images.HealthBlood,
-		/**
-		 * Seamless version of the blood (assets/ui/source/HealthBloodTile.png).
-		 * Upload it, add it to images.csv, run `npm run assets:images`, then set
-		 * this to `Images.HealthBloodTile`. Until then the original texture is
-		 * looped with crossfades.
-		 */
-		bloodTile: undefined as string | undefined,
+		/** Seamless blood tile (made from HealthBlood: ends trimmed, baked-in line softened, ends blended). */
+		bloodTile: Images.HealthBloodTile,
 		cover: Images.CapsuleCover,
 		/** The glass interior the blood fills (the Studio clip Frame): centred, 92.5% wide. */
 		fillInsetLeft: 0.0375,
 		fillInsetWidth: 0.925,
 	},
-	oxygen: { bar: Images.OxygenBar, fill: Images.Oxygen },
+	/**
+	 * The fill sits BEHIND the glass tube (so the glass, outline and brass caps
+	 * stay on top), clipped to the tube's interior between the caps, and
+	 * tinted a pale air-blue so it reads as a gauge rather than a flat sticker.
+	 */
+	oxygen: {
+		bar: Images.OxygenBar,
+		fill: Images.Oxygen,
+		fillLeft: 17 / 768,
+		fillRight: 750 / 768,
+		tint: Color3.fromRGB(215, 238, 246),
+		transparency: 0.1,
+	},
 	/**
 	 * Point bars. Draw order matches Studio: back (-1) → glass (0) → fill (1).
 	 * `fillLeft`/`fillRight` are where the liquid starts/ends in the fill art
@@ -144,13 +150,8 @@ export const HudArt = {
 	stamina: {
 		back: Images.Backgroundres2,
 		glass: Images.Backgroundres,
-		/**
-		 * Purple, which clashes with the Reservoir. Upload
-		 * assets/ui/source/StaminaFill.png (the same art recoloured green), add it
-		 * to images.csv, run `npm run assets:images`, then set this to
-		 * `Images.StaminaFill`.
-		 */
-		fill: Images.Res,
+		/** The original purple `res` fill recoloured green, so Stamina doesn't look like the Reservoir. */
+		fill: Images.StaminaFill,
 		fillLeft: 10 / 420,
 		fillRight: 399 / 420,
 	},
@@ -174,13 +175,11 @@ export const HudAnimation = {
 	 * of moving 0 → 1.77 in 8 seconds.
 	 */
 	bloodSpeed: 1.77 / 8,
-	/** Width of one blood texture copy, in fill-area widths (Studio: stretched 3× wide). */
-	bloodWidth: 3,
-	/** Width of one seamless tile copy: the trimmed texture (875 of 1200 px) at the same scale. */
+	/**
+	 * Width of one blood tile, in fill-area widths. The original texture was
+	 * stretched 3× wide; the tile is the trimmed 875 of its 1200 px at that scale.
+	 */
 	bloodTileWidth: 3 * (875 / 1200),
-	/** Fallback loop (original texture only): crossfade width, and the transparent strip at each end. */
-	bloodCrossfade: 0.15,
-	bloodEdgeMargin: 18 / 420,
 	/** Reservoir core spin, degrees per second (the wheel stays still). */
 	reservoirSpinDegreesPerSecond: 25,
 	/** Bar drain/refill smoothing (≈ 1 / seconds). */
