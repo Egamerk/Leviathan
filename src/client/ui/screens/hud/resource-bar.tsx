@@ -1,5 +1,4 @@
 import React, { type Binding } from "@rbxts/react";
-import { ClippedFill } from "client/ui/components/clipped-fill";
 import { useAnimationClock } from "client/ui/hooks/use-animation-clock";
 import { useSmoothedNumber } from "client/ui/hooks/use-smoothed-number";
 import { ArtAspect, HudAnimation, HudArt, type Piece } from "./hud.config";
@@ -8,12 +7,13 @@ import { place } from "./hud.layout";
 export interface ResourceBarArt {
 	back: string;
 	glass: string;
-	fill: string;
+	/** Side of the brass cap. The liquid stays anchored there and drains from the other end. */
+	anchor: "left" | "right";
 	fillLeft: number;
 	fillRight: number;
 	fillTop: number;
 	fillBottom: number;
-	flowTile?: string;
+	flowTile: string;
 	flowTileAspect: number;
 }
 
@@ -32,65 +32,101 @@ const DIVIDER = HudArt.divider;
 const MIN_FRACTION = 1e-3;
 
 /**
- * Flowing liquid: a rounded CanvasGroup (the pill shape) that shrinks with the
- * fraction, holding ONE `ScaleType.Tile` ImageLabel that scrolls the seamless
- * strip. An inner frame is counter-sized so the texture keeps its scale while
- * the pill drains.
+ * Flowing liquid, anchored at the cap side and draining from the other end.
+ *
+ * Coordinates inside the `Box` frame are fractions of the liquid area (the
+ * "fill box"), so the texture keeps its scale while the level changes:
+ *
+ *   Clip       rectangle covering the filled part, so the cap end is SQUARE
+ *   └ Box      counter-sized to the whole fill box
+ *     └ Liquid rounded CanvasGroup (pill) from the moving edge to past the
+ *       │      cap edge. The cap-side rounding falls outside Clip and is cut
+ *       │      off, so only the moving end is round.
+ *       └ Tex  the fill box again, holding ONE ScaleType.Tile ImageLabel that scrolls
  */
 function FlowingFill(props: {
 	fraction: Binding<number>;
-	art: ResourceBarArt & { flowTile: string };
+	art: ResourceBarArt;
 	barAspect: number;
 	barWidthHw: number;
 	flowDirection: number;
 }) {
 	const { fraction, art, barAspect, barWidthHw, flowDirection } = props;
 	const clock = useAnimationClock();
+	const fromRight = art.anchor === "right";
 	const fillWidth = art.fillRight - art.fillLeft;
 	const fillHeight = art.fillBottom - art.fillTop;
-	// Tile width in pill widths: the tile spans the pill's height, keeping its aspect.
-	const pillAspect = (fillWidth * barAspect) / fillHeight;
+	const pillAspect = (fillWidth * barAspect) / fillHeight; // fill box width ÷ height, in pixels
+	// How far the pill extends past the cap edge, in fill-box widths (≥ its corner radius).
+	const overhang = 1 / pillAspect;
+	// Tile width in fill-box widths: the tile spans the box's height, keeping its aspect.
 	const tileWidth = art.flowTileAspect / pillAspect;
 	const labelWidth = 1 + tileWidth;
-	// Shared on-screen speed (hw/s) converted to pill widths per second.
+	// Shared on-screen speed (hw/s) converted to fill-box widths per second.
 	const speed = HudAnimation.liquidSpeed / (barWidthHw * fillWidth);
 	const offset = clock.map((t) => {
 		const phase = (t * speed) % tileWidth;
 		return flowDirection >= 0 ? phase - tileWidth : -phase;
 	});
 
+	const level = fraction.map((f) => math.max(f, MIN_FRACTION));
+	// Liquid (pill) extent in fill-box units: [start, start + width].
+	const pillStart = level.map((f) => (fromRight ? 1 - f : -overhang));
+	const pillWidth = level.map((f) => f + overhang);
+
 	return (
-		<canvasgroup
-			key="Fill"
+		<frame
+			key="Clip"
+			AnchorPoint={new Vector2(fromRight ? 1 : 0, 0)}
 			BackgroundTransparency={1}
-			Position={UDim2.fromScale(art.fillLeft, art.fillTop)}
-			Size={fraction.map((f) => UDim2.fromScale(fillWidth * math.max(f, MIN_FRACTION), fillHeight))}
+			ClipsDescendants={true}
+			Position={UDim2.fromScale(fromRight ? art.fillRight : art.fillLeft, art.fillTop)}
+			Size={level.map((f) => UDim2.fromScale(fillWidth * f, fillHeight))}
 			Visible={fraction.map((f) => f > MIN_FRACTION)}
 			ZIndex={1}
 		>
-			<uicorner CornerRadius={new UDim(0.5, 0)} />
 			<frame
-				key="Full"
+				key="Box"
+				AnchorPoint={new Vector2(fromRight ? 1 : 0, 0)}
 				BackgroundTransparency={1}
-				Size={fraction.map((f) => UDim2.fromScale(1 / math.max(f, MIN_FRACTION), 1))}
+				Position={UDim2.fromScale(fromRight ? 1 : 0, 0)}
+				Size={level.map((f) => UDim2.fromScale(1 / f, 1))}
 			>
-				<imagelabel
+				<canvasgroup
 					key="Liquid"
 					BackgroundTransparency={1}
-					Image={art.flowTile}
-					ScaleType={Enum.ScaleType.Tile}
-					TileSize={UDim2.fromScale(tileWidth / labelWidth, 1)}
-					Position={offset.map((x) => UDim2.fromScale(x, 0))}
-					Size={UDim2.fromScale(labelWidth, 1)}
-				/>
+					Position={pillStart.map((x) => UDim2.fromScale(x, 0))}
+					Size={pillWidth.map((w) => UDim2.fromScale(w, 1))}
+				>
+					<uicorner CornerRadius={new UDim(0.5, 0)} />
+					<frame
+						key="Tex"
+						BackgroundTransparency={1}
+						Position={level.map((f) => {
+							const start = fromRight ? 1 - f : -overhang;
+							return UDim2.fromScale(-start / (f + overhang), 0);
+						})}
+						Size={pillWidth.map((w) => UDim2.fromScale(1 / w, 1))}
+					>
+						<imagelabel
+							key="Tile"
+							BackgroundTransparency={1}
+							Image={art.flowTile}
+							ScaleType={Enum.ScaleType.Tile}
+							TileSize={UDim2.fromScale(tileWidth / labelWidth, 1)}
+							Position={offset.map((x) => UDim2.fromScale(x, 0))}
+							Size={UDim2.fromScale(labelWidth, 1)}
+						/>
+					</frame>
+				</canvasgroup>
 			</frame>
-		</canvasgroup>
+		</frame>
 	);
 }
 
 /**
- * Auxiliary / Stamina tube: back, glass, liquid (flowing once its tile is
- * uploaded, otherwise the still fill), and brass dividers marking each point.
+ * Auxiliary / Stamina tube: back, glass, flowing liquid anchored at the cap,
+ * and brass dividers marking each point.
  */
 export function ResourceBar({ name, fraction, points, piece, art, flowDirection }: ResourceBarProps) {
 	const smoothed = useSmoothedNumber(fraction, HudAnimation.barSmoothing);
@@ -118,24 +154,17 @@ export function ResourceBar({ name, fraction, points, piece, art, flowDirection 
 		);
 	}
 
-	const tile = art.flowTile;
 	return (
 		<frame key={name} BackgroundTransparency={1} {...place(piece)}>
 			{layer("Back", art.back, -1)}
 			{layer("Glass", art.glass, 0)}
-			{tile !== undefined ? (
-				<FlowingFill
-					fraction={smoothed}
-					art={{ ...art, flowTile: tile }}
-					barAspect={piece.aspect}
-					barWidthHw={piece.width}
-					flowDirection={flowDirection}
-				/>
-			) : (
-				<ClippedFill fraction={smoothed} insetLeft={art.fillLeft} insetWidth={fillWidth} zIndex={1}>
-					{layer("Fill", art.fill, 1)}
-				</ClippedFill>
-			)}
+			<FlowingFill
+				fraction={smoothed}
+				art={art}
+				barAspect={piece.aspect}
+				barWidthHw={piece.width}
+				flowDirection={flowDirection}
+			/>
 			{dividers}
 		</frame>
 	);

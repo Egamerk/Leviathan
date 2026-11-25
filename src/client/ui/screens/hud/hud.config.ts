@@ -143,28 +143,29 @@ export const HudArt = {
 	auxiliary: {
 		back: Images.BackgroundAux,
 		glass: Images.BackgroundAux2,
-		fill: Images.Aux,
+		/** Side the liquid is anchored to (its brass cap). It drains away from the dial side. */
+		anchor: "left" as "left" | "right",
 		fillLeft: 24 / 420,
 		fillRight: 410 / 420,
 		/** Top/bottom of the liquid pill in the fill art (fractions of its height). */
 		fillTop: 21 / 104,
 		fillBottom: 82 / 104,
-		/** Seamless strip for the flowing liquid (assets/ui/source/AuxTile.png). Unset = still `fill`. */
-		flowTile: Images.AuxTile as string | undefined,
+		/** Seamless strip for the flowing liquid (assets/ui/source/AuxTile.png). */
+		flowTile: Images.AuxTile,
 		/** Width ÷ height of the flow tile. */
 		flowTileAspect: 508 / 60,
 	},
 	stamina: {
 		back: Images.Backgroundres2,
 		glass: Images.Backgroundres,
-		/** The original purple `res` fill recoloured green, so Stamina doesn't look like the Reservoir. */
-		fill: Images.StaminaFill,
+		/** Cap is on the right: Stamina drains left → right (away from the dial). */
+		anchor: "right" as "left" | "right",
 		fillLeft: 10 / 420,
 		fillRight: 399 / 420,
 		fillTop: 21 / 104,
 		fillBottom: 82 / 104,
-		/** Seamless strip for the flowing liquid (assets/ui/source/StaminaTile.png). Unset = still `fill`. */
-		flowTile: Images.StaminaTile as string | undefined,
+		/** Seamless strip (assets/ui/source/StaminaTile.png): StaminaFill's green liquid. */
+		flowTile: Images.StaminaTile,
 		flowTileAspect: 511 / 60,
 	},
 	/** Brass divider drawn between points on the Auxiliary / Stamina bars. */
