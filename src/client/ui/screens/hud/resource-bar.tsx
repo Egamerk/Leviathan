@@ -299,6 +299,7 @@ export function ResourceBar({ name, fraction, points, piece, art, flowDirection,
 				Position={UDim2.fromScale(x, 0.5)}
 				Size={UDim2.fromScale(dividerWidth, dividerHeight)}
 				Image={DIVIDER.image}
+				ScaleType={Enum.ScaleType.Crop}
 				ZIndex={2}
 			/>,
 		);

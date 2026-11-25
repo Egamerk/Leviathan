@@ -66,6 +66,7 @@ function HealthDividers() {
 				AnchorPoint={new Vector2(0.5, 0.5)}
 				BackgroundTransparency={1}
 				Image={HudArt.divider.image}
+				ScaleType={Enum.ScaleType.Crop}
 				Position={UDim2.fromScale(ART.fillInsetLeft + (ART.fillInsetWidth * k) / max, 0.5)}
 				Size={UDim2.fromScale(width, height)}
 				ZIndex={Z.dividers}
