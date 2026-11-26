@@ -18,13 +18,16 @@
 		"leviathan:out/server/lifecycles/init@OnPlayerLeaving": "server/lifecycles/init@OnPlayerLeaving",
 		"leviathan:out/server/lifecycles/init@OnPlayerDataLoaded": "server/lifecycles/init@OnPlayerDataLoaded",
 		"leviathan:out/server/services/dev/stats-command.service@StatsCommandService": "server/services/dev/stats-command.service@StatsCommandService",
-		"leviathan:out/client/controllers/core/asset-preload.controller@AssetPreloadController": "client/controllers/core/asset-preload.controller@AssetPreloadController"
+		"leviathan:out/client/controllers/core/asset-preload.controller@AssetPreloadController": "client/controllers/core/asset-preload.controller@AssetPreloadController",
+		"leviathan:out/client/controllers/world/lighting.controller@LightingController": "client/controllers/world/lighting.controller@LightingController",
+		"leviathan:out/server/services/dev/lighting-command.service@LightingCommandService": "server/services/dev/lighting-command.service@LightingCommandService"
 	},
 	"metadata": {
 		"globs": {
 			"paths": {
 				"src/shared/components/**/*.component.ts": [],
 				"src/client/controllers/**/*.controller.ts": [
+					"out/client/controllers/world/lighting.controller.lua",
 					"out/client/controllers/stats/stats.controller.lua",
 					"out/client/controllers/core/state-sync.controller.lua",
 					"out/client/controllers/core/character-lifecycle.controller.lua",
@@ -40,6 +43,7 @@
 					"out/server/services/stats/stats.service.lua",
 					"out/server/services/dev/vitals-command.service.lua",
 					"out/server/services/dev/stats-command.service.lua",
+					"out/server/services/dev/lighting-command.service.lua",
 					"out/server/services/data/player-data.service.lua",
 					"out/server/services/core/state-sync.service.lua",
 					"out/server/services/core/player-lifecycle.service.lua"

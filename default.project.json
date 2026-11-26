@@ -77,11 +77,9 @@
 		"Lighting": {
 			"$className": "Lighting",
 			"$properties": {
-				"Ambient": [0.4, 0.4, 0.4],
-				"Brightness": 2,
 				"GlobalShadows": true,
 				"Outlines": false,
-				"Technology": "ShadowMap"
+				"Technology": "Future"
 			}
 		},
 
