@@ -162,10 +162,9 @@ function BridgePlate() {
  *   between them). Full slices show the bright spinning liquid, empty ones a
  *   dim version, and a partial slice fades in by how full it is. An occult
  *   rune ring turns slowly against the swirl.
- * - Locked: the whole chamber shows dimmed, slow-turning liquid (dormant).
+ * - Locked: not shown at all (holder, ring and chamber are hidden).
  */
-export function ReservoirDial({ hovered = false }: { hovered?: boolean }) {
-	const glow = useSmoothedNumber(hovered ? 1 : 0, HudArt.hover.speed);
+export function ReservoirDial() {
 	const clock = useAnimationClock();
 	const stats = useAtom(localStatsAtom);
 	const vitals = useAtom(vitalsAtom);
@@ -202,6 +201,9 @@ export function ReservoirDial({ hovered = false }: { hovered?: boolean }) {
 			spokes.push(<Spoke key={`Spoke${k}`} angle={ARC_START - k * sliceSpan} core={core} />);
 		}
 	}
+
+	// Hidden entirely until the Reservoir is unlocked (after all hooks, which must always run).
+	if (!unlocked) return undefined;
 
 	return (
 		<>
@@ -250,19 +252,6 @@ export function ReservoirDial({ hovered = false }: { hovered?: boolean }) {
 			</canvasgroup>
 			{spokes}
 			<BridgePlate />
-			{/* Hover feedback: a soft glow ring just outside the brass ring. */}
-			<frame
-				key="HoverGlow"
-				AnchorPoint={new Vector2(0.5, 0.5)}
-				BackgroundTransparency={1}
-				Position={UDim2.fromScale(core.x, core.y)}
-				Size={UDim2.fromScale(core.width * 1.12, core.height * 1.12)}
-				Visible={glow.map((g) => g > 0.01)}
-				ZIndex={0}
-			>
-				<uicorner CornerRadius={new UDim(1, 0)} />
-				<uistroke Color={HudArt.hover.dialGlow} Thickness={2.5} Transparency={glow.map((g) => 1 - g * 0.85)} />
-			</frame>
 			<imagelabel
 				key="ReservoirWheel"
 				BackgroundTransparency={1}

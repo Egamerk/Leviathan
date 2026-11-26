@@ -58,12 +58,11 @@ export function Hud() {
 					hovered={hovered === "stamina"}
 					readout={vitals && stats ? { current: vitals.stamina, max: stats.maxStamina } : undefined}
 				/>
-				<ReservoirDial hovered={hovered === "reservoir"} />
+				<ReservoirDial />
 				<HoverZone element="oxygen" piece={HudPieces.oxygen} onHover={onHover} />
 				<HoverZone element="health" piece={HudPieces.health} onHover={onHover} />
 				<HoverZone element="auxiliary" piece={HudPieces.auxiliary} onHover={onHover} />
 				<HoverZone element="stamina" piece={HudPieces.stamina} onHover={onHover} />
-				<HoverZone element="reservoir" piece={HudPieces.core} pad={0.15} onHover={onHover} />
 			</frame>
 		</screengui>
 	);

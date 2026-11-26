@@ -299,11 +299,10 @@ export const HudArt = {
 	divider: { image: Images.Divider, heightFraction: 1.05 },
 	/** Dividers on the health capsule, one per whole health point; like the bars, a bit taller than the glass (fraction of the capsule). */
 	healthDivider: { heightFraction: 1.05 },
-	/** Hover feedback: hovered tubes/capsules ease up to this scale; the dial gets a glow ring. Hovering Oxygen shows its %. */
+	/** Hover feedback: hovered tubes/capsules ease up to this scale. Hovering Oxygen shows its %. */
 	hover: {
 		scale: 1.04,
 		speed: 16,
-		dialGlow: Color3.fromRGB(214, 186, 255),
 	},
 	/** Health readout ("3 / 4") on the capsule. */
 	healthText: {
