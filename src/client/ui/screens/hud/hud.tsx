@@ -42,7 +42,7 @@ export function Hud() {
 					points={stats?.maxAuxiliary ?? 2}
 					piece={HudPieces.auxiliary}
 					art={HudArt.auxiliary}
-					flowDirection={HudAnimation.auxiliaryFlowDirection}
+					flowDirection={HudAnimation.auxiliaryFlowDirection * HudAnimation.auxiliaryFlowSpeed}
 					hovered={hovered === "auxiliary"}
 				/>
 				<ResourceBar
@@ -51,7 +51,7 @@ export function Hud() {
 					points={stats?.maxStamina ?? 4}
 					piece={HudPieces.stamina}
 					art={HudArt.stamina}
-					flowDirection={HudAnimation.staminaFlowDirection}
+					flowDirection={HudAnimation.staminaFlowDirection * HudAnimation.staminaFlowSpeed}
 					hovered={hovered === "stamina"}
 				/>
 				<ReservoirDial hovered={hovered === "reservoir"} />

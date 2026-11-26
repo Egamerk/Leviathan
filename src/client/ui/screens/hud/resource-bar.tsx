@@ -68,7 +68,7 @@ interface ResourceBarProps {
 	points: number;
 	piece: Piece;
 	art: ResourceBarArt;
-	/** 1 = flows rightward, -1 = leftward. */
+	/** Sign: 1 = flows rightward, -1 = leftward. Size: multiple of the shared liquid speed (0.5 = half speed). */
 	flowDirection: number;
 	/** Hover feedback: the tube eases up in size. */
 	hovered?: boolean;
@@ -173,7 +173,8 @@ function FlowingFill(props: {
 	const tileWidth = art.flowTileAspect / pillAspect;
 	const labelWidth = 1 + tileWidth;
 	// Shared on-screen speed (hw/s) converted to fill-box widths per second.
-	const speed = HudAnimation.liquidSpeed / (barWidthHw * fillWidth);
+	// flowDirection's sign is the direction, its size a multiple of the shared speed.
+	const speed = (HudAnimation.liquidSpeed * math.abs(flowDirection)) / (barWidthHw * fillWidth);
 	const offset = clock.map((t) => {
 		const phase = (t * speed) % tileWidth;
 		return flowDirection >= 0 ? phase - tileWidth : -phase;

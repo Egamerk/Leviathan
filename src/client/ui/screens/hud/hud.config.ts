@@ -367,8 +367,11 @@ export const HudAnimation = {
 	 */
 	liquidSpeed: (1.77 / 8) * 0.925,
 	/** Flow direction per bar: 1 = rightward (like the blood), -1 = leftward. */
-	auxiliaryFlowDirection: 1,
+	auxiliaryFlowDirection: -1,
 	staminaFlowDirection: 1,
+	/** Flow speed of each liquid as a multiple of `liquidSpeed`. */
+	auxiliaryFlowSpeed: 0.25,
+	staminaFlowSpeed: 0.5,
 	/**
 	 * Width of one blood tile, in fill-area widths. The original texture was
 	 * stretched 3× wide; the tile is the trimmed 875 of its 1200 px at that scale.
