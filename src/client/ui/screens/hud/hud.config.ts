@@ -37,15 +37,18 @@ const OxygenTubeArt = {
 	glass: Images.OxygenGlass as string | undefined,
 	flowTile: Images.OxygenTile as string | undefined,
 	flowTileAspect: 508 / 60,
-	/** Bubbles rising (and drifting slightly) through the gas. */
+	/** Bubbles carried left → right along the tube with the gas. */
 	overlay: {
 		image: Images.OxygenBubbles as string | undefined,
 		aspect: 512 / 128,
-		velocityX: 0.09,
-		velocityY: 0.35,
+		velocityX: 0.45,
+		velocityY: 0,
 	} as LiquidOverlay,
-	/** "O₂ 100%" readout centred on the tube, styled like the health readout. */
+	/** "O₂" label centred on the tube (shows the percentage on hover). */
 	label: true,
+	/** Brass caps keep their shape when the tube is wider than the art (only the glass stretches). */
+	artAspect: ArtAspect.oxygenTube,
+	sliceCap: 0.05,
 	anchor: "left" as "left" | "right",
 	capsBothEnds: true,
 	fillLeft: 0.0225,
@@ -58,17 +61,31 @@ const OxygenTubeArt = {
 const GAP = 0.016;
 const HEALTH_HALF = 1 / ArtAspect.health / 2;
 const BAR_WIDTH = 0.375;
+/** Width of the Reservoir holder (Wheel&Woe1) under the health capsule (hw). */
+const HOLDER_WIDTH = 0.36;
+/** Gap between the holder's edge and the inner end of Auxiliary / Stamina (hw). */
+const BAR_CLEARANCE = 0.012;
+/** Auxiliary / Stamina sit either side of the holder without touching it. */
+const BAR_OUTER = HOLDER_WIDTH / 2 + BAR_CLEARANCE + BAR_WIDTH;
+const BAR_X = BAR_OUTER - BAR_WIDTH / 2;
+const BAR_HALF = BAR_WIDTH / ArtAspect.resourceBar / 2;
+/**
+ * Health is widened (same thickness) so it spans both small bars plus a small
+ * margin. Its brass caps keep their shape; only the glass stretches.
+ */
+const HEALTH_WIDTH = 2 * (BAR_OUTER + 0.0125);
+const HEALTH_HEIGHT = 1 / ArtAspect.health;
 /**
  * Oxygen: with the new tube it spans Auxiliary's outer cap to Stamina's outer
- * cap (same thickness as those tubes), so the stack reads as one block. The
- * thin original bar is a little shorter than health.
+ * cap (its original thickness), so the stack reads as one block. The thin
+ * original bar is a little shorter than health.
  */
 export const USE_OXYGEN_TUBE =
 	OxygenTubeArt.back !== undefined && OxygenTubeArt.glass !== undefined && OxygenTubeArt.flowTile !== undefined;
-const OXYGEN_WIDTH = USE_OXYGEN_TUBE ? 2 * 0.3 + BAR_WIDTH : 0.82;
-const OXYGEN_ASPECT = USE_OXYGEN_TUBE ? ArtAspect.oxygenTube : ArtAspect.oxygen;
-const OXYGEN_HALF = OXYGEN_WIDTH / OXYGEN_ASPECT / 2;
-const BAR_HALF = BAR_WIDTH / ArtAspect.resourceBar / 2;
+const OXYGEN_WIDTH = USE_OXYGEN_TUBE ? 2 * BAR_OUTER : 0.82 * HEALTH_WIDTH;
+const OXYGEN_HEIGHT = USE_OXYGEN_TUBE ? (2 * 0.3 + BAR_WIDTH) / ArtAspect.oxygenTube : 0.82 / ArtAspect.oxygen;
+const OXYGEN_ASPECT = OXYGEN_WIDTH / OXYGEN_HEIGHT;
+const OXYGEN_HALF = OXYGEN_HEIGHT / 2;
 
 /**
  * Reservoir dial geometry, measured from the art (pixels in each image at
@@ -77,7 +94,7 @@ const BAR_HALF = BAR_WIDTH / ArtAspect.resourceBar / 2;
  */
 const Dial = {
 	/** The dial is the HUD's centrepiece; large enough for the gauge slices to read. */
-	holderWidth: 0.36,
+	holderWidth: HOLDER_WIDTH,
 	/** Holder (Wheel&Woe1): the hole's centre and radius, and the outer edge of its bevelled rim. */
 	holeCenter: new Vector2(211, 42),
 	holeRadius: 78,
@@ -114,9 +131,9 @@ export interface Piece {
 
 export const HudPieces = {
 	oxygen: { x: 0, y: -(HEALTH_HALF + GAP + OXYGEN_HALF), width: OXYGEN_WIDTH, aspect: OXYGEN_ASPECT },
-	health: { x: 0, y: 0, width: 1, aspect: ArtAspect.health },
-	auxiliary: { x: -0.3, y: HEALTH_HALF + GAP + BAR_HALF, width: BAR_WIDTH, aspect: ArtAspect.resourceBar },
-	stamina: { x: 0.3, y: HEALTH_HALF + GAP + BAR_HALF, width: BAR_WIDTH, aspect: ArtAspect.resourceBar },
+	health: { x: 0, y: 0, width: HEALTH_WIDTH, aspect: HEALTH_WIDTH / HEALTH_HEIGHT },
+	auxiliary: { x: -BAR_X, y: HEALTH_HALF + GAP + BAR_HALF, width: BAR_WIDTH, aspect: ArtAspect.resourceBar },
+	stamina: { x: BAR_X, y: HEALTH_HALF + GAP + BAR_HALF, width: BAR_WIDTH, aspect: ArtAspect.resourceBar },
 	holder: {
 		x: 0,
 		y: holderTop + Dial.holderWidth / ArtAspect.holder / 2,
@@ -182,6 +199,8 @@ export const HudArt = {
 		/** The glass interior the blood fills (the Studio clip Frame): centred, 92.5% wide. */
 		fillInsetLeft: 0.0375,
 		fillInsetWidth: 0.925,
+		/** Width of each brass cap region kept unstretched when the capsule is widened (fraction of the art). */
+		sliceCap: 0.06,
 	},
 	/**
 	 * The fill sits BEHIND the glass tube (so the glass, outline and brass caps
@@ -218,17 +237,8 @@ export const HudArt = {
 		flowTile: Images.AuxTile,
 		/** Width ÷ height of the flow tile. */
 		flowTileAspect: 508 / 60,
-		/**
-		 * Lantern fuel: glowing embers drifting up and flickering
-		 * (assets/ui/source/AuxEmbers.png). Clearing `image` removes the overlay.
-		 */
-		overlay: {
-			image: Images.AuxEmbers as string | undefined,
-			aspect: 512 / 128,
-			velocityX: 0.04,
-			velocityY: 0.28,
-			flicker: 0.35,
-		} as LiquidOverlay,
+		/** No overlay: just the liquid flowing. */
+		overlay: undefined as LiquidOverlay | undefined,
 	},
 	stamina: {
 		back: Images.Backgroundres2,
@@ -249,16 +259,16 @@ export const HudArt = {
 		flowTile: Images.StaminaTileBlue,
 		flowTileAspect: 511 / 60,
 		/**
-		 * Kinetic energy: quick light streaks rushing through the liquid
-		 * (assets/ui/source/StaminaStreaks.png). Clearing `image` removes the overlay.
+		 * Glowing specks drifting up and flickering (assets/ui/source/AuxEmbers.png;
+		 * StaminaStreaks is the old overlay). Clearing `image` removes the overlay.
 		 */
 		overlay: {
-			image: Images.StaminaStreaks as string | undefined,
+			image: Images.AuxEmbers as string | undefined,
 			aspect: 512 / 128,
-			velocityX: 1.4,
-			velocityY: 0,
-			transparency: 0.4,
-		} as LiquidOverlay,
+			velocityX: 0.04,
+			velocityY: 0.28,
+			flicker: 0.35,
+		} as LiquidOverlay | undefined,
 	},
 	/**
 	 * End shading for the flowing Auxiliary / Stamina liquids, matching the

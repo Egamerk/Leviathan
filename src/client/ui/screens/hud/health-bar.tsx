@@ -2,6 +2,7 @@ import React, { type Binding } from "@rbxts/react";
 import { vitalsAtom } from "client/store";
 import { healthFractionAtom, localStatsAtom } from "client/store/stats";
 import { ClippedFill } from "client/ui/components/clipped-fill";
+import { SlicedImage, slicedInset } from "client/ui/components/sliced-image";
 import { useAnimationClock } from "client/ui/hooks/use-animation-clock";
 import { useAtom } from "client/ui/hooks/use-atom";
 import { useSmoothedNumber } from "client/ui/hooks/use-smoothed-number";
@@ -11,6 +12,17 @@ import { formatValue } from "./hud.format";
 
 const ART = HudArt.health;
 const ANIM = HudAnimation;
+
+/**
+ * The capsule is wider than its art: the caps keep their shape, so the blood
+ * area (between the caps) grows. FILL_LEFT / FILL_WIDTH are fractions of the
+ * widened capsule; BLOOD_SCALE keeps the blood texture and its speed at the
+ * same on-screen size as before.
+ */
+const BOX_ASPECT = HudPieces.health.aspect;
+const FILL_LEFT = slicedInset(ART.fillInsetLeft, ArtAspect.health, BOX_ASPECT);
+const FILL_WIDTH = 1 - 2 * FILL_LEFT;
+const BLOOD_SCALE = (ART.fillInsetWidth * math.min(ArtAspect.health / BOX_ASPECT, 1)) / FILL_WIDTH;
 
 /**
  * Draw order for the health capsule. The blood stays below `cover`, so the
@@ -29,8 +41,8 @@ const Z = {
 } as const;
 
 const TEXT = HudArt.healthText;
-/** "3 / 4" readout, read straight from synced vitals and derived stats. */
-function HealthText() {
+/** "3 / 4" readout, read straight from synced vitals and derived stats. Fades in while hovered. */
+function HealthText({ reveal }: { reveal: Binding<number> }) {
 	const vitals = useAtom(vitalsAtom);
 	const stats = useAtom(localStatsAtom);
 	if (vitals === undefined || stats === undefined) return undefined;
@@ -45,9 +57,15 @@ function HealthText() {
 			Text={`${formatValue(vitals.health)} / ${formatValue(stats.maxHealth)}`}
 			TextColor3={TEXT.color}
 			TextScaled={true}
+			TextTransparency={reveal.map((r) => 1 - r)}
+			Visible={reveal.map((r) => r > 0.01)}
 			ZIndex={Z.text}
 		>
-			<uistroke Color={TEXT.strokeColor} Thickness={TEXT.strokeThickness} />
+			<uistroke
+				Color={TEXT.strokeColor}
+				Thickness={TEXT.strokeThickness}
+				Transparency={reveal.map((r) => 1 - r)}
+			/>
 		</textlabel>
 	);
 }
@@ -67,7 +85,7 @@ function HealthDividers() {
 				BackgroundTransparency={1}
 				Image={HudArt.divider.image}
 				ScaleType={Enum.ScaleType.Crop}
-				Position={UDim2.fromScale(ART.fillInsetLeft + (ART.fillInsetWidth * k) / max, 0.5)}
+				Position={UDim2.fromScale(FILL_LEFT + (FILL_WIDTH * k) / max, 0.5)}
 				Size={UDim2.fromScale(width, height)}
 				ZIndex={Z.dividers}
 			/>,
@@ -83,7 +101,8 @@ function HealthDividers() {
  * tile's ends match.
  */
 function TiledBlood({ clock, image }: { clock: Binding<number>; image: string }) {
-	const tileWidth = ANIM.bloodTileWidth;
+	const tileWidth = ANIM.bloodTileWidth * BLOOD_SCALE;
+	const speed = ANIM.bloodSpeed * BLOOD_SCALE;
 	const labelWidth = 1 + tileWidth;
 	return (
 		<imagelabel
@@ -93,7 +112,7 @@ function TiledBlood({ clock, image }: { clock: Binding<number>; image: string })
 			ScaleType={Enum.ScaleType.Tile}
 			TileSize={UDim2.fromScale(tileWidth / labelWidth, 1)}
 			// Flows rightward like the Studio spec: x goes -tileWidth → 0, then wraps.
-			Position={clock.map((t) => UDim2.fromScale(((t * ANIM.bloodSpeed) % tileWidth) - tileWidth, 0))}
+			Position={clock.map((t) => UDim2.fromScale(((t * speed) % tileWidth) - tileWidth, 0))}
 			Size={UDim2.fromScale(labelWidth, 1)}
 			ZIndex={Z.blood}
 		/>
@@ -103,45 +122,45 @@ function TiledBlood({ clock, image }: { clock: Binding<number>; image: string })
 /** Health capsule: back, flowing blood clipped to current health, point dividers, glass cover on top. */
 export function HealthBar({ hovered = false }: { hovered?: boolean }) {
 	const scale = useSmoothedNumber(hovered ? HudArt.hover.scale : 1, HudArt.hover.speed);
+	const reveal = useSmoothedNumber(hovered ? 1 : 0, HudArt.hover.speed);
 	const fraction = useSmoothedNumber(useAtom(healthFractionAtom), ANIM.barSmoothing);
 	const clock = useAnimationClock();
 
 	return (
 		<frame key="Health" BackgroundTransparency={1} {...place(HudPieces.health)}>
 			<uiscale Scale={scale} />
-			<imagelabel
-				key="Background"
-				BackgroundTransparency={1}
-				Size={UDim2.fromScale(1, 1)}
-				Image={ART.background}
-				ZIndex={Z.background}
-			/>
-			<ClippedFill
-				fraction={fraction}
-				insetLeft={ART.fillInsetLeft}
-				insetWidth={ART.fillInsetWidth}
-				zIndex={Z.fill}
-			>
+			<frame key="Background" BackgroundTransparency={1} Size={UDim2.fromScale(1, 1)} ZIndex={Z.background}>
+				<SlicedImage
+					image={ART.background}
+					artAspect={ArtAspect.health}
+					boxAspect={BOX_ASPECT}
+					cap={ART.sliceCap}
+					zIndex={Z.background}
+				/>
+			</frame>
+			<ClippedFill fraction={fraction} insetLeft={FILL_LEFT} insetWidth={FILL_WIDTH} zIndex={Z.fill}>
 				<frame
 					key="FillArea"
 					BackgroundTransparency={1}
 					ClipsDescendants={true}
-					Position={UDim2.fromScale(ART.fillInsetLeft, 0)}
-					Size={UDim2.fromScale(ART.fillInsetWidth, 1)}
+					Position={UDim2.fromScale(FILL_LEFT, 0)}
+					Size={UDim2.fromScale(FILL_WIDTH, 1)}
 					ZIndex={Z.fill}
 				>
 					<TiledBlood clock={clock} image={ART.bloodTile} />
 				</frame>
 			</ClippedFill>
 			<HealthDividers />
-			<imagelabel
-				key="Cover"
-				BackgroundTransparency={1}
-				Size={UDim2.fromScale(1, 1)}
-				Image={ART.cover}
-				ZIndex={Z.cover}
-			/>
-			<HealthText />
+			<frame key="Cover" BackgroundTransparency={1} Size={UDim2.fromScale(1, 1)} ZIndex={Z.cover}>
+				<SlicedImage
+					image={ART.cover}
+					artAspect={ArtAspect.health}
+					boxAspect={BOX_ASPECT}
+					cap={ART.sliceCap}
+					zIndex={Z.cover}
+				/>
+			</frame>
+			<HealthText reveal={reveal} />
 		</frame>
 	);
 }

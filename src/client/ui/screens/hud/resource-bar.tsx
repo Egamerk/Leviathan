@@ -1,5 +1,6 @@
 import React, { type Binding } from "@rbxts/react";
 import { useAnimationClock } from "client/ui/hooks/use-animation-clock";
+import { SlicedImage, slicedInset } from "client/ui/components/sliced-image";
 import { useSmoothedNumber } from "client/ui/hooks/use-smoothed-number";
 import { ArtAspect, HudAnimation, HudArt, type Piece } from "./hud.config";
 import { place } from "./hud.layout";
@@ -33,6 +34,13 @@ export interface ResourceBarArt {
 	capsBothEnds?: boolean;
 	/** Optional animated layer over the liquid (bubbles, embers, streaks…). */
 	overlay?: LiquidOverlay;
+	/**
+	 * Width ÷ height of the tube art. When the piece is wider than this, the end
+	 * caps (`sliceCap` of the art's width each) keep their shape and only the
+	 * middle stretches.
+	 */
+	artAspect?: number;
+	sliceCap?: number;
 }
 
 /**
@@ -276,7 +284,17 @@ function Overlay(props: { clock: Binding<number>; overlay: LiquidOverlay; image:
  * Auxiliary / Stamina tube: back, glass, flowing liquid anchored at one end,
  * and brass dividers marking each point.
  */
-export function ResourceBar({ name, fraction, points, piece, art, flowDirection, hovered = false }: ResourceBarProps) {
+export function ResourceBar(props: ResourceBarProps) {
+	const { name, fraction, points, piece, flowDirection, hovered = false } = props;
+	// A widened tube: move the fill box's ends inward to where the (unstretched) caps now sit.
+	const art =
+		props.art.artAspect !== undefined
+			? {
+					...props.art,
+					fillLeft: slicedInset(props.art.fillLeft, props.art.artAspect, piece.aspect),
+					fillRight: 1 - slicedInset(1 - props.art.fillRight, props.art.artAspect, piece.aspect),
+				}
+			: props.art;
 	const smoothed = useSmoothedNumber(fraction, HudAnimation.barSmoothing);
 	const scale = useSmoothedNumber(hovered ? HudArt.hover.scale : 1, HudArt.hover.speed);
 	const fillWidth = art.fillRight - art.fillLeft;
@@ -284,9 +302,26 @@ export function ResourceBar({ name, fraction, points, piece, art, flowDirection,
 	const dividerHeight = DIVIDER.heightFraction;
 	const dividerWidth = (dividerHeight * ArtAspect.divider) / piece.aspect;
 
-	const layer = (key: string, image: string, zIndex: number) => (
-		<imagelabel key={key} BackgroundTransparency={1} Size={UDim2.fromScale(1, 1)} Image={image} ZIndex={zIndex} />
-	);
+	const layer = (key: string, image: string, zIndex: number) =>
+		art.artAspect !== undefined ? (
+			<frame key={key} BackgroundTransparency={1} Size={UDim2.fromScale(1, 1)} ZIndex={zIndex}>
+				<SlicedImage
+					image={image}
+					artAspect={art.artAspect}
+					boxAspect={piece.aspect}
+					cap={art.sliceCap ?? 0.05}
+					zIndex={zIndex}
+				/>
+			</frame>
+		) : (
+			<imagelabel
+				key={key}
+				BackgroundTransparency={1}
+				Size={UDim2.fromScale(1, 1)}
+				Image={image}
+				ZIndex={zIndex}
+			/>
+		);
 
 	const dividers = new Array<React.Element>();
 	for (let k = 1; k < points; k++) {

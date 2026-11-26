@@ -44,6 +44,12 @@ drain toward the middle, so the empty part opens up at the outer brass caps. Sta
 drains (`darkenWhenLow` in `HudArt.stamina`; 0 turns it off). Set `anchor` / `cap` in
 `hud.config.ts` to change either bar.
 
+**Widths:** Auxiliary and Stamina sit either side of the Reservoir holder with a small gap
+(`BAR_CLEARANCE`); Health and Oxygen are widened to span both. Their brass caps keep their shape
+and only the glass stretches (`client/ui/components/sliced-image.tsx`).
+
+**Readouts:** the health "3 / 4" and the O₂ percentage only show while hovered.
+
 **Health dividers:** one brass divider per whole health point (3 between 4), drawn over the
 blood and under the glass. Height: `HudArt.healthDivider`.
 
