@@ -50,6 +50,10 @@ and only the glass stretches (`client/ui/components/sliced-image.tsx`).
 
 **Readouts:** the health "3 / 4" and the O₂ percentage only show while hovered.
 
+**Health cracks:** at 50% health or below the glass shows `below50%`; at 25% or below it
+switches to `below25%` (which includes the first cracks). They fade in and out and follow actual
+health. Thresholds and images: `HudArt.health.cracks`.
+
 **Health dividers:** one brass divider per whole health point (3 between 4), drawn over the
 blood and under the glass. Height: `HudArt.healthDivider`.
 

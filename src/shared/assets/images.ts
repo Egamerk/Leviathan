@@ -25,6 +25,10 @@ export const Images = {
 	Backgroundres: "rbxassetid://131682038644341",
 	/** "Backgroundres2", modified 2026-03-26 */
 	Backgroundres2: "rbxassetid://92048519392547",
+	/** "below25%", modified 2026-11-26 */
+	Below25: "rbxassetid://96827846888820",
+	/** "below50%", modified 2026-11-26 */
+	Below50: "rbxassetid://110770047973353",
 	/** "Blood", modified 2026-03-18 */
 	Blood_v1: "rbxassetid://127788627313437",
 	/** "Blood", modified 2026-03-25 */

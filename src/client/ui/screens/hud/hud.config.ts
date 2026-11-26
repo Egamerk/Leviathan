@@ -201,6 +201,17 @@ export const HudArt = {
 		fillInsetWidth: 0.925,
 		/** Width of each brass cap region kept unstretched when the capsule is widened (fraction of the art). */
 		sliceCap: 0.06,
+		/**
+		 * Cracks in the glass at low health, stretched over the area between the
+		 * caps. The lowest matching threshold wins (the 25% art already contains
+		 * the 50% cracks). `atOrBelow` is a fraction of max health.
+		 */
+		cracks: [
+			{ atOrBelow: 0.5, image: Images.Below50 },
+			{ atOrBelow: 0.25, image: Images.Below25 },
+		],
+		/** Seconds-ish for cracks to fade in/out (higher = faster). */
+		crackFadeSpeed: 10,
 	},
 	/**
 	 * The fill sits BEHIND the glass tube (so the glass, outline and brass caps

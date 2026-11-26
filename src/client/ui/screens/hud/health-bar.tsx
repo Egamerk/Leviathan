@@ -35,9 +35,11 @@ const Z = {
 	fill: 2,
 	blood: 2,
 	cover: 10,
+	/** Cracks in the glass. */
+	cracks: 11,
 	/** Point dividers: on top of the glass, like the Auxiliary / Stamina dividers. */
-	dividers: 11,
-	text: 12,
+	dividers: 12,
+	text: 13,
 } as const;
 
 const TEXT = HudArt.healthText;
@@ -67,6 +69,47 @@ function HealthText({ reveal }: { reveal: Binding<number> }) {
 				Transparency={reveal.map((r) => 1 - r)}
 			/>
 		</textlabel>
+	);
+}
+
+/** The crack set for a health fraction: the lowest threshold it's at or below, if any. */
+function crackIndex(fraction: number): number | undefined {
+	let index: number | undefined;
+	let lowest = math.huge;
+	ART.cracks.forEach((crack, i) => {
+		if (fraction <= crack.atOrBelow + 1e-6 && crack.atOrBelow < lowest) {
+			lowest = crack.atOrBelow;
+			index = i;
+		}
+	});
+	return index;
+}
+
+/** One crack image, fading in while it's the active set. */
+function Crack({ image, active }: { image: string; active: boolean }) {
+	const visible = useSmoothedNumber(active ? 1 : 0, ART.crackFadeSpeed);
+	return (
+		<imagelabel
+			BackgroundTransparency={1}
+			Image={image}
+			ImageTransparency={visible.map((v) => 1 - v)}
+			Position={UDim2.fromScale(FILL_LEFT, 0)}
+			Size={UDim2.fromScale(FILL_WIDTH, 1)}
+			Visible={visible.map((v) => v > 0.01)}
+			ZIndex={Z.cracks}
+		/>
+	);
+}
+
+/** Glass cracks at low health (uses actual health, not the smoothed bar). */
+function HealthCracks() {
+	const active = crackIndex(useAtom(healthFractionAtom));
+	return (
+		<>
+			{ART.cracks.map((crack, i) => (
+				<Crack key={`Crack${i}`} image={crack.image} active={active === i} />
+			))}
+		</>
 	);
 }
 
@@ -150,6 +193,7 @@ export function HealthBar({ hovered = false }: { hovered?: boolean }) {
 					<TiledBlood clock={clock} image={ART.bloodTile} />
 				</frame>
 			</ClippedFill>
+			<HealthCracks />
 			<HealthDividers />
 			<frame key="Cover" BackgroundTransparency={1} Size={UDim2.fromScale(1, 1)} ZIndex={Z.cover}>
 				<SlicedImage
