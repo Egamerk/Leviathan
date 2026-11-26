@@ -37,6 +37,8 @@ export const Images = {
 	BloodBackground: "rbxassetid://136181014710756",
 	/** "CapsuleCover", modified unknown */
 	CapsuleCover: "rbxassetid://121162540544331",
+	/** "CommonItem", modified 2026-11-26 */
+	CommonItem: "rbxassetid://79957367894824",
 	/** "Divider", modified 2026-03-18 */
 	Divider: "rbxassetid://128776470437215",
 	/** "HealthBlood", modified unknown */
@@ -55,6 +57,8 @@ export const Images = {
 	OxygenTile: "rbxassetid://123049627159440",
 	/** "OxygenTube", modified unknown */
 	OxygenTube: "rbxassetid://120379759578056",
+	/** "RareItem", modified 2026-11-26 */
+	RareItem: "rbxassetid://70653205112712",
 	/** "res", modified 2026-03-26 */
 	Res: "rbxassetid://118289853331031",
 	/** "ResEnd", modified 2026-06-19 */

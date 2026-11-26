@@ -1,5 +1,6 @@
 import React from "@rbxts/react";
 import { Hud } from "./screens/hud/hud";
+import { Inventory } from "./screens/inventory/inventory";
 
 /**
  * Root of the React tree. Each screen in `ui/screens/` renders its own
@@ -9,6 +10,7 @@ export function App() {
 	return (
 		<>
 			<Hud />
+			<Inventory />
 		</>
 	);
 }
