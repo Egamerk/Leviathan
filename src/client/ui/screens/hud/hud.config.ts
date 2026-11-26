@@ -246,7 +246,7 @@ export const HudArt = {
 		 * Seamless liquid strip. Green: Images.StaminaTile (StaminaTile.png).
 		 * Blue: Images.StaminaTileBlue (StaminaTileBlue.png). Swap to compare.
 		 */
-		flowTile: Images.StaminaTile,
+		flowTile: Images.StaminaTileBlue,
 		flowTileAspect: 511 / 60,
 		/**
 		 * Kinetic energy: quick light streaks rushing through the liquid
