@@ -52,7 +52,9 @@ and only the glass stretches (`client/ui/components/sliced-image.tsx`).
 
 **Health cracks:** at 50% health or below the glass shows `below50%`; at 25% or below it
 switches to `below25%` (which includes the first cracks). They fade in and out and follow actual
-health. Thresholds and images: `HudArt.health.cracks`.
+health. Dropping into a threshold plays the glass-crack sound (`Sounds.GlassCrack`), deeper at 25%
+(`pitch` per threshold); healing out of one and spawning low are silent. Thresholds, images and
+pitch: `HudArt.health.cracks`.
 
 **Health dividers:** one brass divider per whole health point (3 between 4), drawn over the
 blood and under the glass. Height: `HudArt.healthDivider`.

@@ -1,4 +1,5 @@
 import { Images } from "shared/assets/images";
+import { Sounds } from "shared/assets/sounds";
 import type { LiquidOverlay } from "./resource-bar";
 
 /**
@@ -207,9 +208,15 @@ export const HudArt = {
 		 * the 50% cracks). `atOrBelow` is a fraction of max health.
 		 */
 		cracks: [
-			{ atOrBelow: 0.5, image: Images.Below50 },
-			{ atOrBelow: 0.25, image: Images.Below25 },
+			{ atOrBelow: 0.5, image: Images.Below50, pitch: 1 },
+			{ atOrBelow: 0.25, image: Images.Below25, pitch: 0.75 },
 		],
+		/**
+		 * Played when health drops INTO a crack threshold (not when healing out of
+		 * one), at that threshold's `pitch` (1 = normal, lower = deeper).
+		 */
+		crackSound: Sounds.GlassCrack,
+		crackVolume: 0.6,
 		/** Seconds-ish for cracks to fade in/out (higher = faster). */
 		crackFadeSpeed: 10,
 	},

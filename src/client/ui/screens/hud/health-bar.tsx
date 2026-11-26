@@ -1,10 +1,11 @@
-import React, { type Binding } from "@rbxts/react";
+import React, { type Binding, useEffect, useRef } from "@rbxts/react";
 import { vitalsAtom } from "client/store";
 import { healthFractionAtom, localStatsAtom } from "client/store/stats";
 import { ClippedFill } from "client/ui/components/clipped-fill";
 import { SlicedImage, slicedInset } from "client/ui/components/sliced-image";
 import { useAnimationClock } from "client/ui/hooks/use-animation-clock";
 import { useAtom } from "client/ui/hooks/use-atom";
+import { playUiSound } from "client/ui/hooks/play-ui-sound";
 import { useSmoothedNumber } from "client/ui/hooks/use-smoothed-number";
 import { ArtAspect, HudAnimation, HudArt, HudPieces } from "./hud.config";
 import { place } from "./hud.layout";
@@ -101,9 +102,25 @@ function Crack({ image, active }: { image: string; active: boolean }) {
 	);
 }
 
-/** Glass cracks at low health (uses actual health, not the smoothed bar). */
+/** Lower threshold = more cracked. undefined (no cracks) counts as the least. */
+function severity(index: number | undefined): number {
+	return index === undefined ? -math.huge : -ART.cracks[index].atOrBelow;
+}
+
+/**
+ * Glass cracks at low health (uses actual health, not the smoothed bar). The
+ * crack sound plays each time health drops into a worse threshold, pitched
+ * per threshold; not on spawn, and not when healing.
+ */
 function HealthCracks() {
 	const active = crackIndex(useAtom(healthFractionAtom));
+	const previous = useRef(active);
+	useEffect(() => {
+		const before = previous.current;
+		previous.current = active;
+		if (active === undefined || severity(active) <= severity(before)) return;
+		playUiSound(ART.crackSound, { volume: ART.crackVolume, pitch: ART.cracks[active].pitch });
+	}, [active]);
 	return (
 		<>
 			{ART.cracks.map((crack, i) => (
