@@ -187,8 +187,8 @@ export const RESERVOIR_CHAMBER_CUT = (BRIDGE_BOTTOM - (HudPieces.core.y - CORE_H
 export const HudPlacement = {
 	/** Cluster height as a fraction of the screen's height. */
 	height: 0.2,
-	/** Gap between the cluster and the bottom of the screen, as a fraction of screen height. */
-	bottomPadding: 0.03,
+	/** Gap between the cluster and the bottom of the screen, as a fraction of screen height. Leaves room for the hotbar underneath (see inventory.config.ts). */
+	bottomPadding: 0.12,
 } as const;
 
 export const HudArt = {
