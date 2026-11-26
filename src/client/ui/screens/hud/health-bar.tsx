@@ -34,10 +34,10 @@ const Z = {
 	/** The clipped fill frames holding the blood. */
 	fill: 2,
 	blood: 2,
-	/** Point dividers: over the blood, under the glass. */
-	dividers: 5,
 	cover: 10,
-	text: 11,
+	/** Point dividers: on top of the glass, like the Auxiliary / Stamina dividers. */
+	dividers: 11,
+	text: 12,
 } as const;
 
 const TEXT = HudArt.healthText;
@@ -119,7 +119,7 @@ function TiledBlood({ clock, image }: { clock: Binding<number>; image: string })
 	);
 }
 
-/** Health capsule: back, flowing blood clipped to current health, point dividers, glass cover on top. */
+/** Health capsule: back, flowing blood clipped to current health, glass cover, point dividers on top. */
 export function HealthBar({ hovered = false }: { hovered?: boolean }) {
 	const scale = useSmoothedNumber(hovered ? HudArt.hover.scale : 1, HudArt.hover.speed);
 	const reveal = useSmoothedNumber(hovered ? 1 : 0, HudArt.hover.speed);

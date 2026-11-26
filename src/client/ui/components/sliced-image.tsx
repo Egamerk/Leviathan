@@ -11,8 +11,12 @@ interface SlicedImageProps {
 	zIndex?: number;
 }
 
-/** Overlap between the three parts (fraction of the box) so no seam shows. */
-const SEAM = 0.002;
+/**
+ * Overlap between the three parts (fraction of the box). Zero: the glass is
+ * see-through, so any overlap draws twice and shows as a light line. The parts
+ * share exact edges, so there is no gap either.
+ */
+const SEAM = 0;
 
 /**
  * Fills its parent with `image`, keeping both end caps at their real shape
