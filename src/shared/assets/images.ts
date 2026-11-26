@@ -63,6 +63,8 @@ export const Images = {
 	ReservoirSwirl: "rbxassetid://90548372812692",
 	/** "Resstart", modified 2026-06-19 */
 	Resstart: "rbxassetid://77943388945462",
+	/** "StaminaEmbers", modified 2026-11-26 */
+	StaminaEmbers: "rbxassetid://116530375623482",
 	/** "StaminaFill", modified unknown */
 	StaminaFill: "rbxassetid://86227484174680",
 	/** "StaminaStreaks", modified unknown */

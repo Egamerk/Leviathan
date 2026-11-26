@@ -259,11 +259,11 @@ export const HudArt = {
 		flowTile: Images.StaminaTileBlue,
 		flowTileAspect: 511 / 60,
 		/**
-		 * Glowing specks drifting up and flickering (assets/ui/source/AuxEmbers.png;
-		 * StaminaStreaks is the old overlay). Clearing `image` removes the overlay.
+		 * Icy-blue specks drifting up and flickering (assets/ui/source/StaminaEmbers.png,
+		 * AuxEmbers recoloured; StaminaStreaks is the old overlay). Clearing `image` removes the overlay.
 		 */
 		overlay: {
-			image: Images.AuxEmbers as string | undefined,
+			image: Images.StaminaEmbers as string | undefined,
 			aspect: 512 / 128,
 			velocityX: 0.04,
 			velocityY: 0.28,
