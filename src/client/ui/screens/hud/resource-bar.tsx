@@ -3,6 +3,7 @@ import { useAnimationClock } from "client/ui/hooks/use-animation-clock";
 import { SlicedImage, slicedInset } from "client/ui/components/sliced-image";
 import { useSmoothedNumber } from "client/ui/hooks/use-smoothed-number";
 import { ArtAspect, HudAnimation, HudArt, type Piece } from "./hud.config";
+import { formatValue } from "./hud.format";
 import { place } from "./hud.layout";
 
 export interface ResourceBarArt {
@@ -72,6 +73,8 @@ interface ResourceBarProps {
 	flowDirection: number;
 	/** Hover feedback: the tube eases up in size. */
 	hovered?: boolean;
+	/** "current / max" readout shown while hovered (like the health bar). Omit for none. */
+	readout?: { current: number; max: number };
 }
 
 const DIVIDER = HudArt.divider;
@@ -286,7 +289,8 @@ function Overlay(props: { clock: Binding<number>; overlay: LiquidOverlay; image:
  * and brass dividers marking each point.
  */
 export function ResourceBar(props: ResourceBarProps) {
-	const { name, fraction, points, piece, flowDirection, hovered = false } = props;
+	const { name, fraction, points, piece, flowDirection, hovered = false, readout } = props;
+	const reveal = useSmoothedNumber(hovered ? 1 : 0, HudArt.hover.speed);
 	// A widened tube: move the fill box's ends inward to where the (unstretched) caps now sit.
 	const art =
 		props.art.artAspect !== undefined
@@ -354,6 +358,28 @@ export function ResourceBar(props: ResourceBarProps) {
 				flowDirection={flowDirection}
 			/>
 			{dividers}
+			{readout !== undefined && (
+				<textlabel
+					key="Readout"
+					AnchorPoint={new Vector2(0.5, 0.5)}
+					BackgroundTransparency={1}
+					FontFace={HudArt.healthText.font}
+					Position={UDim2.fromScale((art.fillLeft + art.fillRight) / 2, (art.fillTop + art.fillBottom) / 2)}
+					Size={UDim2.fromScale(0.5, (art.fillBottom - art.fillTop) * 1.15)}
+					Text={`${formatValue(readout.current)} / ${formatValue(readout.max)}`}
+					TextColor3={HudArt.healthText.color}
+					TextScaled={true}
+					TextTransparency={reveal.map((r) => 1 - r)}
+					Visible={reveal.map((r) => r > 0.01)}
+					ZIndex={4}
+				>
+					<uistroke
+						Color={HudArt.healthText.strokeColor}
+						Thickness={HudArt.healthText.strokeThickness}
+						Transparency={reveal.map((r) => 1 - r)}
+					/>
+				</textlabel>
+			)}
 		</frame>
 	);
 }

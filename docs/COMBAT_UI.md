@@ -48,7 +48,7 @@ drains (`darkenWhenLow` in `HudArt.stamina`; 0 turns it off). Set `anchor` / `ca
 (`BAR_CLEARANCE`); Health and Oxygen are widened to span both. Their brass caps keep their shape
 and only the glass stretches (`client/ui/components/sliced-image.tsx`).
 
-**Readouts:** the health "3 / 4" and the O₂ percentage only show while hovered.
+**Readouts:** hovering Health, Auxiliary or Stamina fades in its "current / max" (e.g. "3 / 4"); hovering Oxygen shows its percentage.
 
 **Health cracks:** at 50% health or below the glass shows `below50%`; at 25% or below it
 switches to `below25%` (which includes the first cracks). They fade in and out and follow actual

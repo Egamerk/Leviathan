@@ -1,4 +1,5 @@
 import React, { useState } from "@rbxts/react";
+import { vitalsAtom } from "client/store";
 import { auxiliaryFractionAtom, localStatsAtom, staminaFractionAtom } from "client/store/stats";
 import { useAtom } from "client/ui/hooks/use-atom";
 import { HealthBar } from "./health-bar";
@@ -20,6 +21,7 @@ export function Hud() {
 	const auxiliary = useAtom(auxiliaryFractionAtom);
 	const stamina = useAtom(staminaFractionAtom);
 	const stats = useAtom(localStatsAtom);
+	const vitals = useAtom(vitalsAtom);
 	const [hovered, setHovered] = useState<HudElement | undefined>(undefined);
 	const onHover = (element: HudElement | undefined, toggle?: boolean) =>
 		setHovered((current) => (toggle ? (current === element ? undefined : element) : element));
@@ -44,6 +46,7 @@ export function Hud() {
 					art={HudArt.auxiliary}
 					flowDirection={HudAnimation.auxiliaryFlowDirection * HudAnimation.auxiliaryFlowSpeed}
 					hovered={hovered === "auxiliary"}
+					readout={vitals && stats ? { current: vitals.auxiliary, max: stats.maxAuxiliary } : undefined}
 				/>
 				<ResourceBar
 					name="Stamina"
@@ -53,6 +56,7 @@ export function Hud() {
 					art={HudArt.stamina}
 					flowDirection={HudAnimation.staminaFlowDirection * HudAnimation.staminaFlowSpeed}
 					hovered={hovered === "stamina"}
+					readout={vitals && stats ? { current: vitals.stamina, max: stats.maxStamina } : undefined}
 				/>
 				<ReservoirDial hovered={hovered === "reservoir"} />
 				<HoverZone element="oxygen" piece={HudPieces.oxygen} onHover={onHover} />
